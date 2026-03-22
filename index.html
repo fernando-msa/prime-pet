@@ -421,19 +421,19 @@
     <div class="grid grid-2">
       <div class="field" style="grid-column: span 2">
         <label>Nome completo</label>
-        <input type="text" placeholder="Nome completo do tutor">
+        <input type="text" id="tutor_nome" placeholder="Nome completo do tutor">
       </div>
       <div class="field">
         <label>Telefone / WhatsApp</label>
-        <input type="tel" placeholder="(79) 99999-0000">
+        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000">
       </div>
       <div class="field">
         <label>Data de hoje</label>
-        <input type="date">
+        <input type="date" id="data_hoje">
       </div>
       <div class="field" style="grid-column: span 2">
         <label>Endereço</label>
-        <input type="text" placeholder="Rua, número, bairro, cidade">
+        <input type="text" id="tutor_endereco" placeholder="Rua, número, bairro, cidade">
       </div>
     </div>
   </div>
@@ -448,19 +448,19 @@
     <div class="grid grid-2">
       <div class="field">
         <label>Nome do pet</label>
-        <input type="text" placeholder="Como ele se chama?">
+        <input type="text" id="pet_nome" placeholder="Como ele se chama?">
       </div>
       <div class="field">
         <label>Raça</label>
-        <input type="text" placeholder="Ex: Golden Retriever, SRD…">
+        <input type="text" id="pet_raca" placeholder="Ex: Golden Retriever, SRD…">
       </div>
       <div class="field">
         <label>Idade</label>
-        <input type="text" placeholder="Ex: 2 anos">
+        <input type="text" id="pet_idade" placeholder="Ex: 2 anos">
       </div>
       <div class="field">
         <label>Peso (kg)</label>
-        <input type="number" placeholder="Ex: 8" min="0" step="0.1">
+        <input type="number" id="pet_peso" placeholder="Ex: 8" min="0" step="0.1">
       </div>
       <div class="field" style="grid-column: span 2">
         <label>Sexo</label>
@@ -495,7 +495,7 @@
         </div>
         <div class="cond-field" id="doenca-detail">
           <label>Qual(is) doença(s)?</label>
-          <input type="text" placeholder="Descreva aqui">
+          <input type="text" id="doenca_desc" placeholder="Descreva aqui">
         </div>
       </div>
       <div class="field">
@@ -506,7 +506,7 @@
         </div>
         <div class="cond-field" id="med-detail">
           <label>Qual(is) medicação(ões) e horários?</label>
-          <input type="text" placeholder="Ex: Comfortis 10mg – 1x ao dia, às 8h">
+          <input type="text" id="med_desc" placeholder="Ex: Comfortis 10mg – 1x ao dia, às 8h">
         </div>
       </div>
       <div class="field">
@@ -517,7 +517,7 @@
         </div>
         <div class="cond-field" id="alergia-detail">
           <label>Qual(is) alergia(s)?</label>
-          <input type="text" placeholder="Ex: alergia a certos shampoos, alimentos…">
+          <input type="text" id="alergia_desc" placeholder="Ex: alergia a certos shampoos, alimentos…">
         </div>
       </div>
     </div>
@@ -534,10 +534,10 @@
       <div class="field">
         <label>Perfil geral (pode marcar mais de um)</label>
         <div class="check-group">
-          <label><input type="checkbox" name="comp" value="docil"> 😇 Dócil</label>
-          <label><input type="checkbox" name="comp" value="agressivo"> 😠 Agressivo</label>
-          <label><input type="checkbox" name="comp" value="medroso"> 😨 Medroso</label>
-          <label><input type="checkbox" name="comp" value="agitado"> ⚡ Agitado</label>
+          <label><input type="checkbox" name="comp" value="Dócil"> 😇 Dócil</label>
+          <label><input type="checkbox" name="comp" value="Agressivo"> 😠 Agressivo</label>
+          <label><input type="checkbox" name="comp" value="Medroso"> 😨 Medroso</label>
+          <label><input type="checkbox" name="comp" value="Agitado"> ⚡ Agitado</label>
         </div>
       </div>
       <div class="grid grid-2">
@@ -558,7 +558,7 @@
       </div>
       <div class="field">
         <label>Observações adicionais sobre comportamento</label>
-        <textarea placeholder="Qualquer detalhe que nos ajude a cuidar melhor do seu pet…"></textarea>
+        <textarea id="obs_comp" placeholder="Qualquer detalhe que nos ajude a cuidar melhor do seu pet…"></textarea>
       </div>
     </div>
   </div>
@@ -574,24 +574,24 @@
       <div class="field">
         <label>Serviço(s) escolhido(s)</label>
         <div class="check-group">
-          <label><input type="checkbox" name="serv" value="banho"> 🛁 Banho</label>
-          <label><input type="checkbox" name="serv" value="visita"> 🏠 Visita (alimentação, limpeza, cuidados)</label>
+          <label><input type="checkbox" name="serv" value="Banho"> 🛁 Banho</label>
+          <label><input type="checkbox" name="serv" value="Visita"> 🏠 Visita (alimentação, limpeza, cuidados)</label>
         </div>
       </div>
       <div class="grid grid-2">
         <div class="field">
           <label>Dias contratados</label>
-          <input type="text" placeholder="Ex: Seg, Qua, Sex">
+          <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
         </div>
         <div class="field">
           <label>Horário combinado</label>
-          <input type="text" placeholder="Ex: 09:00h">
+          <input type="text" id="horario" placeholder="Ex: 09:00h">
         </div>
       </div>
       <div class="grid grid-2">
         <div class="field">
           <label>Forma de pagamento</label>
-          <select>
+          <select id="pagamento">
             <option value="">Selecione…</option>
             <option>Pix</option>
             <option>Dinheiro</option>
@@ -601,7 +601,7 @@
         </div>
         <div class="field">
           <label>Data de pagamento</label>
-          <input type="text" placeholder="Ex: todo dia 5">
+          <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
         </div>
       </div>
       <div class="info-card">
@@ -671,25 +671,6 @@
       <strong>Cancelamentos</strong> devem ser informados com antecedência mínima de <strong>24 horas</strong>.<br>
       Em caso de ausência sem aviso, poderá ser cobrada uma taxa de cancelamento.<br><br>
       <strong>Vigência:</strong> Este contrato entra em vigor na data da assinatura e permanece válido enquanto os serviços estiverem ativos.
-    </div>
-  </div>
-
-  <!-- 9. ASSINATURA -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">9</div>
-      <h2 class="section-title">Assinatura</h2>
-      <span class="section-icon">✍️</span>
-    </div>
-    <div class="sig-row">
-      <div class="sig-box">
-        <p class="sig-box-label">Assinatura do Tutor</p>
-        <div class="sig-line">Nome / Data</div>
-      </div>
-      <div class="sig-box">
-        <p class="sig-box-label">Prime Pet – Responsável</p>
-        <div class="sig-line">Assinatura / Carimbo</div>
-      </div>
     </div>
   </div>
 
