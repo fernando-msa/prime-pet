@@ -695,8 +695,8 @@
 
   <!-- SUBMIT -->
   <div class="submit-wrap">
-    <button class="btn-submit" onclick="window.print()">
-      🖨️ Imprimir / Salvar PDF
+    <button class="btn-submit" onclick="enviarWhatsApp()">
+      💬 Enviar pelo WhatsApp
     </button>
   </div>
 
@@ -708,6 +708,14 @@
 
 </div><!-- /form-wrap -->
 
+<!-- Toast de validação -->
+<div id="toast" style="
+  display:none; position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+  background:#b85c38; color:#fff; border-radius:12px; padding:14px 24px;
+  font-size:14px; z-index:999; box-shadow:0 8px 32px rgba(0,0,0,.25);
+  max-width:90vw; text-align:center; font-family:'DM Sans',sans-serif;
+">⚠️ Preencha pelo menos o nome do tutor e o nome do pet!</div>
+
 <script>
   function toggle(id, show) {
     document.getElementById(id).classList.toggle('visible', show);
@@ -715,17 +723,113 @@
 
   function setToggle(btn, val, group) {
     const wrap = btn.closest('.toggle-wrap');
-    wrap.querySelectorAll('.toggle-btn').forEach(b => {
-      b.classList.remove('active-yes','active-no');
-    });
+    wrap.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
     btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
   }
 
-  // Set today's date as default
+  // Data de hoje como padrão
   const dateInput = document.querySelector('input[type="date"]');
-  if (dateInput) {
-    const today = new Date();
-    dateInput.value = today.toISOString().split('T')[0];
+  if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function radio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : null;
+  }
+
+  function checkboxes(name) {
+    return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
+  }
+
+  function toggleVal(group) {
+    const btn = document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`);
+    const btnNo = document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`);
+    if (btn) return 'Sim';
+    if (btnNo) return 'Não';
+    return 'Não respondido';
+  }
+
+  function simNao(v) {
+    if (v === 'sim') return 'Sim ✅';
+    if (v === 'nao') return 'Não ❌';
+    return 'Não respondido';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3500);
+  }
+
+  function enviarWhatsApp() {
+    const tutorNome = val('tutor_nome');
+    const petNome   = val('pet_nome');
+
+    if (!tutorNome || !petNome) {
+      showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
+      return;
+    }
+
+    const sexo      = radio('sexo')      || 'Não informado';
+    const vacina    = radio('vacina');
+    const doenca    = radio('doenca');
+    const med       = radio('med');
+    const alergia   = radio('alergia');
+    const agress    = radio('agress');
+    const fuga      = radio('fuga');
+    const comp      = checkboxes('comp');
+    const servicos  = checkboxes('serv');
+
+    const linhas = [
+      '🐾 *PRIME PET – Novo Contrato*',
+      '━━━━━━━━━━━━━━━━━━━━',
+      '',
+      '👤 *DADOS DO TUTOR*',
+      `• Nome: ${tutorNome}`,
+      `• Telefone: ${val('tutor_telefone') || 'Não informado'}`,
+      `• Endereço: ${val('tutor_endereco') || 'Não informado'}`,
+      '',
+      '🐶 *DADOS DO PET*',
+      `• Nome: ${petNome}`,
+      `• Raça: ${val('pet_raca') || 'Não informado'}`,
+      `• Idade: ${val('pet_idade') || 'Não informado'}`,
+      `• Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
+      `• Sexo: ${sexo}`,
+      '',
+      '🏥 *SAÚDE*',
+      `• Vacinado: ${simNao(vacina)}`,
+      `• Doença/comorbidade: ${doenca === 'sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
+      `• Medicação: ${med === 'sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
+      `• Alergia: ${alergia === 'sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
+      '',
+      '🐾 *COMPORTAMENTO*',
+      `• Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
+      `• Histórico agressivo: ${simNao(agress)}`,
+      `• Costuma fugir: ${simNao(fuga)}`,
+      `• Observações: ${val('obs_comp') || 'Nenhuma'}`,
+      '',
+      '✂️ *SERVIÇOS*',
+      `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
+      `• Dias: ${val('dias') || 'Não informado'}`,
+      `• Horário: ${val('horario') || 'Não informado'}`,
+      `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
+      '',
+      '✅ *AUTORIZAÇÕES*',
+      `• Emergência vet.: ${toggleVal('emer')}`,
+      `• Uso de imagem: ${toggleVal('img')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━',
+      `📅 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
+    ];
+
+    const msg = encodeURIComponent(linhas.join('\n'));
+    const numero = '5579996623050'; // número do dono da Prime Pet
+    window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
   }
 </script>
 </body>
