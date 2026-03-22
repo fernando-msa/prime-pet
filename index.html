@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Pet – Contrato de Serviços</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --sand: #e8ddd0;
+    --espresso: #2c1f14;
+    --mocha: #5c3d2e;
+    --gold: #c9a84c;
+    --sage: #7a9e7e;
+    --rust: #b85c38;
+    --light-mocha: #f0e8df;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--cream);
+    color: var(--espresso);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Decorative header band */
+  .header-band {
+    background: var(--espresso);
+    padding: 40px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-band::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.12);
+  }
+  .header-band::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: -40px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.08);
+  }
+  .brand-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 6vw, 44px);
+    color: #fff;
+    line-height: 1.1;
+    position: relative;
+    z-index: 1;
+  }
+  .header-title span { color: var(--gold); }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+  }
+  .paw-deco {
+    font-size: 22px;
+    margin: 12px 0 0;
+    opacity: 0.4;
+    letter-spacing: 8px;
+  }
+
+  /* Form wrapper */
+  .form-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 36px;
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .section:nth-child(1) { animation-delay: 0.05s }
+  .section:nth-child(2) { animation-delay: 0.10s }
+  .section:nth-child(3) { animation-delay: 0.15s }
+  .section:nth-child(4) { animation-delay: 0.20s }
+  .section:nth-child(5) { animation-delay: 0.25s }
+  .section:nth-child(6) { animation-delay: 0.30s }
+  .section:nth-child(7) { animation-delay: 0.35s }
+  .section:nth-child(8) { animation-delay: 0.40s }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--sand);
+  }
+  .section-num {
+    background: var(--espresso);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--espresso);
+  }
+  .section-icon { font-size: 18px; margin-left: auto; opacity: 0.5; }
+
+  /* Grid */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 560px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Field */
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mocha);
+    margin-bottom: 6px;
+  }
+  .field input[type="text"],
+  .field input[type="tel"],
+  .field input[type="date"],
+  .field input[type="number"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid var(--sand);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--espresso);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--mocha);
+    box-shadow: 0 0 0 3px rgba(92,61,46,0.10);
+  }
+  .field textarea { min-height: 80px; resize: vertical; }
+  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c3d2e'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+
+  /* Radio / Checkbox cards */
+  .radio-group, .check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .radio-group label, .check-group label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    border: 1.5px solid var(--sand);
+    border-radius: 8px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--espresso);
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .radio-group input, .check-group input { display: none; }
+  .radio-group label:has(input:checked),
+  .check-group label:has(input:checked) {
+    background: var(--espresso);
+    color: #fff;
+    border-color: var(--espresso);
+  }
+  .radio-group label:hover, .check-group label:hover {
+    border-color: var(--mocha);
+  }
+
+  /* Conditional fields */
+  .cond-field {
+    display: none;
+    margin-top: 10px;
+    padding: 14px;
+    background: var(--light-mocha);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+  }
+  .cond-field.visible { display: block; }
+  .cond-field label {
+    font-size: 11px !important;
+    margin-bottom: 6px !important;
+  }
+  .cond-field input[type="text"] {
+    background: #fff;
+    border: 1.5px solid var(--sand);
+    border-radius: 6px;
+    padding: 9px 12px;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--espresso);
+    outline: none;
+  }
+  .cond-field input:focus { border-color: var(--mocha); }
+
+  /* Info card */
+  .info-card {
+    background: var(--light-mocha);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--mocha);
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .info-card strong { color: var(--espresso); font-weight: 500; }
+
+  /* Responsibilities */
+  .resp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .resp-grid { grid-template-columns: 1fr; } }
+  .resp-card {
+    background: #fff;
+    border: 1.5px solid var(--sand);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .resp-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: var(--espresso);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .resp-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .resp-card ul li {
+    font-size: 13px;
+    color: var(--mocha);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .resp-card ul li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+  }
+
+  /* Authorization toggles */
+  .auth-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid var(--sand);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+  }
+  .auth-label {
+    font-size: 14px;
+    color: var(--espresso);
+    max-width: 78%;
+    line-height: 1.4;
+  }
+  .toggle-wrap { display: flex; gap: 8px; }
+  .toggle-btn {
+    border: 1.5px solid var(--sand);
+    background: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    color: var(--mocha);
+    transition: all 0.18s;
+  }
+  .toggle-btn.active-yes { background: var(--sage); color: #fff; border-color: var(--sage); }
+  .toggle-btn.active-no  { background: var(--rust); color: #fff; border-color: var(--rust); }
+
+  /* Notice box */
+  .notice {
+    background: var(--espresso);
+    color: rgba(255,255,255,0.82);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .notice strong { color: var(--gold); }
+
+  /* Signature area */
+  .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .sig-row { grid-template-columns: 1fr; } }
+  .sig-box {
+    border: 1.5px dashed var(--sand);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    background: #fff;
+  }
+  .sig-box-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mocha);
+    margin-bottom: 40px;
+    font-weight: 500;
+  }
+  .sig-line {
+    border-top: 1px solid var(--sand);
+    margin-top: 8px;
+    padding-top: 8px;
+    font-size: 11px;
+    color: #aaa;
+  }
+
+  /* Submit */
+  .submit-wrap { text-align: center; margin-top: 40px; }
+  .btn-submit {
+    background: var(--espresso);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 16px 48px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-submit:hover { background: var(--mocha); transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* Footer */
+  .form-footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 0.5px;
+  }
+  .form-footer a { color: var(--mocha); text-decoration: none; }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    .btn-submit, .form-footer { display: none; }
+    .section { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-band">
+  <p class="brand-mark">Passeios &amp; Banhos</p>
+  <h1 class="header-title"><span>Prime</span> Pet</h1>
+  <p class="header-sub">Contrato de Prestação de Serviços</p>
+  <p class="paw-deco">🐾 🐾 🐾</p>
+</div>
+
+<div class="form-wrap">
+
+  <!-- 1. TUTOR -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2 class="section-title">Dados do Tutor</h2>
+      <span class="section-icon">👤</span>
+    </div>
+    <div class="grid grid-2">
+      <div class="field" style="grid-column: span 2">
+        <label>Nome completo</label>
+        <input type="text" placeholder="Nome completo do tutor">
+      </div>
+      <div class="field">
+        <label>Telefone / WhatsApp</label>
+        <input type="tel" placeholder="(79) 99999-0000">
+      </div>
+      <div class="field">
+        <label>Data de hoje</label>
+        <input type="date">
+      </div>
+      <div class="field" style="grid-column: span 2">
+        <label>Endereço</label>
+        <input type="text" placeholder="Rua, número, bairro, cidade">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. PET -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2 class="section-title">Dados do Pet</h2>
+      <span class="section-icon">🐶</span>
+    </div>
+    <div class="grid grid-2">
+      <div class="field">
+        <label>Nome do pet</label>
+        <input type="text" placeholder="Como ele se chama?">
+      </div>
+      <div class="field">
+        <label>Raça</label>
+        <input type="text" placeholder="Ex: Golden Retriever, SRD…">
+      </div>
+      <div class="field">
+        <label>Idade</label>
+        <input type="text" placeholder="Ex: 2 anos">
+      </div>
+      <div class="field">
+        <label>Peso (kg)</label>
+        <input type="number" placeholder="Ex: 8" min="0" step="0.1">
+      </div>
+      <div class="field" style="grid-column: span 2">
+        <label>Sexo</label>
+        <div class="radio-group">
+          <label><input type="radio" name="sexo" value="macho"> ♂ Macho</label>
+          <label><input type="radio" name="sexo" value="femea"> ♀ Fêmea</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SAÚDE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2 class="section-title">Condições de Saúde</h2>
+      <span class="section-icon">🏥</span>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Vacinação em dia?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="vacina" value="sim"> ✓ Sim</label>
+          <label><input type="radio" name="vacina" value="nao"> ✗ Não</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Possui alguma doença ou comorbidade?</label>
+        <div class="radio-group" id="doenca-grp">
+          <label><input type="radio" name="doenca" value="nao" onchange="toggle('doenca-detail', false)"> Não</label>
+          <label><input type="radio" name="doenca" value="sim" onchange="toggle('doenca-detail', true)"> Sim</label>
+        </div>
+        <div class="cond-field" id="doenca-detail">
+          <label>Qual(is) doença(s)?</label>
+          <input type="text" placeholder="Descreva aqui">
+        </div>
+      </div>
+      <div class="field">
+        <label>Faz uso de medicação?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="med" value="nao" onchange="toggle('med-detail', false)"> Não</label>
+          <label><input type="radio" name="med" value="sim" onchange="toggle('med-detail', true)"> Sim</label>
+        </div>
+        <div class="cond-field" id="med-detail">
+          <label>Qual(is) medicação(ões) e horários?</label>
+          <input type="text" placeholder="Ex: Comfortis 10mg – 1x ao dia, às 8h">
+        </div>
+      </div>
+      <div class="field">
+        <label>Possui alergias?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="alergia" value="nao" onchange="toggle('alergia-detail', false)"> Não</label>
+          <label><input type="radio" name="alergia" value="sim" onchange="toggle('alergia-detail', true)"> Sim</label>
+        </div>
+        <div class="cond-field" id="alergia-detail">
+          <label>Qual(is) alergia(s)?</label>
+          <input type="text" placeholder="Ex: alergia a certos shampoos, alimentos…">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. COMPORTAMENTO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2 class="section-title">Comportamento do Pet</h2>
+      <span class="section-icon">🐾</span>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Perfil geral (pode marcar mais de um)</label>
+        <div class="check-group">
+          <label><input type="checkbox" name="comp" value="docil"> 😇 Dócil</label>
+          <label><input type="checkbox" name="comp" value="agressivo"> 😠 Agressivo</label>
+          <label><input type="checkbox" name="comp" value="medroso"> 😨 Medroso</label>
+          <label><input type="checkbox" name="comp" value="agitado"> ⚡ Agitado</label>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Já apresentou comportamento agressivo?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="agress" value="sim"> Sim</label>
+            <label><input type="radio" name="agress" value="nao"> Não</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Costuma fugir / escapar?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="fuga" value="sim"> Sim</label>
+            <label><input type="radio" name="fuga" value="nao"> Não</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Observações adicionais sobre comportamento</label>
+        <textarea placeholder="Qualquer detalhe que nos ajude a cuidar melhor do seu pet…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SERVIÇOS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2 class="section-title">Serviços Contratados</h2>
+      <span class="section-icon">✂️</span>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Serviço(s) escolhido(s)</label>
+        <div class="check-group">
+          <label><input type="checkbox" name="serv" value="banho"> 🛁 Banho</label>
+          <label><input type="checkbox" name="serv" value="visita"> 🏠 Visita (alimentação, limpeza, cuidados)</label>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Dias contratados</label>
+          <input type="text" placeholder="Ex: Seg, Qua, Sex">
+        </div>
+        <div class="field">
+          <label>Horário combinado</label>
+          <input type="text" placeholder="Ex: 09:00h">
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Forma de pagamento</label>
+          <select>
+            <option value="">Selecione…</option>
+            <option>Pix</option>
+            <option>Dinheiro</option>
+            <option>Cartão de débito</option>
+            <option>Cartão de crédito</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Data de pagamento</label>
+          <input type="text" placeholder="Ex: todo dia 5">
+        </div>
+      </div>
+      <div class="info-card">
+        <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. RESPONSABILIDADES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2 class="section-title">Responsabilidades</h2>
+      <span class="section-icon">📋</span>
+    </div>
+    <div class="resp-grid">
+      <div class="resp-card">
+        <h4>🐾 Prime Pet</h4>
+        <ul>
+          <li>Garantir a segurança, cuidado e bem-estar do pet</li>
+          <li>Utilizar equipamentos adequados e seguros</li>
+          <li>Informar qualquer problema ao tutor imediatamente</li>
+        </ul>
+      </div>
+      <div class="resp-card">
+        <h4>👤 Tutor</h4>
+        <ul>
+          <li>Fornecer informações verdadeiras sobre o pet</li>
+          <li>Informar condições de saúde ou comportamento</li>
+          <li>Garantir acesso ao pet no horário combinado</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. AUTORIZAÇÕES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2 class="section-title">Autorizações</h2>
+      <span class="section-icon">✅</span>
+    </div>
+    <div class="auth-row">
+      <span class="auth-label">Autorizo atendimento emergencial veterinário, caso necessário durante o serviço.</span>
+      <div class="toggle-wrap">
+        <button class="toggle-btn" onclick="setToggle(this,'yes','emer')">Sim</button>
+        <button class="toggle-btn" onclick="setToggle(this,'no','emer')">Não</button>
+      </div>
+    </div>
+    <div class="auth-row">
+      <span class="auth-label">Autorizo o uso de imagem / foto do meu pet para fins de divulgação nas redes sociais da Prime Pet.</span>
+      <div class="toggle-wrap">
+        <button class="toggle-btn" onclick="setToggle(this,'yes','img')">Sim</button>
+        <button class="toggle-btn" onclick="setToggle(this,'no','img')">Não</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. CANCELAMENTO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2 class="section-title">Cancelamento &amp; Vigência</h2>
+      <span class="section-icon">📅</span>
+    </div>
+    <div class="notice">
+      <strong>Cancelamentos</strong> devem ser informados com antecedência mínima de <strong>24 horas</strong>.<br>
+      Em caso de ausência sem aviso, poderá ser cobrada uma taxa de cancelamento.<br><br>
+      <strong>Vigência:</strong> Este contrato entra em vigor na data da assinatura e permanece válido enquanto os serviços estiverem ativos.
+    </div>
+  </div>
+
+  <!-- 9. ASSINATURA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2 class="section-title">Assinatura</h2>
+      <span class="section-icon">✍️</span>
+    </div>
+    <div class="sig-row">
+      <div class="sig-box">
+        <p class="sig-box-label">Assinatura do Tutor</p>
+        <div class="sig-line">Nome / Data</div>
+      </div>
+      <div class="sig-box">
+        <p class="sig-box-label">Prime Pet – Responsável</p>
+        <div class="sig-line">Assinatura / Carimbo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <button class="btn-submit" onclick="window.print()">
+      🖨️ Imprimir / Salvar PDF
+    </button>
+  </div>
+
+  <div class="form-footer">
+    <strong>Prime Pet – Passeios &amp; Banhos</strong><br>
+    📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
+    📸 <a href="https://instagram.com/Prime_Pet" target="_blank">@Prime_Pet</a>
+  </div>
+
+</div><!-- /form-wrap -->
+
+<script>
+  function toggle(id, show) {
+    document.getElementById(id).classList.toggle('visible', show);
+  }
+
+  function setToggle(btn, val, group) {
+    const wrap = btn.closest('.toggle-wrap');
+    wrap.querySelectorAll('.toggle-btn').forEach(b => {
+      b.classList.remove('active-yes','active-no');
+    });
+    btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+  }
+
+  // Set today's date as default
+  const dateInput = document.querySelector('input[type="date"]');
+  if (dateInput) {
+    const today = new Date();
+    dateInput.value = today.toISOString().split('T')[0];
+  }
+</script>
+</body>
+</html>
