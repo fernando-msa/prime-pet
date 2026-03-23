@@ -231,6 +231,110 @@ body {
 
 .admin-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
 
+.planner-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.planner-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--espresso);
+}
+.planner-sub {
+  font-size: 12px;
+  color: var(--mocha);
+  opacity: 0.7;
+  margin-top: 3px;
+}
+.planner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.month-input {
+  border: 1.5px solid var(--sand);
+  background: #fff;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--espresso);
+}
+.btn-export {
+  border: 1.5px solid var(--espresso);
+  background: var(--espresso);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-export:hover { background: var(--mocha); border-color: var(--mocha); }
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+@media (max-width: 760px) {
+  .overview-grid { grid-template-columns: 1fr; }
+}
+.overview-card {
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 12px;
+  padding: 16px;
+}
+.overview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.overview-title {
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mocha);
+  font-weight: 500;
+}
+.overview-count {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--espresso);
+}
+.overview-count.pending { color: #b08800; }
+.overview-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.overview-item {
+  font-size: 13px;
+  color: var(--espresso);
+  background: var(--light-mocha);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.overview-item small {
+  color: var(--mocha);
+  opacity: 0.8;
+}
+.overview-empty {
+  font-size: 13px;
+  color: var(--mocha);
+  opacity: 0.7;
+}
+
 .stats-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
 .stat-card {
   background: #fff;
@@ -369,6 +473,37 @@ body {
   </div>
 
   <div class="admin-wrap">
+    <div class="planner-head">
+      <div>
+        <h2 class="planner-title">Visão administrativa</h2>
+        <p class="planner-sub">Acompanhe pendências e o que está planejado no calendário.</p>
+      </div>
+      <div class="planner-actions">
+        <input type="month" id="mes-referencia" class="month-input" onchange="alterarMesVisao(this.value)">
+        <button class="btn-export" onclick="exportarMesGoogle()">Exportar mês (Google Agenda)</button>
+      </div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="overview-card">
+        <div class="overview-head">
+          <h3 class="overview-title">Pendências para resolver</h3>
+          <span class="overview-count pending" id="pendencias-count">0</span>
+        </div>
+        <ul class="overview-list" id="pendencias-list"></ul>
+        <p class="overview-empty" id="pendencias-empty">Nenhuma pendência para este mês.</p>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-head">
+          <h3 class="overview-title">Planejado no calendário</h3>
+          <span class="overview-count" id="planejado-count">0</span>
+        </div>
+        <ul class="overview-list" id="planejado-list"></ul>
+        <p class="overview-empty" id="planejado-empty">Nenhum agendamento para este mês.</p>
+      </div>
+    </div>
+
     <div class="stats-row">
       <div class="stat-card"><div class="stat-num pending"   id="cnt-pending">–</div><div class="stat-label">Pendentes</div></div>
       <div class="stat-card"><div class="stat-num confirmed" id="cnt-confirmed">–</div><div class="stat-label">Confirmados</div></div>
@@ -415,6 +550,9 @@ const auth = getAuth(app);
 let agendamentos = {};
 let filtroAtual  = 'all';
 let logoutEmAndamento = false;
+let mesVisao = new Date().toISOString().slice(0, 7);
+
+document.getElementById('mes-referencia').value = mesVisao;
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
@@ -521,6 +659,113 @@ function iniciarAdmin() {
   });
 }
 
+window.alterarMesVisao = function(valor) {
+  mesVisao = valor || new Date().toISOString().slice(0, 7);
+  renderLista();
+};
+
+function formatDateBR(date) {
+  const [y, m, d] = date.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function addOneHour(hour) {
+  const [h, min] = hour.split(':').map(Number);
+  const dt = new Date(2000, 0, 1, h, min, 0, 0);
+  dt.setHours(dt.getHours() + 1);
+  return `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
+}
+
+function toGoogleDate(dateISO) {
+  const [y, m, d] = dateISO.split('-');
+  return `${m}/${d}/${y}`;
+}
+
+function renderResumoMes(items) {
+  const pendencias = items.filter(i => i.status === 'pending');
+  const planejados = items.filter(i => i.status !== 'cancelled');
+
+  const pendenciasList = document.getElementById('pendencias-list');
+  const planejadoList  = document.getElementById('planejado-list');
+  pendenciasList.innerHTML = '';
+  planejadoList.innerHTML  = '';
+
+  document.getElementById('pendencias-count').textContent = pendencias.length;
+  document.getElementById('planejado-count').textContent  = planejados.length;
+
+  document.getElementById('pendencias-empty').style.display = pendencias.length ? 'none' : 'block';
+  document.getElementById('planejado-empty').style.display  = planejados.length ? 'none' : 'block';
+
+  pendencias.slice(0, 6).forEach(({ date, hour }) => {
+    const li = document.createElement('li');
+    li.className = 'overview-item';
+    li.innerHTML = `⚠️ <strong>${formatDateBR(date)}</strong> às <strong>${hour}</strong> <small>(aguardando confirmação)</small>`;
+    pendenciasList.appendChild(li);
+  });
+
+  planejados
+    .sort((a, b) => (a.date + a.hour).localeCompare(b.date + b.hour))
+    .slice(0, 8)
+    .forEach(({ date, hour, status }) => {
+      const li = document.createElement('li');
+      li.className = 'overview-item';
+      li.innerHTML = `📌 <strong>${formatDateBR(date)}</strong> às <strong>${hour}</strong> <small>(${status === 'confirmed' ? 'confirmado' : 'pendente'})</small>`;
+      planejadoList.appendChild(li);
+    });
+}
+
+window.exportarMesGoogle = function() {
+  const itemsMes = [];
+  Object.entries(agendamentos).forEach(([date, slots]) => {
+    if (!date.startsWith(mesVisao)) return;
+    Object.entries(slots).forEach(([hourKey, status]) => {
+      if (status === 'cancelled') return;
+      const hour = hourKey.slice(0,2) + ':' + hourKey.slice(2);
+      itemsMes.push({ date, hour, status });
+    });
+  });
+
+  if (!itemsMes.length) {
+    showToast('Nenhum agendamento para exportar neste mês.');
+    return;
+  }
+
+  const linhas = [
+    ['Subject','Start Date','Start Time','End Date','End Time','All Day Event','Description','Location','Private'].join(',')
+  ];
+
+  itemsMes
+    .sort((a, b) => (a.date + a.hour).localeCompare(b.date + b.hour))
+    .forEach(({ date, hour, status }) => {
+      const subject = `Prime Pet - ${status === 'pending' ? 'Pendente' : 'Agendado'}`;
+      const desc = status === 'pending'
+        ? 'Status: pendente de confirmacao no painel Prime Pet'
+        : 'Status: confirmado no painel Prime Pet';
+      linhas.push([
+        `"${subject}"`,
+        toGoogleDate(date),
+        hour,
+        toGoogleDate(date),
+        addOneHour(hour),
+        'False',
+        `"${desc}"`,
+        '"Prime Pet"',
+        'True'
+      ].join(','));
+    });
+
+  const blob = new Blob([linhas.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prime-pet-agenda-${mesVisao}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('CSV exportado! Importe no Google Agenda em Configurações → Importar e exportar.');
+};
+
 // ── Render ────────────────────────────────────────
 function renderLista() {
   const lista = document.getElementById('lista-agend');
@@ -549,6 +794,8 @@ function renderLista() {
   });
 
   const visíveis = filtroAtual === 'all' ? items : items.filter(i => i.status === filtroAtual);
+  const itensMes = items.filter(i => i.date.startsWith(mesVisao));
+  renderResumoMes(itensMes);
 
   if (visíveis.length === 0) {
     lista.innerHTML = '<div class="empty-state">🐾 Nenhum agendamento encontrado.</div>';
