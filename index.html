@@ -34,6 +34,35 @@ body {
   position: relative;
   overflow: hidden;
 }
+.header-admin-link {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 2;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(2px);
+}
+.header-admin-link:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.7);
+}
+@media (max-width: 560px) {
+  .header-admin-link {
+    top: 12px;
+    right: 12px;
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+}
 .header-band::before {
   content: '';
   position: absolute;
@@ -514,6 +543,7 @@ body {
 <body>
 
 <div class="header-band">
+  <a class="header-admin-link" href="./admin.html">Área Admin</a>
   <p class="brand-mark">Passeios &amp; Banhos</p>
   <h1 class="header-title"><span>Prime</span> Pet</h1>
   <p class="header-sub">Contrato de Prestação de Serviços</p>
@@ -521,7 +551,6 @@ body {
 </div>
 
 <div class="form-wrap">
-
   <!-- 1. TUTOR -->
   <div class="section">
     <div class="section-header">
@@ -692,22 +721,6 @@ body {
       <div class="field">
         <label>Dias contratados</label>
         <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
-      </div>
-      <div class="grid grid-2">
-        <div class="field">
-          <label>Forma de pagamento</label>
-          <select id="pagamento">
-            <option value="">Selecione…</option>
-            <option>Pix</option>
-            <option>Dinheiro</option>
-            <option>Cartão de débito</option>
-            <option>Cartão de crédito</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Data de pagamento</label>
-          <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
-        </div>
       </div>
       <div class="info-card">
         <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
@@ -1115,7 +1128,6 @@ window.enviarWhatsApp = async function() {
     '✂️ *SERVIÇOS*',
     `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
     `• Dias: ${val('dias') || 'Não informado'}`,
-    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
     '',
     '✅ *AUTORIZAÇÕES*',
     `• Emergência vet.: ${toggleVal('emer')}`,
