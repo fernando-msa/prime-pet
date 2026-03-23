@@ -6,398 +6,410 @@
 <title>Prime Pet – Contrato de Serviços</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #faf7f2;
-    --sand: #e8ddd0;
-    --espresso: #2c1f14;
-    --mocha: #5c3d2e;
-    --gold: #c9a84c;
-    --sage: #7a9e7e;
-    --rust: #b85c38;
-    --light-mocha: #f0e8df;
-  }
+:root {
+  --cream: #faf7f2;
+  --sand: #e8ddd0;
+  --espresso: #2c1f14;
+  --mocha: #5c3d2e;
+  --gold: #c9a84c;
+  --sage: #7a9e7e;
+  --rust: #b85c38;
+  --light-mocha: #f0e8df;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background-color: var(--cream);
-    color: var(--espresso);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    padding: 0;
-  }
+body {
+  background-color: var(--cream);
+  color: var(--espresso);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  padding: 0;
+}
 
-  /* Decorative header band */
-  .header-band {
-    background: var(--espresso);
-    padding: 40px 24px 36px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .header-band::before {
-    content: '';
-    position: absolute;
-    top: -60px; left: -60px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: rgba(201,168,76,0.12);
-  }
-  .header-band::after {
-    content: '';
-    position: absolute;
-    bottom: -80px; right: -40px;
-    width: 260px; height: 260px;
-    border-radius: 50%;
-    background: rgba(201,168,76,0.08);
-  }
-  .brand-mark {
-    font-family: 'Playfair Display', serif;
-    font-size: 11px;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 10px;
-  }
-  .header-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 6vw, 44px);
-    color: #fff;
-    line-height: 1.1;
-    position: relative;
-    z-index: 1;
-  }
-  .header-title span { color: var(--gold); }
-  .header-sub {
-    font-size: 13px;
-    color: rgba(255,255,255,0.5);
-    margin-top: 8px;
-    letter-spacing: 1px;
-    position: relative;
-    z-index: 1;
-  }
-  .paw-deco {
-    font-size: 22px;
-    margin: 12px 0 0;
-    opacity: 0.4;
-    letter-spacing: 8px;
-  }
+/* Decorative header band */
+.header-band {
+  background: var(--espresso);
+  padding: 40px 24px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header-band::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.12);
+}
+.header-band::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; right: -40px;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.08);
+}
+.brand-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 6vw, 44px);
+  color: #fff;
+  line-height: 1.1;
+  position: relative;
+  z-index: 1;
+}
+.header-title span { color: var(--gold); }
+.header-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 8px;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+.paw-deco {
+  font-size: 22px;
+  margin: 12px 0 0;
+  opacity: 0.4;
+  letter-spacing: 8px;
+}
 
-  /* Form wrapper */
-  .form-wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 40px 20px 60px;
-  }
+/* Form wrapper */
+.form-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
 
-  /* Section */
-  .section {
-    margin-bottom: 36px;
-    animation: fadeUp 0.5s ease both;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .section:nth-child(1) { animation-delay: 0.05s }
-  .section:nth-child(2) { animation-delay: 0.10s }
-  .section:nth-child(3) { animation-delay: 0.15s }
-  .section:nth-child(4) { animation-delay: 0.20s }
-  .section:nth-child(5) { animation-delay: 0.25s }
-  .section:nth-child(6) { animation-delay: 0.30s }
-  .section:nth-child(7) { animation-delay: 0.35s }
-  .section:nth-child(8) { animation-delay: 0.40s }
+/* Section */
+.section {
+  margin-bottom: 36px;
+  animation: fadeUp 0.5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section:nth-child(1) { animation-delay: 0.05s }
+.section:nth-child(2) { animation-delay: 0.10s }
+.section:nth-child(3) { animation-delay: 0.15s }
+.section:nth-child(4) { animation-delay: 0.20s }
+.section:nth-child(5) { animation-delay: 0.25s }
+.section:nth-child(6) { animation-delay: 0.30s }
+.section:nth-child(7) { animation-delay: 0.35s }
+.section:nth-child(8) { animation-delay: 0.40s }
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1.5px solid var(--sand);
-  }
-  .section-num {
-    background: var(--espresso);
-    color: var(--gold);
-    font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--espresso);
-  }
-  .section-icon { font-size: 18px; margin-left: auto; opacity: 0.5; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--sand);
+}
+.section-num {
+  background: var(--espresso);
+  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--espresso);
+}
+.section-icon { font-size: 18px; margin-left: auto; opacity: 0.5; }
 
-  /* Grid */
-  .grid { display: grid; gap: 16px; }
-  .grid-2 { grid-template-columns: 1fr 1fr; }
-  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 560px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  }
+/* Grid */
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 560px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
 
-  /* Field */
-  .field label {
-    display: block;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--mocha);
-    margin-bottom: 6px;
-  }
-  .field input[type="text"],
-  .field input[type="tel"],
-  .field input[type="date"],
-  .field input[type="number"],
-  .field select,
-  .field textarea {
-    width: 100%;
-    background: #fff;
-    border: 1.5px solid var(--sand);
-    border-radius: 8px;
-    padding: 11px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--espresso);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-appearance: none;
-  }
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    border-color: var(--mocha);
-    box-shadow: 0 0 0 3px rgba(92,61,46,0.10);
-  }
-  .field textarea { min-height: 80px; resize: vertical; }
-  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c3d2e'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+/* Field */
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mocha);
+  margin-bottom: 6px;
+}
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="date"],
+.field input[type="number"],
+.field select,
+.field textarea {
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--espresso);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--mocha);
+  box-shadow: 0 0 0 3px rgba(92,61,46,0.10);
+}
+.field textarea { min-height: 80px; resize: vertical; }
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c3d2e'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+.field-hint {
+  font-size: 12px;
+  color: var(--mocha);
+  margin-top: 6px;
+  opacity: 0.75;
+}
 
-  /* Radio / Checkbox cards */
-  .radio-group, .check-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 2px;
-  }
-  .radio-group label, .check-group label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: #fff;
-    border: 1.5px solid var(--sand);
-    border-radius: 8px;
-    padding: 9px 14px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 0;
-    text-transform: none;
-    color: var(--espresso);
-    transition: all 0.18s;
-    user-select: none;
-  }
-  .radio-group input, .check-group input { display: none; }
-  .radio-group label:has(input:checked),
-  .check-group label:has(input:checked) {
-    background: var(--espresso);
-    color: #fff;
-    border-color: var(--espresso);
-  }
-  .radio-group label:hover, .check-group label:hover {
-    border-color: var(--mocha);
-  }
+/* Radio / Checkbox cards */
+.radio-group, .check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+.radio-group label, .check-group label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--espresso);
+  transition: all 0.18s;
+  user-select: none;
+}
+.radio-group input, .check-group input { display: none; }
+.radio-group label:has(input:checked),
+.check-group label:has(input:checked) {
+  background: var(--espresso);
+  color: #fff;
+  border-color: var(--espresso);
+}
+.radio-group label:hover, .check-group label:hover {
+  border-color: var(--mocha);
+}
 
-  /* Conditional fields */
-  .cond-field {
-    display: none;
-    margin-top: 10px;
-    padding: 14px;
-    background: var(--light-mocha);
-    border-radius: 8px;
-    border-left: 3px solid var(--gold);
-  }
-  .cond-field.visible { display: block; }
-  .cond-field label {
-    font-size: 11px !important;
-    margin-bottom: 6px !important;
-  }
-  .cond-field input[type="text"] {
-    background: #fff;
-    border: 1.5px solid var(--sand);
-    border-radius: 6px;
-    padding: 9px 12px;
-    width: 100%;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--espresso);
-    outline: none;
-  }
-  .cond-field input:focus { border-color: var(--mocha); }
+/* Conditional fields */
+.cond-field {
+  display: none;
+  margin-top: 10px;
+  padding: 14px;
+  background: var(--light-mocha);
+  border-radius: 8px;
+  border-left: 3px solid var(--gold);
+}
+.cond-field.visible { display: block; }
+.cond-field label {
+  font-size: 11px !important;
+  margin-bottom: 6px !important;
+}
+.cond-field input[type="text"] {
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 6px;
+  padding: 9px 12px;
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--espresso);
+  outline: none;
+}
+.cond-field input:focus { border-color: var(--mocha); }
 
-  /* Info card */
-  .info-card {
-    background: var(--light-mocha);
-    border-radius: 10px;
-    padding: 16px 18px;
-    font-size: 13px;
-    color: var(--mocha);
-    line-height: 1.7;
-    margin-bottom: 8px;
-  }
-  .info-card strong { color: var(--espresso); font-weight: 500; }
+/* Info card */
+.info-card {
+  background: var(--light-mocha);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 13px;
+  color: var(--mocha);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.info-card strong { color: var(--espresso); font-weight: 500; }
 
-  /* Responsibilities */
-  .resp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 560px) { .resp-grid { grid-template-columns: 1fr; } }
-  .resp-card {
-    background: #fff;
-    border: 1.5px solid var(--sand);
-    border-radius: 10px;
-    padding: 18px;
-  }
-  .resp-card h4 {
-    font-family: 'Playfair Display', serif;
-    font-size: 14px;
-    margin-bottom: 12px;
-    color: var(--espresso);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .resp-card ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .resp-card ul li {
-    font-size: 13px;
-    color: var(--mocha);
-    padding-left: 16px;
-    position: relative;
-    line-height: 1.5;
-  }
-  .resp-card ul li::before {
-    content: '–';
-    position: absolute;
-    left: 0;
-    color: var(--gold);
-  }
+/* Responsibilities */
+.resp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .resp-grid { grid-template-columns: 1fr; } }
+.resp-card {
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 10px;
+  padding: 18px;
+}
+.resp-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--espresso);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.resp-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.resp-card ul li {
+  font-size: 13px;
+  color: var(--mocha);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.5;
+}
+.resp-card ul li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
 
-  /* Authorization toggles */
-  .auth-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    border: 1.5px solid var(--sand);
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 10px;
-  }
-  .auth-label {
-    font-size: 14px;
-    color: var(--espresso);
-    max-width: 78%;
-    line-height: 1.4;
-  }
-  .toggle-wrap { display: flex; gap: 8px; }
-  .toggle-btn {
-    border: 1.5px solid var(--sand);
-    background: none;
-    border-radius: 6px;
-    padding: 6px 14px;
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    color: var(--mocha);
-    transition: all 0.18s;
-  }
-  .toggle-btn.active-yes { background: var(--sage); color: #fff; border-color: var(--sage); }
-  .toggle-btn.active-no  { background: var(--rust); color: #fff; border-color: var(--rust); }
+/* Authorization toggles */
+.auth-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+}
+.auth-label {
+  font-size: 14px;
+  color: var(--espresso);
+  max-width: 78%;
+  line-height: 1.4;
+}
+.toggle-wrap { display: flex; gap: 8px; }
+.toggle-btn {
+  border: 1.5px solid var(--sand);
+  background: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  color: var(--mocha);
+  transition: all 0.18s;
+}
+.toggle-btn.active-yes { background: var(--sage); color: #fff; border-color: var(--sage); }
+.toggle-btn.active-no  { background: var(--rust); color: #fff; border-color: var(--rust); }
 
-  /* Notice box */
-  .notice {
-    background: var(--espresso);
-    color: rgba(255,255,255,0.82);
-    border-radius: 10px;
-    padding: 16px 18px;
-    font-size: 13px;
-    line-height: 1.7;
-  }
-  .notice strong { color: var(--gold); }
+/* Notice box */
+.notice {
+  background: var(--espresso);
+  color: rgba(255,255,255,0.82);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.notice strong { color: var(--gold); }
 
-  /* Signature area */
-  .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 560px) { .sig-row { grid-template-columns: 1fr; } }
-  .sig-box {
-    border: 1.5px dashed var(--sand);
-    border-radius: 10px;
-    padding: 24px;
-    text-align: center;
-    background: #fff;
-  }
-  .sig-box-label {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--mocha);
-    margin-bottom: 40px;
-    font-weight: 500;
-  }
-  .sig-line {
-    border-top: 1px solid var(--sand);
-    margin-top: 8px;
-    padding-top: 8px;
-    font-size: 11px;
-    color: #aaa;
-  }
+/* Signature area */
+.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .sig-row { grid-template-columns: 1fr; } }
+.sig-box {
+  border: 1.5px dashed var(--sand);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  background: #fff;
+}
+.sig-box-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mocha);
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+.sig-line {
+  border-top: 1px solid var(--sand);
+  margin-top: 8px;
+  padding-top: 8px;
+  font-size: 11px;
+  color: #aaa;
+}
 
-  /* Submit */
-  .submit-wrap { text-align: center; margin-top: 40px; }
-  .btn-submit {
-    background: var(--espresso);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 16px 48px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: background 0.2s, transform 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .btn-submit:hover { background: var(--mocha); transform: translateY(-1px); }
-  .btn-submit:active { transform: translateY(0); }
+/* Submit */
+.submit-wrap { text-align: center; margin-top: 40px; }
+.btn-submit {
+  background: var(--espresso);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 48px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-submit:hover { background: var(--mocha); transform: translateY(-1px); }
+.btn-submit:active { transform: translateY(0); }
 
-  /* Footer */
-  .form-footer {
-    text-align: center;
-    margin-top: 32px;
-    font-size: 12px;
-    color: #aaa;
-    letter-spacing: 0.5px;
-  }
-  .form-footer a { color: var(--mocha); text-decoration: none; }
+/* Footer */
+.form-footer {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 12px;
+  color: #aaa;
+  letter-spacing: 0.5px;
+}
+.form-footer a { color: var(--mocha); text-decoration: none; }
 
-  /* Print */
-  @media print {
-    body { background: #fff; }
-    .btn-submit, .form-footer { display: none; }
-    .section { animation: none; }
-  }
+/* Print */
+@media print {
+  body { background: #fff; }
+  .btn-submit, .form-footer { display: none; }
+  .section { animation: none; }
+}
 </style>
 </head>
 <body>
@@ -585,7 +597,26 @@
         </div>
         <div class="field">
           <label>Horário combinado</label>
-          <input type="text" id="horario" placeholder="Ex: 09:00h">
+          <select id="horario">
+            <option value="">Selecione um horário…</option>
+            <optgroup label="☀️ Manhã (09h–12h)">
+              <option value="09:00">09:00</option>
+              <option value="09:30">09:30</option>
+              <option value="10:00">10:00</option>
+              <option value="10:30">10:30</option>
+              <option value="11:00">11:00</option>
+              <option value="11:30">11:30</option>
+            </optgroup>
+            <optgroup label="🌤️ Tarde (14h–17h)">
+              <option value="14:00">14:00</option>
+              <option value="14:30">14:30</option>
+              <option value="15:00">15:00</option>
+              <option value="15:30">15:30</option>
+              <option value="16:00">16:00</option>
+              <option value="16:30">16:30</option>
+            </optgroup>
+          </select>
+          <p class="field-hint">🕐 Atendemos das 09h às 12h e das 14h às 17h</p>
         </div>
       </div>
       <div class="grid grid-2">
@@ -685,6 +716,8 @@
     <strong>Prime Pet – Passeios &amp; Banhos</strong><br>
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
     📸 <a href="https://instagram.com/Prime_Pet" target="_blank">@Prime_Pet</a>
+    <br><br>
+    Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank">github.com/fernando-msa</a>
   </div>
 
 </div><!-- /form-wrap -->
@@ -698,120 +731,121 @@
 ">⚠️ Preencha pelo menos o nome do tutor e o nome do pet!</div>
 
 <script>
-  function toggle(id, show) {
-    document.getElementById(id).classList.toggle('visible', show);
+function toggle(id, show) {
+  document.getElementById(id).classList.toggle('visible', show);
+}
+
+function setToggle(btn, val, group) {
+  const wrap = btn.closest('.toggle-wrap');
+  wrap.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
+  btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+}
+
+// Data de hoje como padrão
+const dateInput = document.querySelector('input[type="date"]');
+if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function radio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function checkboxes(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
+}
+
+function toggleVal(group) {
+  const btn   = document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`);
+  const btnNo = document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`);
+  if (btn)   return 'Sim';
+  if (btnNo) return 'Não';
+  return 'Não respondido';
+}
+
+function simNao(v) {
+  if (v === 'sim') return 'Sim ✅';
+  if (v === 'nao') return 'Não ❌';
+  return 'Não respondido';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3500);
+}
+
+function enviarWhatsApp() {
+  const tutorNome = val('tutor_nome');
+  const petNome   = val('pet_nome');
+
+  if (!tutorNome || !petNome) {
+    showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
+    return;
   }
 
-  function setToggle(btn, val, group) {
-    const wrap = btn.closest('.toggle-wrap');
-    wrap.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
-    btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
-  }
+  const sexo     = radio('sexo') || 'Não informado';
+  const vacina   = radio('vacina');
+  const doenca   = radio('doenca');
+  const med      = radio('med');
+  const alergia  = radio('alergia');
+  const agress   = radio('agress');
+  const fuga     = radio('fuga');
+  const comp     = checkboxes('comp');
+  const servicos = checkboxes('serv');
 
-  // Data de hoje como padrão
-  const dateInput = document.querySelector('input[type="date"]');
-  if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+  const linhas = [
+    '🐾 *PRIME PET – Novo Contrato*',
+    '━━━━━━━━━━━━━━━━━━━━',
+    '',
+    '👤 *DADOS DO TUTOR*',
+    `• Nome: ${tutorNome}`,
+    `• Telefone: ${val('tutor_telefone') || 'Não informado'}`,
+    `• Endereço: ${val('tutor_endereco') || 'Não informado'}`,
+    '',
+    '🐶 *DADOS DO PET*',
+    `• Nome: ${petNome}`,
+    `• Raça: ${val('pet_raca') || 'Não informado'}`,
+    `• Idade: ${val('pet_idade') || 'Não informado'}`,
+    `• Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
+    `• Sexo: ${sexo}`,
+    '',
+    '🏥 *SAÚDE*',
+    `• Vacinado: ${simNao(vacina)}`,
+    `• Doença/comorbidade: ${doenca === 'sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Medicação: ${med === 'sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Alergia: ${alergia === 'sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
+    '',
+    '🐾 *COMPORTAMENTO*',
+    `• Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
+    `• Histórico agressivo: ${simNao(agress)}`,
+    `• Costuma fugir: ${simNao(fuga)}`,
+    `• Observações: ${val('obs_comp') || 'Nenhuma'}`,
+    '',
+    '✂️ *SERVIÇOS*',
+    `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
+    `• Dias: ${val('dias') || 'Não informado'}`,
+    `• Horário: ${val('horario') || 'Não informado'}`,
+    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
+    '',
+    '✅ *AUTORIZAÇÕES*',
+    `• Emergência vet.: ${toggleVal('emer')}`,
+    `• Uso de imagem: ${toggleVal('img')}`,
+    '',
+    '━━━━━━━━━━━━━━━━━━━━',
+    `📅 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
+  ];
 
-  function val(id) {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : '';
-  }
-
-  function radio(name) {
-    const el = document.querySelector(`input[name="${name}"]:checked`);
-    return el ? el.value : null;
-  }
-
-  function checkboxes(name) {
-    return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
-  }
-
-  function toggleVal(group) {
-    const btn = document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`);
-    const btnNo = document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`);
-    if (btn) return 'Sim';
-    if (btnNo) return 'Não';
-    return 'Não respondido';
-  }
-
-  function simNao(v) {
-    if (v === 'sim') return 'Sim ✅';
-    if (v === 'nao') return 'Não ❌';
-    return 'Não respondido';
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3500);
-  }
-
-  function enviarWhatsApp() {
-    const tutorNome = val('tutor_nome');
-    const petNome   = val('pet_nome');
-
-    if (!tutorNome || !petNome) {
-      showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
-      return;
-    }
-
-    const sexo      = radio('sexo')      || 'Não informado';
-    const vacina    = radio('vacina');
-    const doenca    = radio('doenca');
-    const med       = radio('med');
-    const alergia   = radio('alergia');
-    const agress    = radio('agress');
-    const fuga      = radio('fuga');
-    const comp      = checkboxes('comp');
-    const servicos  = checkboxes('serv');
-
-    const linhas = [
-      '🐾 *PRIME PET – Novo Contrato*',
-      '━━━━━━━━━━━━━━━━━━━━',
-      '',
-      '👤 *DADOS DO TUTOR*',
-      `• Nome: ${tutorNome}`,
-      `• Telefone: ${val('tutor_telefone') || 'Não informado'}`,
-      `• Endereço: ${val('tutor_endereco') || 'Não informado'}`,
-      '',
-      '🐶 *DADOS DO PET*',
-      `• Nome: ${petNome}`,
-      `• Raça: ${val('pet_raca') || 'Não informado'}`,
-      `• Idade: ${val('pet_idade') || 'Não informado'}`,
-      `• Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
-      `• Sexo: ${sexo}`,
-      '',
-      '🏥 *SAÚDE*',
-      `• Vacinado: ${simNao(vacina)}`,
-      `• Doença/comorbidade: ${doenca === 'sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
-      `• Medicação: ${med === 'sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
-      `• Alergia: ${alergia === 'sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
-      '',
-      '🐾 *COMPORTAMENTO*',
-      `• Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
-      `• Histórico agressivo: ${simNao(agress)}`,
-      `• Costuma fugir: ${simNao(fuga)}`,
-      `• Observações: ${val('obs_comp') || 'Nenhuma'}`,
-      '',
-      '✂️ *SERVIÇOS*',
-      `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
-      `• Dias: ${val('dias') || 'Não informado'}`,
-      `• Horário: ${val('horario') || 'Não informado'}`,
-      `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
-      '',
-      '✅ *AUTORIZAÇÕES*',
-      `• Emergência vet.: ${toggleVal('emer')}`,
-      `• Uso de imagem: ${toggleVal('img')}`,
-      '',
-      '━━━━━━━━━━━━━━━━━━━━',
-      `📅 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
-    ];
-
-    const msg = encodeURIComponent(linhas.join('\n'));
-    const numero = '5579996623050'; // número do dono da Prime Pet
-    window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
-  }
+  const msg    = encodeURIComponent(linhas.join('\n'));
+  const numero = '5579996623050';
+  window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
+}
 </script>
+
 </body>
 </html>
