@@ -34,6 +34,41 @@ body {
   position: relative;
   overflow: hidden;
 }
+.header-quick-links {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+}
+.header-link-btn {
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.08);
+  font-family: 'DM Sans', sans-serif;
+}
+.header-link-btn:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.8);
+}
+@media (max-width: 560px) {
+  .header-quick-links {
+    top: 12px;
+    right: 12px;
+  }
+  .header-link-btn {
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+}
 .header-band::before {
   content: '';
   position: absolute;
@@ -387,6 +422,13 @@ body {
   cursor: not-allowed;
   text-decoration: line-through;
 }
+.slot-btn.past {
+  background: #f6f2ec;
+  border-color: #e2d7ca;
+  color: #b4a79a;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
 .slots-loading {
   font-size: 13px;
   color: var(--mocha);
@@ -514,6 +556,10 @@ body {
 <body>
 
 <div class="header-band">
+  <div class="header-quick-links">
+    <a class="header-link-btn" href="./client.html">Portal Cliente</a>
+    <a class="header-link-btn" href="./admin.html">Área Admin</a>
+  </div>
   <p class="brand-mark">Passeios &amp; Banhos</p>
   <h1 class="header-title"><span>Prime</span> Pet</h1>
   <p class="header-sub">Contrato de Prestação de Serviços</p>
@@ -521,7 +567,6 @@ body {
 </div>
 
 <div class="form-wrap">
-
   <!-- 1. TUTOR -->
   <div class="section">
     <div class="section-header">
@@ -536,7 +581,7 @@ body {
       </div>
       <div class="field">
         <label>Telefone / WhatsApp</label>
-        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000">
+        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000" pattern="^\\(?[1-9]{2}\\)?\\s?9?\\d{4}-?\\d{4}$" title="Informe um telefone brasileiro válido, ex: (79) 99999-0000">
       </div>
       <div class="field">
         <label>Data de hoje</label>
@@ -544,7 +589,12 @@ body {
       </div>
       <div class="field" style="grid-column: span 2">
         <label>Endereço</label>
-        <input type="text" id="tutor_endereco" placeholder="Rua, número, bairro, cidade">
+        <input type="text" id="tutor_endereco" list="sugestoes_endereco" placeholder="Rua, número, bairro, cidade">
+        <datalist id="sugestoes_endereco"></datalist>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button type="button" class="toggle-btn" onclick="usarLocalizacaoNavegador()">📍 Usar minha localização</button>
+        </div>
+        <p class="field-hint">Digite o endereço para receber sugestões automáticas e facilitar o mapa no WhatsApp.</p>
       </div>
     </div>
   </div>
@@ -692,22 +742,6 @@ body {
       <div class="field">
         <label>Dias contratados</label>
         <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
-      </div>
-      <div class="grid grid-2">
-        <div class="field">
-          <label>Forma de pagamento</label>
-          <select id="pagamento">
-            <option value="">Selecione…</option>
-            <option>Pix</option>
-            <option>Dinheiro</option>
-            <option>Cartão de débito</option>
-            <option>Cartão de crédito</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Data de pagamento</label>
-          <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
-        </div>
       </div>
       <div class="info-card">
         <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
@@ -882,7 +916,7 @@ let viewYear, viewMonth;
 let agendamentos = {};   // { "2025-07-10": { "09:00": "pending"|"confirmed", ... } }
 let selectedDate = null;
 let selectedHour = null;
-let unsubscribe  = null;
+let debounceEndereco = null;
 
 // ── Init ──────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -890,8 +924,46 @@ window.addEventListener('DOMContentLoaded', () => {
   viewYear   = hoje.getFullYear();
   viewMonth  = hoje.getMonth();
   document.getElementById('data_hoje').value = hoje.toISOString().split('T')[0];
+  iniciarSugestoesEndereco();
   subscribeAgendamentos();
 });
+
+function iniciarSugestoesEndereco() {
+  const input = document.getElementById('tutor_endereco');
+  const list  = document.getElementById('sugestoes_endereco');
+  if (!input || !list) return;
+
+  input.addEventListener('input', () => {
+    const termo = input.value.trim();
+    if (debounceEndereco) clearTimeout(debounceEndereco);
+    if (termo.length < 5) {
+      list.innerHTML = '';
+      return;
+    }
+    debounceEndereco = setTimeout(async () => {
+      const sugestoes = await buscarSugestoesEndereco(termo);
+      list.innerHTML = '';
+      sugestoes.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s;
+        list.appendChild(option);
+      });
+    }, 400);
+  });
+}
+
+async function buscarSugestoesEndereco(termo) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&countrycodes=br&q=${encodeURIComponent(termo)}`;
+  try {
+    const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    if (!Array.isArray(data)) return [];
+    return data.map(item => item.display_name).filter(Boolean);
+  } catch (_) {
+    return [];
+  }
+}
 
 // ── Firebase: ouve mudanças em tempo real ─────────
 function subscribeAgendamentos() {
@@ -945,7 +1017,7 @@ function renderCalendario() {
     const vals  = Object.values(slots);
     const temConfirmado = vals.includes('confirmed');
     const temPendente   = vals.some(v => v === 'pending');
-    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed');
+    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed' || slots[h] === 'pending');
 
     if (todosOcupados)   el.classList.add('cal-has-full');
     else if (temConfirmado || temPendente) el.classList.add('cal-has-pending');
@@ -1009,6 +1081,7 @@ function renderSlots(dataStr) {
     btn.textContent = h;
 
     const status = slots[h];
+    const expirado = slotJaPassou(dataStr, h);
     if (status === 'confirmed') {
       btn.classList.add('occupied');
       btn.title    = 'Horário ocupado';
@@ -1017,6 +1090,11 @@ function renderSlots(dataStr) {
       btn.classList.add('pending');
       btn.title    = 'Aguardando confirmação';
       btn.disabled = true;
+    } else if (expirado) {
+      btn.classList.add('past');
+      btn.title    = 'Horário já passou';
+      btn.disabled = true;
+      if (selectedHour === h) selectedHour = null;
     } else {
       if (h === selectedHour) btn.classList.add('selected');
       btn.onclick = () => selecionaHorario(h, btn);
@@ -1024,6 +1102,10 @@ function renderSlots(dataStr) {
 
     grid.appendChild(btn);
   });
+
+  if (!selectedHour) {
+    document.getElementById('agend-resumo').style.display = 'none';
+  }
 }
 
 function selecionaHorario(h, btn) {
@@ -1042,6 +1124,13 @@ function formatDate(y, m, d) {
   return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 }
 
+function slotJaPassou(dataStr, hora) {
+  const [y, m, d] = dataStr.split('-').map(Number);
+  const [hh, mm]  = hora.split(':').map(Number);
+  const inicioSlot = new Date(y, m - 1, d, hh, mm, 0, 0);
+  return inicioSlot <= new Date();
+}
+
 // ── Salva agendamento pendente no Firebase ─────────
 async function salvarPendente() {
   if (!selectedDate || !selectedHour) return;
@@ -1052,18 +1141,112 @@ async function salvarPendente() {
   await set(ref(db, path), 'pending');
 }
 
+async function validarEnderecoNoMapa(endereco) {
+  if (!endereco) return null;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(endereco)}`;
+  const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  if (!Array.isArray(data) || !data.length) return null;
+
+  const local = data[0];
+  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${local.lat},${local.lon}`;
+  return {
+    enderecoFormatado: local.display_name || endereco,
+    lat: local.lat,
+    lon: local.lon,
+    mapsLink
+  };
+}
+
+async function reverseGeocode(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+  const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  return data?.display_name || null;
+}
+
+window.usarLocalizacaoNavegador = function() {
+  if (!navigator.geolocation) {
+    showToast('Seu navegador não suporta geolocalização.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const { latitude, longitude } = pos.coords;
+    const endereco = await reverseGeocode(latitude, longitude);
+    if (endereco) {
+      document.getElementById('tutor_endereco').value = endereco;
+      showToast('📍 Localização preenchida com base no seu navegador.');
+    } else {
+      document.getElementById('tutor_endereco').value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+      showToast('📍 Coordenadas obtidas. Complete o endereço, se necessário.');
+    }
+  }, () => {
+    showToast('Não foi possível obter sua localização.');
+  }, { enableHighAccuracy: true, timeout: 10000 });
+};
+
+async function salvarHistoricoCliente({ tutorNome, petNome, telefone, endereco, mapsLink, dataAgendada, horaAgendada, saude }) {
+  const payload = {
+    tutorNome,
+    petNome,
+    telefone: telefone || '',
+    endereco: endereco || '',
+    mapsLink: mapsLink || '',
+    dataAgendada,
+    horaAgendada,
+    status: 'pending',
+    saude: saude || {},
+    criadoEm: Date.now()
+  };
+  await set(push(ref(db, 'historico_clientes')), payload);
+}
+
+function limparTelefone(telefone) {
+  return (telefone || '').replace(/\D/g, '');
+}
+
+function telefoneValidoBR(telefone) {
+  const d = limparTelefone(telefone);
+  if (![10, 11].includes(d.length)) return false;
+  const ddd = Number(d.slice(0, 2));
+  if (ddd < 11 || ddd > 99) return false;
+  if (d.length === 11 && d[2] !== '9') return false;
+  return true;
+}
+
 // ── Envio WhatsApp ────────────────────────────────
 window.enviarWhatsApp = async function() {
   const tutorNome = val('tutor_nome');
   const petNome   = val('pet_nome');
+  const enderecoTutor = val('tutor_endereco');
+  const telefoneTutor = val('tutor_telefone');
 
   if (!tutorNome || !petNome) {
     showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
     return;
   }
+  if (!telefoneValidoBR(telefoneTutor)) {
+    showToast('⚠️ Informe um telefone brasileiro válido (ex: 79 99999-0000).');
+    return;
+  }
   if (!selectedDate || !selectedHour) {
     showToast('⚠️ Selecione uma data e horário no calendário!');
     return;
+  }
+
+  let localizacao = null;
+  if (enderecoTutor) {
+    try {
+      localizacao = await validarEnderecoNoMapa(enderecoTutor);
+    } catch (_) {
+      localizacao = null;
+    }
+    if (!localizacao) {
+      showToast('⚠️ Endereço não encontrado/validado. Revise o endereço para continuar.');
+      return;
+    }
   }
 
   // Salva como pendente no Firebase
@@ -1083,50 +1266,65 @@ window.enviarWhatsApp = async function() {
   const servicos = checkboxes('serv');
 
   const linhas = [
-    '🐾 *PRIME PET – Novo Agendamento*',
-    '━━━━━━━━━━━━━━━━━━━━',
+    '🐾 *PRIME PET - NOVO AGENDAMENTO*',
+    '------------------------------',
+    `📅 *Quando:* ${dtFmt} às ${selectedHour}`,
+    '⏳ *Status:* PENDENTE (aguarda confirmação)',
     '',
-    `📅 *AGENDAMENTO:* ${dtFmt} às ${selectedHour} _(PENDENTE – aguarda confirmação)_`,
+    '👤 *TUTOR*',
+    `- Nome: ${tutorNome}`,
+    `- Telefone: ${telefoneTutor || 'Não informado'}`,
+    `- Endereço: ${localizacao?.enderecoFormatado || enderecoTutor || 'Não informado'}`,
+    `🗺️ Mapa: ${localizacao?.mapsLink || 'Não informado'}`,
     '',
-    '👤 *DADOS DO TUTOR*',
-    `• Nome: ${tutorNome}`,
-    `• Telefone: ${val('tutor_telefone') || 'Não informado'}`,
-    `• Endereço: ${val('tutor_endereco') || 'Não informado'}`,
-    '',
-    '🐶 *DADOS DO PET*',
-    `• Nome: ${petNome}`,
-    `• Raça: ${val('pet_raca') || 'Não informado'}`,
-    `• Idade: ${val('pet_idade') || 'Não informado'}`,
-    `• Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
-    `• Sexo: ${sexo}`,
+    '🐶 *PET*',
+    `- Nome: ${petNome}`,
+    `- Raça: ${val('pet_raca') || 'Não informado'}`,
+    `- Idade: ${val('pet_idade') || 'Não informado'}`,
+    `- Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
+    `- Sexo: ${sexo}`,
     '',
     '🏥 *SAÚDE*',
-    `• Vacinado: ${simNao(vacina)}`,
-    `• Doença/comorbidade: ${doenca === 'sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
-    `• Medicação: ${med === 'sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
-    `• Alergia: ${alergia === 'sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
+    `- Vacinação: ${simNao(vacina)}`,
+    `- Doença/comorbidade: ${doenca === 'sim' ? 'Sim - ' + (val('doenca_desc') || 'sem descrição') : 'Não'}`,
+    `- Medicação: ${med === 'sim' ? 'Sim - ' + (val('med_desc') || 'sem descrição') : 'Não'}`,
+    `- Alergia: ${alergia === 'sim' ? 'Sim - ' + (val('alergia_desc') || 'sem descrição') : 'Não'}`,
     '',
     '🐾 *COMPORTAMENTO*',
-    `• Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
-    `• Histórico agressivo: ${simNao(agress)}`,
-    `• Costuma fugir: ${simNao(fuga)}`,
-    `• Observações: ${val('obs_comp') || 'Nenhuma'}`,
+    `- Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
+    `- Histórico agressivo: ${simNao(agress)}`,
+    `- Costuma fugir: ${simNao(fuga)}`,
+    `- Observações: ${val('obs_comp') || 'Nenhuma'}`,
     '',
     '✂️ *SERVIÇOS*',
-    `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
-    `• Dias: ${val('dias') || 'Não informado'}`,
-    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
+    `- Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
+    `- Dias: ${val('dias') || 'Não informado'}`,
     '',
     '✅ *AUTORIZAÇÕES*',
-    `• Emergência vet.: ${toggleVal('emer')}`,
-    `• Uso de imagem: ${toggleVal('img')}`,
+    `- Emergência vet.: ${toggleVal('emer')}`,
+    `- Uso de imagem: ${toggleVal('img')}`,
     '',
-    '━━━━━━━━━━━━━━━━━━━━',
-    `📤 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
+    `🕒 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
+    '------------------------------',
   ];
 
   const msg    = encodeURIComponent(linhas.join('\n'));
   const numero = '5579996623050';
+  await salvarHistoricoCliente({
+    tutorNome,
+    petNome,
+    telefone: telefoneTutor,
+    endereco: localizacao?.enderecoFormatado || enderecoTutor,
+    mapsLink: localizacao?.mapsLink || '',
+    dataAgendada: selectedDate,
+    horaAgendada: selectedHour,
+    saude: {
+      vacinado: simNao(vacina),
+      doenca: doenca === 'sim' ? (val('doenca_desc') || 'Sim (sem descrição)') : 'Não',
+      medicacao: med === 'sim' ? (val('med_desc') || 'Sim (sem descrição)') : 'Não',
+      alergia: alergia === 'sim' ? (val('alergia_desc') || 'Sim (sem descrição)') : 'Não'
+    }
+  });
   window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
 };
 
