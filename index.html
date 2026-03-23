@@ -34,11 +34,15 @@ body {
   position: relative;
   overflow: hidden;
 }
-.header-admin-link {
+.header-quick-links {
   position: absolute;
   top: 16px;
   right: 18px;
   z-index: 2;
+  display: flex;
+  gap: 8px;
+}
+.header-link-btn {
   border: 1.5px solid rgba(255,255,255,0.25);
   color: #fff;
   text-decoration: none;
@@ -51,14 +55,16 @@ body {
   background: rgba(255,255,255,0.08);
   font-family: 'DM Sans', sans-serif;
 }
-.header-admin-link:hover {
+.header-link-btn:hover {
   background: rgba(255,255,255,0.18);
   border-color: rgba(255,255,255,0.8);
 }
 @media (max-width: 560px) {
-  .header-admin-link {
+  .header-quick-links {
     top: 12px;
     right: 12px;
+  }
+  .header-link-btn {
     padding: 7px 12px;
     font-size: 11px;
   }
@@ -571,7 +577,10 @@ body {
 <body>
 
 <div class="header-band">
-  <a class="header-admin-link" href="./admin.html">Área Admin</a>
+  <div class="header-quick-links">
+    <a class="header-link-btn" href="./client.html">Portal Cliente</a>
+    <a class="header-link-btn" href="./admin.html">Área Admin</a>
+  </div>
   <p class="brand-mark">Passeios &amp; Banhos</p>
   <h1 class="header-title"><span>Prime</span> Pet</h1>
   <p class="header-sub">Contrato de Prestação de Serviços</p>
@@ -593,7 +602,7 @@ body {
       </div>
       <div class="field">
         <label>Telefone / WhatsApp</label>
-        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000">
+        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000" pattern="^\\(?[1-9]{2}\\)?\\s?9?\\d{4}-?\\d{4}$" title="Informe um telefone brasileiro válido, ex: (79) 99999-0000">
       </div>
       <div class="field">
         <label>Data de hoje</label>
@@ -1199,7 +1208,7 @@ window.usarLocalizacaoNavegador = function() {
   }, { enableHighAccuracy: true, timeout: 10000 });
 };
 
-async function salvarHistoricoCliente({ tutorNome, petNome, telefone, endereco, mapsLink, dataAgendada, horaAgendada }) {
+async function salvarHistoricoCliente({ tutorNome, petNome, telefone, endereco, mapsLink, dataAgendada, horaAgendada, saude }) {
   const payload = {
     tutorNome,
     petNome,
@@ -1209,9 +1218,23 @@ async function salvarHistoricoCliente({ tutorNome, petNome, telefone, endereco, 
     dataAgendada,
     horaAgendada,
     status: 'pending',
+    saude: saude || {},
     criadoEm: Date.now()
   };
   await set(push(ref(db, 'historico_clientes')), payload);
+}
+
+function limparTelefone(telefone) {
+  return (telefone || '').replace(/\D/g, '');
+}
+
+function telefoneValidoBR(telefone) {
+  const d = limparTelefone(telefone);
+  if (![10, 11].includes(d.length)) return false;
+  const ddd = Number(d.slice(0, 2));
+  if (ddd < 11 || ddd > 99) return false;
+  if (d.length === 11 && d[2] !== '9') return false;
+  return true;
 }
 
 // ── Envio WhatsApp ────────────────────────────────
@@ -1219,9 +1242,14 @@ window.enviarWhatsApp = async function() {
   const tutorNome = val('tutor_nome');
   const petNome   = val('pet_nome');
   const enderecoTutor = val('tutor_endereco');
+  const telefoneTutor = val('tutor_telefone');
 
   if (!tutorNome || !petNome) {
     showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
+    return;
+  }
+  if (!telefoneValidoBR(telefoneTutor)) {
+    showToast('⚠️ Informe um telefone brasileiro válido (ex: 79 99999-0000).');
     return;
   }
   if (!selectedDate || !selectedHour) {
@@ -1266,7 +1294,7 @@ window.enviarWhatsApp = async function() {
     '',
     '👤 *TUTOR*',
     `- Nome: ${tutorNome}`,
-    `- Telefone: ${val('tutor_telefone') || 'Não informado'}`,
+    `- Telefone: ${telefoneTutor || 'Não informado'}`,
     `- Endereço: ${localizacao?.enderecoFormatado || enderecoTutor || 'Não informado'}`,
     `🗺️ Mapa: ${localizacao?.mapsLink || 'Não informado'}`,
     '',
@@ -1306,11 +1334,17 @@ window.enviarWhatsApp = async function() {
   await salvarHistoricoCliente({
     tutorNome,
     petNome,
-    telefone: val('tutor_telefone'),
+    telefone: telefoneTutor,
     endereco: localizacao?.enderecoFormatado || enderecoTutor,
     mapsLink: localizacao?.mapsLink || '',
     dataAgendada: selectedDate,
-    horaAgendada: selectedHour
+    horaAgendada: selectedHour,
+    saude: {
+      vacinado: simNao(vacina),
+      doenca: doenca === 'sim' ? (val('doenca_desc') || 'Sim (sem descrição)') : 'Não',
+      medicacao: med === 'sim' ? (val('med_desc') || 'Sim (sem descrição)') : 'Não',
+      alergia: alergia === 'sim' ? (val('alergia_desc') || 'Sim (sem descrição)') : 'Não'
+    }
   });
   window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
 };

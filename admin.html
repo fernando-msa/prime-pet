@@ -381,6 +381,16 @@ body {
   border-bottom: 1px solid rgba(92,61,46,0.25);
 }
 .history-item a:hover { border-color: var(--mocha); }
+.health-alert {
+  margin-top: 6px;
+  background: #fff4ef;
+  border: 1px solid #e9c9b7;
+  border-left: 3px solid var(--rust);
+  border-radius: 7px;
+  padding: 7px 8px;
+  color: #7a3f27;
+  font-size: 12px;
+}
 .history-controls {
   display: none;
   gap: 8px;
@@ -958,6 +968,18 @@ function renderHistoricoClientes() {
   filtrados.slice(0, 20).forEach(item => {
     const data = item.dataAgendada ? formatDateBR(item.dataAgendada) : 'Sem data';
     const hora = item.horaAgendada || '--:--';
+    const saude = item.saude || {};
+    const alertasSaude = [
+      saude.vacinado ? `Vacinação: ${saude.vacinado}` : null,
+      saude.doenca && saude.doenca !== 'Não' ? `Doença/Comorbidade: ${saude.doenca}` : null,
+      saude.medicacao && saude.medicacao !== 'Não' ? `Medicação: ${saude.medicacao}` : null,
+      saude.alergia && saude.alergia !== 'Não' ? `Alergia: ${saude.alergia}` : null
+    ].filter(Boolean);
+
+    const saudeHtml = alertasSaude.length
+      ? `<div class="health-alert"><strong>⚠️ Atenção saúde:</strong><br>${alertasSaude.map(t => `• ${t}`).join('<br>')}</div>`
+      : '';
+
     const card = document.createElement('div');
     card.className = 'history-item';
     card.innerHTML = `
@@ -966,6 +988,7 @@ function renderHistoricoClientes() {
       📞 ${item.telefone || 'Sem telefone'}<br>
       📍 ${item.endereco || 'Sem endereço'}
       ${item.mapsLink ? `<br><a href="${item.mapsLink}" target="_blank">Abrir localização no mapa</a>` : ''}
+      ${saudeHtml}
     `;
     list.appendChild(card);
   });
