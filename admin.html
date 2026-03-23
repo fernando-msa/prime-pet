@@ -564,9 +564,32 @@ onAuthStateChanged(auth, user => {
     document.getElementById('admin-panel').style.display  = 'none';
     document.getElementById('login-screen').style.display = 'flex';
   }
+}, () => {
+  mostrarErroLogin('Não foi possível validar sua sessão. Tente entrar novamente.');
 });
 
 // ── Login ─────────────────────────────────────────
+function mensagemErroAuth(code) {
+  const msgs = {
+    'auth/user-not-found':          'E-mail não cadastrado.',
+    'auth/wrong-password':          'Senha incorreta.',
+    'auth/invalid-email':           'E-mail inválido.',
+    'auth/too-many-requests':       'Muitas tentativas. Aguarde um momento.',
+    'auth/invalid-credential':      'E-mail ou senha incorretos.',
+    'auth/invalid-login-credentials':'E-mail ou senha incorretos.',
+    'auth/network-request-failed':  'Falha de conexão. Verifique sua internet e tente novamente.',
+  };
+  return msgs[code] || 'Erro ao fazer login. Tente novamente.';
+}
+
+function mostrarErroLogin(msg) {
+  const err = document.getElementById('login-error');
+  const suc = document.getElementById('login-success');
+  suc.style.display = 'none';
+  err.textContent = msg;
+  err.style.display = 'block';
+}
+
 window.fazerLogin = async function() {
   const email = document.getElementById('inp-email').value.trim();
   const senha = document.getElementById('inp-senha').value;
@@ -587,17 +610,12 @@ window.fazerLogin = async function() {
   try {
     await signInWithEmailAndPassword(auth, email, senha);
   } catch (e) {
-    btn.disabled  = false;
-    btn.innerHTML = 'Entrar';
-    const msgs = {
-      'auth/user-not-found':    'E-mail não cadastrado.',
-      'auth/wrong-password':    'Senha incorreta.',
-      'auth/invalid-email':     'E-mail inválido.',
-      'auth/too-many-requests': 'Muitas tentativas. Aguarde um momento.',
-      'auth/invalid-credential':'E-mail ou senha incorretos.',
-    };
-    err.textContent   = msgs[e.code] || 'Erro ao fazer login. Tente novamente.';
-    err.style.display = 'block';
+    mostrarErroLogin(mensagemErroAuth(e?.code));
+  } finally {
+    if (document.getElementById('login-screen').style.display !== 'none') {
+      btn.disabled  = false;
+      btn.innerHTML = 'Entrar';
+    }
   }
 };
 
@@ -637,14 +655,6 @@ window.fazerLogout = async function() {
   } finally {
     logoutEmAndamento = false;
   }
-};
-
-window.sairParaHome = async function(event) {
-  event.preventDefault();
-  await window.fazerLogout();
-  window.location.href = './index.html';
-};
-
 };
 
 window.sairParaHome = async function(event) {
