@@ -362,7 +362,7 @@ body {
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
-      <a class="btn-home" href="./index.html">Voltar ao site</a>
+      <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
     <button class="btn-logout" onclick="fazerLogout()">Sair</button>
@@ -414,6 +414,7 @@ const auth = getAuth(app);
 
 let agendamentos = {};
 let filtroAtual  = 'all';
+let logoutEmAndamento = false;
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
@@ -487,12 +488,30 @@ window.esqueceuSenha = async function() {
 
 // ── Logout ────────────────────────────────────────
 window.fazerLogout = async function() {
-  await signOut(auth);
-  document.getElementById('inp-email').value = '';
-  document.getElementById('inp-senha').value = '';
-  document.getElementById('btn-login').disabled  = false;
-  document.getElementById('btn-login').innerHTML = 'Entrar';
+  if (logoutEmAndamento) return;
+  logoutEmAndamento = true;
+  try {
+    await signOut(auth);
+    document.getElementById('inp-email').value = '';
+    document.getElementById('inp-senha').value = '';
+    document.getElementById('btn-login').disabled  = false;
+    document.getElementById('btn-login').innerHTML = 'Entrar';
+  } finally {
+    logoutEmAndamento = false;
+  }
 };
+
+window.sairParaHome = async function(event) {
+  event.preventDefault();
+  await window.fazerLogout();
+  window.location.href = './index.html';
+};
+
+window.addEventListener('pagehide', () => {
+  if (auth.currentUser && !logoutEmAndamento) {
+    signOut(auth).catch(() => {});
+  }
+});
 
 // ── Dados em tempo real ───────────────────────────
 function iniciarAdmin() {
