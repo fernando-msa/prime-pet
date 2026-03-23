@@ -1109,10 +1109,44 @@ async function salvarPendente() {
   await set(ref(db, path), 'pending');
 }
 
+async function validarEnderecoNoMapa(endereco) {
+  if (!endereco) return null;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(endereco)}`;
+  const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  if (!Array.isArray(data) || !data.length) return null;
+
+  const local = data[0];
+  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${local.lat},${local.lon}`;
+  return {
+    enderecoFormatado: local.display_name || endereco,
+    lat: local.lat,
+    lon: local.lon,
+    mapsLink
+  };
+}
+
+async function salvarHistoricoCliente({ tutorNome, petNome, telefone, endereco, mapsLink, dataAgendada, horaAgendada }) {
+  const payload = {
+    tutorNome,
+    petNome,
+    telefone: telefone || '',
+    endereco: endereco || '',
+    mapsLink: mapsLink || '',
+    dataAgendada,
+    horaAgendada,
+    status: 'pending',
+    criadoEm: Date.now()
+  };
+  await set(push(ref(db, 'historico_clientes')), payload);
+}
+
 // ── Envio WhatsApp ────────────────────────────────
 window.enviarWhatsApp = async function() {
   const tutorNome = val('tutor_nome');
   const petNome   = val('pet_nome');
+  const enderecoTutor = val('tutor_endereco');
 
   if (!tutorNome || !petNome) {
     showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
@@ -1121,6 +1155,19 @@ window.enviarWhatsApp = async function() {
   if (!selectedDate || !selectedHour) {
     showToast('⚠️ Selecione uma data e horário no calendário!');
     return;
+  }
+
+  let localizacao = null;
+  if (enderecoTutor) {
+    try {
+      localizacao = await validarEnderecoNoMapa(enderecoTutor);
+    } catch (_) {
+      localizacao = null;
+    }
+    if (!localizacao) {
+      showToast('⚠️ Endereço não encontrado/validado. Revise o endereço para continuar.');
+      return;
+    }
   }
 
   // Salva como pendente no Firebase
@@ -1148,7 +1195,8 @@ window.enviarWhatsApp = async function() {
     '👤 *DADOS DO TUTOR*',
     `• Nome: ${tutorNome}`,
     `• Telefone: ${val('tutor_telefone') || 'Não informado'}`,
-    `• Endereço: ${val('tutor_endereco') || 'Não informado'}`,
+    `• Endereço: ${localizacao?.enderecoFormatado || enderecoTutor || 'Não informado'}`,
+    `• Localização (Mapa): ${localizacao?.mapsLink || 'Não informada'}`,
     '',
     '🐶 *DADOS DO PET*',
     `• Nome: ${petNome}`,
@@ -1183,6 +1231,15 @@ window.enviarWhatsApp = async function() {
 
   const msg    = encodeURIComponent(linhas.join('\n'));
   const numero = '5579996623050';
+  await salvarHistoricoCliente({
+    tutorNome,
+    petNome,
+    telefone: val('tutor_telefone'),
+    endereco: localizacao?.enderecoFormatado || enderecoTutor,
+    mapsLink: localizacao?.mapsLink || '',
+    dataAgendada: selectedDate,
+    horaAgendada: selectedHour
+  });
   window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
 };
 
