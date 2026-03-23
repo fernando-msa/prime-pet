@@ -34,6 +34,35 @@ body {
   position: relative;
   overflow: hidden;
 }
+.header-admin-link {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 2;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.08);
+  font-family: 'DM Sans', sans-serif;
+}
+.header-admin-link:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.8);
+}
+@media (max-width: 560px) {
+  .header-admin-link {
+    top: 12px;
+    right: 12px;
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+}
 .header-band::before {
   content: '';
   position: absolute;
@@ -387,6 +416,13 @@ body {
   cursor: not-allowed;
   text-decoration: line-through;
 }
+.slot-btn.past {
+  background: #f6f2ec;
+  border-color: #e2d7ca;
+  color: #b4a79a;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
 .slots-loading {
   font-size: 13px;
   color: var(--mocha);
@@ -514,6 +550,7 @@ body {
 <body>
 
 <div class="header-band">
+  <a class="header-admin-link" href="./admin.html">Área Admin</a>
   <p class="brand-mark">Passeios &amp; Banhos</p>
   <h1 class="header-title"><span>Prime</span> Pet</h1>
   <p class="header-sub">Contrato de Prestação de Serviços</p>
@@ -521,7 +558,6 @@ body {
 </div>
 
 <div class="form-wrap">
-
   <!-- 1. TUTOR -->
   <div class="section">
     <div class="section-header">
@@ -692,22 +728,6 @@ body {
       <div class="field">
         <label>Dias contratados</label>
         <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
-      </div>
-      <div class="grid grid-2">
-        <div class="field">
-          <label>Forma de pagamento</label>
-          <select id="pagamento">
-            <option value="">Selecione…</option>
-            <option>Pix</option>
-            <option>Dinheiro</option>
-            <option>Cartão de débito</option>
-            <option>Cartão de crédito</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Data de pagamento</label>
-          <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
-        </div>
       </div>
       <div class="info-card">
         <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
@@ -882,7 +902,6 @@ let viewYear, viewMonth;
 let agendamentos = {};   // { "2025-07-10": { "09:00": "pending"|"confirmed", ... } }
 let selectedDate = null;
 let selectedHour = null;
-let unsubscribe  = null;
 
 // ── Init ──────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -945,7 +964,7 @@ function renderCalendario() {
     const vals  = Object.values(slots);
     const temConfirmado = vals.includes('confirmed');
     const temPendente   = vals.some(v => v === 'pending');
-    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed');
+    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed' || slots[h] === 'pending');
 
     if (todosOcupados)   el.classList.add('cal-has-full');
     else if (temConfirmado || temPendente) el.classList.add('cal-has-pending');
@@ -1009,6 +1028,7 @@ function renderSlots(dataStr) {
     btn.textContent = h;
 
     const status = slots[h];
+    const expirado = slotJaPassou(dataStr, h);
     if (status === 'confirmed') {
       btn.classList.add('occupied');
       btn.title    = 'Horário ocupado';
@@ -1017,6 +1037,11 @@ function renderSlots(dataStr) {
       btn.classList.add('pending');
       btn.title    = 'Aguardando confirmação';
       btn.disabled = true;
+    } else if (expirado) {
+      btn.classList.add('past');
+      btn.title    = 'Horário já passou';
+      btn.disabled = true;
+      if (selectedHour === h) selectedHour = null;
     } else {
       if (h === selectedHour) btn.classList.add('selected');
       btn.onclick = () => selecionaHorario(h, btn);
@@ -1024,6 +1049,10 @@ function renderSlots(dataStr) {
 
     grid.appendChild(btn);
   });
+
+  if (!selectedHour) {
+    document.getElementById('agend-resumo').style.display = 'none';
+  }
 }
 
 function selecionaHorario(h, btn) {
@@ -1040,6 +1069,13 @@ function selecionaHorario(h, btn) {
 // ── Helpers ───────────────────────────────────────
 function formatDate(y, m, d) {
   return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function slotJaPassou(dataStr, hora) {
+  const [y, m, d] = dataStr.split('-').map(Number);
+  const [hh, mm]  = hora.split(':').map(Number);
+  const inicioSlot = new Date(y, m - 1, d, hh, mm, 0, 0);
+  return inicioSlot <= new Date();
 }
 
 // ── Salva agendamento pendente no Firebase ─────────
@@ -1115,7 +1151,6 @@ window.enviarWhatsApp = async function() {
     '✂️ *SERVIÇOS*',
     `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
     `• Dias: ${val('dias') || 'Não informado'}`,
-    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
     '',
     '✅ *AUTORIZAÇÕES*',
     `• Emergência vet.: ${toggleVal('emer')}`,
