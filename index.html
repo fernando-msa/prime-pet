@@ -88,6 +88,27 @@ body {
   padding: 40px 20px 60px;
 }
 
+.admin-access {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--sand);
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mocha);
+}
+.admin-access a {
+  color: var(--espresso);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.admin-access a:hover {
+  border-color: var(--espresso);
+}
+
 .section {
   margin-bottom: 36px;
   animation: fadeUp 0.5s ease both;
@@ -521,6 +542,9 @@ body {
 </div>
 
 <div class="form-wrap">
+  <div class="admin-access">
+    É administrador(a)? <a href="./admin.html">Acessar painel de agendamentos</a>
+  </div>
 
   <!-- 1. TUTOR -->
   <div class="section">
@@ -692,22 +716,6 @@ body {
       <div class="field">
         <label>Dias contratados</label>
         <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
-      </div>
-      <div class="grid grid-2">
-        <div class="field">
-          <label>Forma de pagamento</label>
-          <select id="pagamento">
-            <option value="">Selecione…</option>
-            <option>Pix</option>
-            <option>Dinheiro</option>
-            <option>Cartão de débito</option>
-            <option>Cartão de crédito</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Data de pagamento</label>
-          <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
-        </div>
       </div>
       <div class="info-card">
         <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
@@ -1115,7 +1123,6 @@ window.enviarWhatsApp = async function() {
     '✂️ *SERVIÇOS*',
     `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
     `• Dias: ${val('dias') || 'Não informado'}`,
-    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
     '',
     '✅ *AUTORIZAÇÕES*',
     `• Emergência vet.: ${toggleVal('emer')}`,
