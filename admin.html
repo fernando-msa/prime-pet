@@ -192,14 +192,38 @@ body {
   font-size: 18px;
 }
 .admin-logo span { color: var(--gold); }
-.btn-logout {
-  background: none;
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-home {
+  background: rgba(255,255,255,0.08);
   border: 1.5px solid rgba(255,255,255,0.25);
-  color: rgba(255,255,255,0.65);
-  border-radius: 7px;
-  padding: 7px 16px;
+  color: rgba(255,255,255,0.9);
+  border-radius: 8px;
+  padding: 8px 16px;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-home:hover {
+  border-color: rgba(255,255,255,0.8);
+  color: #fff;
+}
+.btn-logout {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.9);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -337,6 +361,10 @@ body {
 <div id="admin-panel">
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
+    <div class="admin-actions">
+      <a class="btn-home" href="./index.html">Voltar ao site</a>
+      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    </div>
     <button class="btn-logout" onclick="fazerLogout()">Sair</button>
   </div>
 

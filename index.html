@@ -34,6 +34,35 @@ body {
   position: relative;
   overflow: hidden;
 }
+.header-admin-link {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 2;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.08);
+  font-family: 'DM Sans', sans-serif;
+}
+.header-admin-link:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.8);
+}
+@media (max-width: 560px) {
+  .header-admin-link {
+    top: 12px;
+    right: 12px;
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+}
 .header-band::before {
   content: '';
   position: absolute;
@@ -535,6 +564,7 @@ body {
 <body>
 
 <div class="header-band">
+  <a class="header-admin-link" href="./admin.html">Área Admin</a>
   <p class="brand-mark">Passeios &amp; Banhos</p>
   <h1 class="header-title"><span>Prime</span> Pet</h1>
   <p class="header-sub">Contrato de Prestação de Serviços</p>
@@ -542,10 +572,6 @@ body {
 </div>
 
 <div class="form-wrap">
-  <div class="admin-access">
-    É administrador(a)? <a href="./admin.html">Acessar painel de agendamentos</a>
-  </div>
-
   <!-- 1. TUTOR -->
   <div class="section">
     <div class="section-header">
