@@ -923,7 +923,6 @@ let viewYear, viewMonth;
 let agendamentos = {};   // { "2025-07-10": { "09:00": "pending"|"confirmed", ... } }
 let selectedDate = null;
 let selectedHour = null;
-let unsubscribe  = null;
 
 // ── Init ──────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -986,7 +985,7 @@ function renderCalendario() {
     const vals  = Object.values(slots);
     const temConfirmado = vals.includes('confirmed');
     const temPendente   = vals.some(v => v === 'pending');
-    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed');
+    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed' || slots[h] === 'pending');
 
     if (todosOcupados)   el.classList.add('cal-has-full');
     else if (temConfirmado || temPendente) el.classList.add('cal-has-pending');

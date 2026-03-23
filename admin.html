@@ -645,6 +645,14 @@ window.sairParaHome = async function(event) {
   window.location.href = './index.html';
 };
 
+};
+
+window.sairParaHome = async function(event) {
+  event.preventDefault();
+  await window.fazerLogout();
+  window.location.href = './index.html';
+};
+
 window.addEventListener('pagehide', () => {
   if (auth.currentUser && !logoutEmAndamento) {
     signOut(auth).catch(() => {});
@@ -679,6 +687,11 @@ function addOneHour(hour) {
 function toGoogleDate(dateISO) {
   const [y, m, d] = dateISO.split('-');
   return `${m}/${d}/${y}`;
+}
+
+function csvEscape(value) {
+  const txt = String(value ?? '');
+  return `"${txt.replace(/"/g, '""')}"`;
 }
 
 function renderResumoMes(items) {
@@ -742,14 +755,14 @@ window.exportarMesGoogle = function() {
         ? 'Status: pendente de confirmacao no painel Prime Pet'
         : 'Status: confirmado no painel Prime Pet';
       linhas.push([
-        `"${subject}"`,
+        csvEscape(subject),
         toGoogleDate(date),
         hour,
         toGoogleDate(date),
         addOneHour(hour),
         'False',
-        `"${desc}"`,
-        '"Prime Pet"',
+        csvEscape(desc),
+        csvEscape('Prime Pet'),
         'True'
       ].join(','));
     });
