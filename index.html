@@ -437,6 +437,13 @@ body {
   cursor: not-allowed;
   text-decoration: line-through;
 }
+.slot-btn.past {
+  background: #f6f2ec;
+  border-color: #e2d7ca;
+  color: #b4a79a;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
 .slots-loading {
   font-size: 13px;
   color: var(--mocha);
@@ -1043,6 +1050,7 @@ function renderSlots(dataStr) {
     btn.textContent = h;
 
     const status = slots[h];
+    const expirado = slotJaPassou(dataStr, h);
     if (status === 'confirmed') {
       btn.classList.add('occupied');
       btn.title    = 'Horário ocupado';
@@ -1051,6 +1059,11 @@ function renderSlots(dataStr) {
       btn.classList.add('pending');
       btn.title    = 'Aguardando confirmação';
       btn.disabled = true;
+    } else if (expirado) {
+      btn.classList.add('past');
+      btn.title    = 'Horário já passou';
+      btn.disabled = true;
+      if (selectedHour === h) selectedHour = null;
     } else {
       if (h === selectedHour) btn.classList.add('selected');
       btn.onclick = () => selecionaHorario(h, btn);
@@ -1058,6 +1071,10 @@ function renderSlots(dataStr) {
 
     grid.appendChild(btn);
   });
+
+  if (!selectedHour) {
+    document.getElementById('agend-resumo').style.display = 'none';
+  }
 }
 
 function selecionaHorario(h, btn) {
@@ -1074,6 +1091,13 @@ function selecionaHorario(h, btn) {
 // ── Helpers ───────────────────────────────────────
 function formatDate(y, m, d) {
   return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function slotJaPassou(dataStr, hora) {
+  const [y, m, d] = dataStr.split('-').map(Number);
+  const [hh, mm]  = hora.split(':').map(Number);
+  const inicioSlot = new Date(y, m - 1, d, hh, mm, 0, 0);
+  return inicioSlot <= new Date();
 }
 
 // ── Salva agendamento pendente no Firebase ─────────
