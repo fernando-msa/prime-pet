@@ -717,22 +717,6 @@ body {
         <label>Dias contratados</label>
         <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
       </div>
-      <div class="grid grid-2">
-        <div class="field">
-          <label>Forma de pagamento</label>
-          <select id="pagamento">
-            <option value="">Selecione…</option>
-            <option>Pix</option>
-            <option>Dinheiro</option>
-            <option>Cartão de débito</option>
-            <option>Cartão de crédito</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Data de pagamento</label>
-          <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
-        </div>
-      </div>
       <div class="info-card">
         <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
       </div>
@@ -1139,7 +1123,6 @@ window.enviarWhatsApp = async function() {
     '✂️ *SERVIÇOS*',
     `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
     `• Dias: ${val('dias') || 'Não informado'}`,
-    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
     '',
     '✅ *AUTORIZAÇÕES*',
     `• Emergência vet.: ${toggleVal('emer')}`,
