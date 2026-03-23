@@ -381,6 +381,75 @@ body {
   border-bottom: 1px solid rgba(92,61,46,0.25);
 }
 .history-item a:hover { border-color: var(--mocha); }
+.history-controls {
+  display: none;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.history-controls.open { display: flex; }
+.history-filter {
+  border: 1.5px solid var(--sand);
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--mocha);
+  cursor: pointer;
+}
+.history-filter.active {
+  background: var(--espresso);
+  color: #fff;
+  border-color: var(--espresso);
+}
+.btn-more {
+  border: 1.5px solid var(--sand);
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--mocha);
+  cursor: pointer;
+}
+.admin-help {
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--mocha);
+  line-height: 1.65;
+}
+.actions-log {
+  background: #fff;
+  border: 1.5px solid var(--sand);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.actions-log h3 {
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mocha);
+  margin-bottom: 10px;
+}
+.actions-log ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.actions-log li {
+  font-size: 13px;
+  color: var(--espresso);
+  background: var(--light-mocha);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
 
 .stats-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
 .stat-card {
@@ -551,13 +620,36 @@ body {
       </div>
     </div>
 
+    <div class="admin-help">
+      <strong>Como funcionam os botões:</strong><br>
+      ✅ <strong>Confirmar</strong> = aprova o agendamento e reserva o horário.<br>
+      ❌ <strong>Cancelar</strong> = remove a reserva e marca como cancelado.<br>
+      🔓 <strong>Liberar</strong> = limpa o slot para voltar a ficar disponível.
+    </div>
+
+    <div class="actions-log">
+      <h3>Controle de ações do admin (quem confirmou/cancelou)</h3>
+      <ul id="acoes-admin-list">
+        <li>Nenhuma ação registrada ainda.</li>
+      </ul>
+    </div>
+
     <div class="history-wrap">
       <div class="history-head">
         <h3 class="history-title">Histórico de clientes</h3>
-        <span class="history-count" id="history-count">0</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="history-count" id="history-count">0</span>
+          <button class="btn-more" onclick="toggleHistorico()">Saber +</button>
+        </div>
+      </div>
+      <div class="history-controls" id="history-controls">
+        <button class="history-filter active" onclick="setHistoryFilter('today', this)">Hoje</button>
+        <button class="history-filter" onclick="setHistoryFilter('yesterday', this)">Ontem</button>
+        <button class="history-filter" onclick="setHistoryFilter('7d', this)">7 dias</button>
+        <button class="history-filter" onclick="setHistoryFilter('month', this)">Mês todo</button>
       </div>
       <div class="history-list" id="history-list">
-        <div class="overview-empty">Nenhum histórico cadastrado ainda.</div>
+        <div class="overview-empty">Clique em "Saber +" para visualizar.</div>
       </div>
     </div>
 
@@ -584,7 +676,7 @@ body {
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
   getAuth, signInWithEmailAndPassword,
   sendPasswordResetEmail, signOut, onAuthStateChanged
@@ -606,19 +698,25 @@ const auth = getAuth(app);
 
 let agendamentos = {};
 let historicoClientes = [];
+let historicoAcoes = [];
 let filtroAtual  = 'all';
 let logoutEmAndamento = false;
 let mesVisao = new Date().toISOString().slice(0, 7);
+let historyExpanded = false;
+let historyFilter = 'today';
+let adminEmailAtual = '';
 
 document.getElementById('mes-referencia').value = mesVisao;
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
   if (user) {
+    adminEmailAtual = user.email || 'admin';
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-panel').style.display  = 'block';
     iniciarAdmin();
   } else {
+    adminEmailAtual = '';
     document.getElementById('admin-panel').style.display  = 'none';
     document.getElementById('login-screen').style.display = 'flex';
   }
@@ -738,11 +836,31 @@ function iniciarAdmin() {
     historicoClientes = Object.entries(raw).map(([id, v]) => ({ id, ...v }));
     renderHistoricoClientes();
   });
+  onValue(ref(db, 'historico_acoes'), snap => {
+    const raw = snap.val() || {};
+    historicoAcoes = Object.entries(raw).map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => (b.at || 0) - (a.at || 0));
+    renderAcoesAdmin();
+  });
 }
 
 window.alterarMesVisao = function(valor) {
   mesVisao = valor || new Date().toISOString().slice(0, 7);
   renderLista();
+  renderHistoricoClientes();
+};
+
+window.toggleHistorico = function() {
+  historyExpanded = !historyExpanded;
+  const controls = document.getElementById('history-controls');
+  controls.classList.toggle('open', historyExpanded);
+  renderHistoricoClientes();
+};
+
+window.setHistoryFilter = function(tipo, btn) {
+  historyFilter = tipo;
+  document.querySelectorAll('.history-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   renderHistoricoClientes();
 };
 
@@ -806,8 +924,28 @@ function renderHistoricoClientes() {
   const count = document.getElementById('history-count');
   list.innerHTML = '';
 
+  if (!historyExpanded) {
+    count.textContent = historicoClientes.length;
+    list.innerHTML = '<div class="overview-empty">Clique em "Saber +" para visualizar o histórico.</div>';
+    return;
+  }
+
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  const ontem = new Date(hoje);
+  ontem.setDate(ontem.getDate() - 1);
+  const seteDias = new Date(hoje);
+  seteDias.setDate(seteDias.getDate() - 6);
+
   const filtrados = historicoClientes
-    .filter(item => (item.dataAgendada || '').startsWith(mesVisao))
+    .filter(item => {
+      const dt = item.dataAgendada ? new Date(item.dataAgendada + 'T00:00:00') : null;
+      if (!dt || Number.isNaN(dt.getTime())) return false;
+      if (historyFilter === 'today') return dt.getTime() === hoje.getTime();
+      if (historyFilter === 'yesterday') return dt.getTime() === ontem.getTime();
+      if (historyFilter === '7d') return dt >= seteDias && dt <= hoje;
+      return (item.dataAgendada || '').startsWith(mesVisao);
+    })
     .sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
 
   count.textContent = filtrados.length;
@@ -830,6 +968,24 @@ function renderHistoricoClientes() {
       ${item.mapsLink ? `<br><a href="${item.mapsLink}" target="_blank">Abrir localização no mapa</a>` : ''}
     `;
     list.appendChild(card);
+  });
+}
+
+function renderAcoesAdmin() {
+  const ul = document.getElementById('acoes-admin-list');
+  if (!ul) return;
+  ul.innerHTML = '';
+
+  if (!historicoAcoes.length) {
+    ul.innerHTML = '<li>Nenhuma ação registrada ainda.</li>';
+    return;
+  }
+
+  historicoAcoes.slice(0, 10).forEach(acao => {
+    const data = acao.at ? new Date(acao.at).toLocaleString('pt-BR') : 'data não informada';
+    const li = document.createElement('li');
+    li.textContent = `${acao.by || 'admin'} • ${acao.action || 'ação'} • ${acao.date || '--/--/----'} ${acao.hour || '--:--'} • ${data}`;
+    ul.appendChild(li);
   });
 }
 
@@ -953,9 +1109,32 @@ function renderLista() {
 }
 
 // ── Ações ─────────────────────────────────────────
-window.confirmar = async (date, hk) => { await set(ref(db,`agendamentos/${date}/${hk}`),'confirmed'); showToast('✅ Confirmado!'); };
-window.cancelar  = async (date, hk) => { await set(ref(db,`agendamentos/${date}/${hk}`),'cancelled'); showToast('❌ Cancelado.'); };
-window.liberar   = async (date, hk) => { await remove(ref(db,`agendamentos/${date}/${hk}`)); showToast('🔓 Slot liberado.'); };
+async function registrarAcaoAdmin(action, date, hk) {
+  const hour = hk.slice(0,2) + ':' + hk.slice(2);
+  await set(push(ref(db, 'historico_acoes')), {
+    action,
+    date,
+    hour,
+    by: adminEmailAtual || 'admin',
+    at: Date.now()
+  });
+}
+
+window.confirmar = async (date, hk) => {
+  await set(ref(db,`agendamentos/${date}/${hk}`),'confirmed');
+  await registrarAcaoAdmin('confirmou', date, hk);
+  showToast('✅ Confirmado! Horário reservado para o cliente.');
+};
+window.cancelar  = async (date, hk) => {
+  await set(ref(db,`agendamentos/${date}/${hk}`),'cancelled');
+  await registrarAcaoAdmin('cancelou', date, hk);
+  showToast('❌ Cancelado. O horário não está mais ativo.');
+};
+window.liberar   = async (date, hk) => {
+  await remove(ref(db,`agendamentos/${date}/${hk}`));
+  await registrarAcaoAdmin('liberou', date, hk);
+  showToast('🔓 Slot liberado. O horário voltou a ficar disponível.');
+};
 window.setFiltro = (filtro, btn) => {
   filtroAtual = filtro;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
