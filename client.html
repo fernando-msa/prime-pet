@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Pet – Portal do Cliente</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#faf7f2; --sand:#e8ddd0; --espresso:#2c1f14; --mocha:#5c3d2e;
+  --gold:#c9a84c; --sage:#7a9e7e; --rust:#b85c38; --light:#f5ede4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--espresso)}
+.header{background:var(--espresso);padding:26px 20px;text-align:center;color:#fff}
+.header h1{font-family:'Playfair Display',serif;font-size:30px}
+.header h1 span{color:var(--gold)}
+.header p{opacity:.75;font-size:13px;margin-top:6px}
+.wrap{max-width:900px;margin:0 auto;padding:24px 16px 46px}
+.card{background:#fff;border:1.5px solid var(--sand);border-radius:12px;padding:16px;margin-bottom:14px}
+.login-row{display:flex;gap:8px;flex-wrap:wrap}
+input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid var(--sand);border-radius:8px;padding:11px 12px;font-size:14px}
+.btn{border:none;border-radius:8px;padding:11px 16px;background:var(--espresso);color:#fff;cursor:pointer;font-size:13px}
+.btn-outline{background:#fff;border:1.5px solid var(--sand);color:var(--mocha)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab{border:1.5px solid var(--sand);background:#fff;color:var(--mocha);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px}
+.tab.active{background:var(--espresso);color:#fff;border-color:var(--espresso)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{border:1px solid var(--sand);border-radius:8px;padding:11px 12px;background:var(--light);font-size:13px;line-height:1.55}
+.badge{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;color:#fff}
+.pending{background:#b08800}.confirmed{background:#2c7a3f}.cancelled{background:var(--rust)}
+.muted{color:var(--mocha);opacity:.75;font-size:12px}
+.health{margin-top:6px;border-left:3px solid var(--rust);background:#fff5f0;padding:6px 8px;border-radius:6px}
+.item-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn-sm{border:1.5px solid var(--sand);background:#fff;color:var(--mocha);border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer}
+.btn-sm:disabled{opacity:.45;cursor:not-allowed}
+.hidden{display:none}
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1><span>Prime</span> Pet</h1>
+    <p>Portal do Cliente • Acompanhe suas solicitações e seus pets</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h2 style="font-family:'Playfair Display',serif;font-size:21px;margin-bottom:10px">Entrar com seus dados</h2>
+      <p class="muted" style="margin-bottom:10px">Entre com código SMS no seu telefone.</p>
+      <div class="login-row">
+        <input type="tel" id="cliente-telefone" placeholder="(79) 99999-0000">
+        <button class="btn" onclick="enviarCodigoOTP()">Enviar código</button>
+        <input type="text" id="cliente-codigo" placeholder="Código OTP" class="hidden">
+        <button class="btn hidden" id="btn-verificar" onclick="verificarCodigoOTP()">Validar código</button>
+        <a class="btn btn-outline" href="./index.html" style="text-decoration:none">Novo agendamento</a>
+        <a class="btn btn-outline" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
+      </div>
+      <div id="recaptcha-container" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card hidden" id="portal-card">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+        <button class="btn-sm" onclick="sairPortal()">Sair</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="trocarAba('solicitacoes', this)">Solicitações</button>
+        <button class="tab" onclick="trocarAba('pets', this)">Meus Pets</button>
+      </div>
+      <div id="aba-solicitacoes" class="list"></div>
+      <div id="aba-pets" class="list hidden"></div>
+    </div>
+
+    <div class="card" id="portal-msg">Digite telefone + nome do tutor para visualizar seu histórico.</div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import {
+  getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyCBvnGzJ1rVrg-kOmxWaYFB0Fzn1_HGNH8",
+  authDomain:"prime-pet.firebaseapp.com",
+  databaseURL:"https://prime-pet-default-rtdb.firebaseio.com",
+  projectId:"prime-pet",
+  storageBucket:"prime-pet.firebasestorage.app",
+  messagingSenderId:"716091719601",
+  appId:"1:716091719601:web:89e7ff08dc887ad4254790"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let cacheSolicitacoes = [];
+let otpConfirmation = null;
+let phoneAuthDigits = '';
+
+function digits(v){ return (v || '').replace(/\D/g,''); }
+function statusBadge(status){
+  const s = status || 'pending';
+  const txt = s === 'confirmed' ? 'Aceito' : s === 'cancelled' ? 'Cancelado' : 'Pendente';
+  return `<span class="badge ${s}">${txt}</span>`;
+}
+function podeEditar(status){ return (status || 'pending') === 'pending'; }
+
+function toE164BR(phoneDigits) {
+  if (!phoneDigits) return null;
+  return `+55${phoneDigits}`;
+}
+
+function setMensagemPortal(msg) {
+  document.getElementById('portal-msg').textContent = msg;
+}
+
+const recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {
+  size: 'normal'
+});
+
+window.enviarCodigoOTP = async function() {
+  const tel = digits(document.getElementById('cliente-telefone').value);
+  if (![10,11].includes(tel.length)) {
+    setMensagemPortal('Telefone inválido. Use formato brasileiro com DDD.');
+    return;
+  }
+  const e164 = toE164BR(tel);
+  try {
+    otpConfirmation = await signInWithPhoneNumber(auth, e164, recaptcha);
+    phoneAuthDigits = tel;
+    document.getElementById('cliente-codigo').classList.remove('hidden');
+    document.getElementById('btn-verificar').classList.remove('hidden');
+    setMensagemPortal('Código enviado por SMS. Digite o código para acessar.');
+  } catch (e) {
+    setMensagemPortal('Não foi possível enviar o código. Verifique o número e tente novamente.');
+  }
+};
+
+window.verificarCodigoOTP = async function() {
+  if (!otpConfirmation) {
+    setMensagemPortal('Solicite o código SMS primeiro.');
+    return;
+  }
+  const code = document.getElementById('cliente-codigo').value.trim();
+  if (code.length < 6) {
+    setMensagemPortal('Código inválido. Digite os 6 números recebidos por SMS.');
+    return;
+  }
+  try {
+    await otpConfirmation.confirm(code);
+    setMensagemPortal('Login realizado com sucesso.');
+  } catch (_) {
+    setMensagemPortal('Código incorreto ou expirado. Solicite um novo código.');
+  }
+};
+
+async function carregarPortalCliente(user) {
+  const [histSnap, agSnap] = await Promise.all([
+    get(ref(db, 'historico_clientes')),
+    get(ref(db, 'agendamentos'))
+  ]);
+
+  const historicoRaw = histSnap.val() || {};
+  const agRaw = agSnap.val() || {};
+
+  cacheSolicitacoes = Object.entries(historicoRaw)
+    .map(([id, item]) => ({ id, ...item }))
+    .filter(item => item.ownerUid === user.uid || (!item.ownerUid && digits(item.telefone) === phoneAuthDigits))
+    .map(item => {
+      const hk = (item.horaAgendada || '').replace(':','');
+      const statusAtual = agRaw?.[item.dataAgendada || '']?.[hk] || item.status || 'pending';
+      return { ...item, statusAtual };
+    })
+    .sort((a,b) => (b.criadoEm||0) - (a.criadoEm||0));
+
+  await Promise.all(
+    cacheSolicitacoes
+      .filter(item => !item.ownerUid)
+      .map(item => set(ref(db, `historico_clientes/${item.id}/ownerUid`), user.uid))
+  );
+
+  if (!cacheSolicitacoes.length) {
+    setMensagemPortal('Nenhuma solicitação encontrada para este login.');
+    document.getElementById('portal-card').classList.add('hidden');
+    return;
+  }
+
+  setMensagemPortal(`Encontramos ${cacheSolicitacoes.length} solicitação(ões).`);
+  document.getElementById('portal-card').classList.remove('hidden');
+  renderSolicitacoes();
+  renderPets();
+}
+
+window.sairPortal = async function() {
+  await signOut(auth);
+  cacheSolicitacoes = [];
+  document.getElementById('portal-card').classList.add('hidden');
+  setMensagemPortal('Você saiu do portal do cliente.');
+};
+
+onAuthStateChanged(auth, user => {
+  if (user) carregarPortalCliente(user);
+});
+
+window.trocarAba = function(aba, btn){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('aba-solicitacoes').classList.toggle('hidden', aba !== 'solicitacoes');
+  document.getElementById('aba-pets').classList.toggle('hidden', aba !== 'pets');
+};
+
+async function atualizarSolicitacaoLocal(id) {
+  const snap = await get(ref(db, `historico_clientes/${id}`));
+  const item = snap.val();
+  if (!item) return;
+  const idx = cacheSolicitacoes.findIndex(s => s.id === id);
+  if (idx >= 0) cacheSolicitacoes[idx] = { ...cacheSolicitacoes[idx], ...item };
+}
+
+window.editarSolicitacao = async function(id){
+  const solic = cacheSolicitacoes.find(s => s.id === id);
+  if (!solic || !podeEditar(solic.statusAtual)) return;
+
+  const novoEndereco = window.prompt('Novo endereço:', solic.endereco || '');
+  if (novoEndereco === null) return;
+  const novoTelefone = window.prompt('Novo telefone:', solic.telefone || '');
+  if (novoTelefone === null) return;
+
+  await set(ref(db, `historico_clientes/${id}/endereco`), novoEndereco.trim());
+  await set(ref(db, `historico_clientes/${id}/telefone`), novoTelefone.trim());
+  await atualizarSolicitacaoLocal(id);
+  renderSolicitacoes();
+  document.getElementById('portal-msg').textContent = 'Dados atualizados com sucesso.';
+};
+
+window.remarcarSolicitacao = async function(id){
+  const solic = cacheSolicitacoes.find(s => s.id === id);
+  if (!solic || !podeEditar(solic.statusAtual)) return;
+
+  const novaData = window.prompt('Nova data (AAAA-MM-DD):', solic.dataAgendada || '');
+  if (!novaData) return;
+  const novoHorario = window.prompt('Novo horário (HH:MM):', solic.horaAgendada || '');
+  if (!novoHorario) return;
+
+  const novoKey = novoHorario.replace(':','');
+  const novoStatusSnap = await get(ref(db, `agendamentos/${novaData}/${novoKey}`));
+  if (novoStatusSnap.exists()) {
+    document.getElementById('portal-msg').textContent = 'Esse horário já está ocupado ou pendente. Escolha outro.';
+    return;
+  }
+
+  const oldKey = (solic.horaAgendada || '').replace(':','');
+  if (solic.dataAgendada && oldKey) {
+    await remove(ref(db, `agendamentos/${solic.dataAgendada}/${oldKey}`));
+  }
+  await set(ref(db, `agendamentos/${novaData}/${novoKey}`), 'pending');
+  await set(ref(db, `historico_clientes/${id}/dataAgendada`), novaData);
+  await set(ref(db, `historico_clientes/${id}/horaAgendada`), novoHorario);
+  await atualizarSolicitacaoLocal(id);
+  renderSolicitacoes();
+  document.getElementById('portal-msg').textContent = 'Remarcação enviada. Aguarde nova confirmação da equipe.';
+};
+
+function renderSolicitacoes(){
+  const box = document.getElementById('aba-solicitacoes');
+  box.innerHTML = '';
+  cacheSolicitacoes.forEach(s => {
+    const data = s.dataAgendada ? s.dataAgendada.split('-').reverse().join('/') : 'Sem data';
+    const editavel = podeEditar(s.statusAtual);
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.innerHTML = `
+      <strong>${s.petNome || 'Pet'}</strong> • ${statusBadge(s.statusAtual)}<br>
+      📅 ${data} às ${s.horaAgendada || '--:--'}<br>
+      📍 ${s.endereco || 'Sem endereço'}
+      ${s.mapsLink ? `<br><a href="${s.mapsLink}" target="_blank">Abrir localização</a>` : ''}
+      <div class="item-actions">
+        <button class="btn-sm" onclick="editarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Editar dados</button>
+        <button class="btn-sm" onclick="remarcarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Remarcar</button>
+        <a class="btn-sm" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
+      </div>
+      ${editavel ? '<span class=\"muted\">Você pode editar/remarcar enquanto estiver pendente.</span>' : '<span class=\"muted\">Solicitação já finalizada. Para alterações, use Fale conosco.</span>'}
+    `;
+    box.appendChild(item);
+  });
+}
+
+function renderPets(){
+  const box = document.getElementById('aba-pets');
+  box.innerHTML = '';
+  const unicos = new Map();
+  cacheSolicitacoes.forEach(s => {
+    const key = (s.petNome || '').toLowerCase().trim();
+    if (!key) return;
+    if (!unicos.has(key)) unicos.set(key, s);
+  });
+
+  if (!unicos.size) {
+    box.innerHTML = '<div class="item">Nenhum pet encontrado.</div>';
+    return;
+  }
+
+  [...unicos.values()].forEach(s => {
+    const saude = s.saude || {};
+    const health = [
+      saude.vacinado ? `Vacinação: ${saude.vacinado}` : null,
+      saude.doenca && saude.doenca !== 'Não' ? `Doença: ${saude.doenca}` : null,
+      saude.medicacao && saude.medicacao !== 'Não' ? `Medicação: ${saude.medicacao}` : null,
+      saude.alergia && saude.alergia !== 'Não' ? `Alergia: ${saude.alergia}` : null,
+    ].filter(Boolean);
+
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.innerHTML = `
+      <strong>🐶 ${s.petNome}</strong><br>
+      Tutor: ${s.tutorNome || 'Não informado'}<br>
+      ${health.length ? `<div class="health">⚠️ ${health.join(' • ')}</div>` : '<span class="muted">Sem alertas de saúde.</span>'}
+    `;
+    box.appendChild(item);
+  });
+}
+</script>
+</body>
+</html>
