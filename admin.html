@@ -649,6 +649,7 @@ body {
         <h3 class="history-title">Histórico de clientes</h3>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="history-count" id="history-count">0</span>
+          <button class="btn-more" onclick="apagarHistoricoClientes()">Apagar histórico</button>
           <button class="btn-more" onclick="toggleHistorico()">Saber +</button>
         </div>
       </div>
@@ -872,6 +873,15 @@ window.setHistoryFilter = function(tipo, btn) {
   document.querySelectorAll('.history-filter').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderHistoricoClientes();
+};
+
+window.apagarHistoricoClientes = async function() {
+  const ok = window.confirm('Tem certeza que deseja apagar TODO o histórico de clientes? Esta ação não pode ser desfeita.');
+  if (!ok) return;
+  await remove(ref(db, 'historico_clientes'));
+  historicoClientes = [];
+  renderHistoricoClientes();
+  showToast('🗑️ Histórico de clientes apagado com sucesso.');
 };
 
 function formatDateBR(date) {
