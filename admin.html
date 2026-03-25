@@ -152,6 +152,19 @@ body {
 .btn-login:hover  { background: var(--mocha); transform: translateY(-1px); }
 .btn-login:active { transform: translateY(0); }
 .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.oauth-wrap { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.btn-oauth {
+  flex:1;
+  border:1.5px solid var(--sand);
+  background:#fff;
+  color:var(--espresso);
+  border-radius:10px;
+  padding:11px 12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-oauth:hover { border-color: var(--mocha); }
 .btn-forgot {
   display: block;
   text-align: center;
@@ -611,6 +624,10 @@ body {
     </div>
 
     <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="oauth-wrap">
+      <button class="btn-oauth" onclick="fazerLoginGoogle()">Entrar com Google</button>
+      <button class="btn-oauth" onclick="fazerLoginApple()">Entrar com Apple</button>
+    </div>
     <a class="btn-forgot" onclick="esqueceuSenha()">Esqueceu a senha?</a>
 
     <div class="login-error"   id="login-error"></div>
@@ -729,7 +746,7 @@ body {
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, signInWithEmailAndPassword,
+  getAuth, signInWithEmailAndPassword, GoogleAuthProvider, OAuthProvider, signInWithPopup,
   sendPasswordResetEmail, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -758,8 +775,16 @@ let mesVisao = new Date().toISOString().slice(0, 7);
 let historyExpanded = false;
 let historyFilter = 'today';
 let adminEmailAtual = '';
+const ADMINS_AUTORIZADOS = new Set([
+  'ribeirojunior270@gmail.com',
+  'arthurleite71@gmail.com'
+]);
 
 document.getElementById('mes-referencia').value = mesVisao;
+
+function isAdminAutorizado(email) {
+  return ADMINS_AUTORIZADOS.has(String(email || '').toLowerCase().trim());
+}
 
 function atualizarStatusSessoes() {
   const badge = document.getElementById('status-sessoes');
@@ -776,6 +801,11 @@ atualizarStatusSessoes();
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
   if (user) {
+    if (!isAdminAutorizado(user.email)) {
+      signOut(auth).catch(() => {});
+      mostrarErroLogin('Acesso negado. Esta conta não tem permissão para o portal admin.');
+      return;
+    }
     adminEmailAtual = user.email || 'admin';
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-panel').style.display  = 'block';
@@ -826,6 +856,10 @@ window.fazerLogin = async function() {
     err.textContent = 'Preencha e-mail e senha.';
     err.style.display = 'block'; return;
   }
+  if (!isAdminAutorizado(email)) {
+    err.textContent = 'Conta sem permissão de admin.';
+    err.style.display = 'block'; return;
+  }
 
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span> Entrando…';
@@ -839,6 +873,40 @@ window.fazerLogin = async function() {
       btn.disabled  = false;
       btn.innerHTML = 'Entrar';
     }
+  }
+};
+
+window.fazerLoginGoogle = async function() {
+  const err = document.getElementById('login-error');
+  const provider = new GoogleAuthProvider();
+  err.style.display = 'none';
+  try {
+    const cred = await signInWithPopup(auth, provider);
+    if (!isAdminAutorizado(cred.user?.email)) {
+      await signOut(auth);
+      mostrarErroLogin('Conta Google sem permissão de admin.');
+    }
+  } catch (e) {
+    mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);
+  }
+};
+
+window.fazerLoginApple = async function() {
+  const err = document.getElementById('login-error');
+  const provider = new OAuthProvider('apple.com');
+  err.style.display = 'none';
+  try {
+    const cred = await signInWithPopup(auth, provider);
+    if (!isAdminAutorizado(cred.user?.email)) {
+      await signOut(auth);
+      mostrarErroLogin('Conta Apple sem permissão de admin.');
+    }
+  } catch (e) {
+    if (e?.code === 'auth/operation-not-allowed') {
+      mostrarErroLogin('Login Apple não habilitado no Firebase Auth deste projeto.');
+      return;
+    }
+    mostrarErroLogin(`Falha no login Apple (${e?.code || 'erro-desconhecido'}).`);
   }
 };
 
