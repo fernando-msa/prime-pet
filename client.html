@@ -212,6 +212,38 @@ async function carregarPerfil(user) {
   document.getElementById('perfil-raca').value = p.petRaca || '';
 }
 
+function normalizarTelefoneBr(valor) {
+  const d = String(valor || '').replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 10) {
+    return d.replace(/(\d{0,2})(\d{0,4})(\d{0,4})/, (_, a, b, c) =>
+      [a && `(${a}`, a && a.length === 2 ? ') ' : '', b, c ? `-${c}` : ''].join('')
+    );
+  }
+  return d.replace(/(\d{0,2})(\d{0,5})(\d{0,4})/, (_, a, b, c) =>
+    [a && `(${a}`, a && a.length === 2 ? ') ' : '', b, c ? `-${c}` : ''].join('')
+  );
+}
+
+function validarPerfilCompleto(perfil) {
+  if (!perfil.nome || perfil.nome.length < 3) {
+    return 'Informe seu nome completo (mínimo 3 caracteres).';
+  }
+  const telDigits = perfil.telefone.replace(/\D/g, '');
+  if (![10, 11].includes(telDigits.length)) {
+    return 'Telefone inválido. Use DDD + número (10 ou 11 dígitos).';
+  }
+  if (!perfil.endereco || perfil.endereco.length < 10) {
+    return 'Informe um endereço mais completo (mínimo 10 caracteres).';
+  }
+  if (perfil.petNome && perfil.petNome.length < 2) {
+    return 'Nome do pet muito curto.';
+  }
+  if (perfil.petRaca && perfil.petRaca.length < 2) {
+    return 'Raça do pet muito curta.';
+  }
+  return '';
+}
+
 async function registrarErro(contexto, erro) {
   const code = erro?.code || 'unknown';
   const message = erro?.message || String(erro || 'sem mensagem');
@@ -409,13 +441,19 @@ window.salvarPerfilCompleto = async function() {
   }
   const perfil = {
     nome: document.getElementById('perfil-nome').value.trim(),
-    telefone: document.getElementById('perfil-telefone').value.trim(),
+    telefone: normalizarTelefoneBr(document.getElementById('perfil-telefone').value.trim()),
     endereco: document.getElementById('perfil-endereco').value.trim(),
     petNome: document.getElementById('perfil-pet').value.trim(),
     petRaca: document.getElementById('perfil-raca').value.trim(),
     email: user.email || '',
     atualizadoEm: Date.now()
   };
+  const erroPerfil = validarPerfilCompleto(perfil);
+  if (erroPerfil) {
+    setMensagemPortal(`⚠️ ${erroPerfil}`);
+    return;
+  }
+  document.getElementById('perfil-telefone').value = perfil.telefone;
   await set(ref(db, `clientes_perfis/${user.uid}`), perfil);
   if (perfil.nome) {
     try { await updateProfile(user, { displayName: perfil.nome }); } catch (_) {}
@@ -445,6 +483,10 @@ onAuthStateChanged(auth, user => {
 });
 
 carregarPreCadastro();
+
+document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
+  e.target.value = normalizarTelefoneBr(e.target.value);
+});
 
 window.trocarAba = function(aba, btn){
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));

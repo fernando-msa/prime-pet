@@ -941,10 +941,28 @@ window.setHistoryFilter = function(tipo, btn) {
 window.apagarHistoricoClientes = async function() {
   const ok = window.confirm('Tem certeza que deseja apagar TODO o histórico de clientes? Esta ação não pode ser desfeita.');
   if (!ok) return;
-  await remove(ref(db, 'historico_clientes'));
-  historicoClientes = [];
-  renderHistoricoClientes();
-  showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  try {
+    const rootRef = ref(db, 'historico_clientes');
+    const snap = await get(rootRef);
+    const raw = snap.val() || {};
+    const ids = Object.keys(raw);
+
+    if (!ids.length) {
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('Histórico já estava vazio.');
+      return;
+    }
+
+    // Remove item a item (mais compatível com regras que não permitem delete no nó raiz)
+    await Promise.all(ids.map(id => remove(ref(db, `historico_clientes/${id}`))));
+    historicoClientes = [];
+    renderHistoricoClientes();
+    showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  } catch (e) {
+    console.error('Falha ao apagar histórico:', e);
+    showToast('❌ Não foi possível apagar o histórico. Verifique permissões no Firebase.');
+  }
 };
 
 function formatDateBR(date) {
