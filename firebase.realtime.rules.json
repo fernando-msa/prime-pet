@@ -25,6 +25,7 @@
         "code": { ".validate": "newData.isString() && newData.val().length <= 120" },
         "message": { ".validate": "newData.isString() && newData.val().length <= 500" },
         "path": { ".validate": "newData.isString() && newData.val().length <= 200" },
+        "email": { ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 160)" },
         "userAgent": { ".validate": "newData.isString() && newData.val().length <= 400" },
         "at": { ".validate": "newData.isNumber()" }
       }

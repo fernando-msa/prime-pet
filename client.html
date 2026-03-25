@@ -114,7 +114,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, get, set, remove, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -155,6 +155,7 @@ async function registrarErro(contexto, erro) {
       code,
       message: String(message).slice(0, 500),
       path: window.location.pathname + window.location.search,
+      email: auth.currentUser?.email || '',
       userAgent: navigator.userAgent,
       at: Date.now()
     });
@@ -179,11 +180,20 @@ function carregarPreCadastro() {
 
 window.entrarComGoogle = async function() {
   try {
-    setMensagemPortal('Redirecionando para login Google...');
-    await signInWithRedirect(auth, provider);
+    setMensagemPortal('Abrindo login Google...');
+    await signInWithPopup(auth, provider);
+    setMensagemPortal('Login com Google realizado com sucesso.');
   } catch (e) {
     const code = e?.code || '';
     registrarErro('login_google', e);
+    if (code === 'auth/popup-blocked') {
+      setMensagemPortal('Popup bloqueado pelo navegador. Permita popups para este site e tente novamente.');
+      return;
+    }
+    if (code === 'auth/popup-closed-by-user') {
+      setMensagemPortal('Popup fechado antes de concluir o login. Tente novamente.');
+      return;
+    }
     if (code === 'auth/unauthorized-domain') {
       setMensagemPortal(`Domínio não autorizado no Firebase Auth (${window.location.hostname}). Adicione em Authentication > Settings > Authorized domains.`);
       return;
@@ -220,8 +230,10 @@ async function carregarPortalCliente(user) {
     .sort((a,b) => (b.criadoEm||0) - (a.criadoEm||0));
 
   if (!cacheSolicitacoes.length) {
-    setMensagemPortal('Nenhuma solicitação encontrada para esta conta Google.');
-    document.getElementById('portal-card').classList.add('hidden');
+    setMensagemPortal(`Login concluído como ${user.email || 'usuário Google'}, mas não encontramos solicitações vinculadas.`);
+    document.getElementById('portal-card').classList.remove('hidden');
+    renderSolicitacoes();
+    renderPets();
     return;
   }
 
@@ -242,6 +254,7 @@ window.sairPortal = async function() {
 onAuthStateChanged(auth, user => {
   if (user) {
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
+    setMensagemPortal(`Logado como ${user.email || 'usuário Google'}. Carregando seus dados...`);
     carregarPortalCliente(user).catch(err => {
       registrarErro('auth_state_changed', err);
       console.error('Falha inesperada ao abrir portal:', err);
@@ -250,16 +263,6 @@ onAuthStateChanged(auth, user => {
     return;
   }
   localStorage.removeItem('primepet_client_session');
-});
-
-getRedirectResult(auth).catch(e => {
-  const code = e?.code || '';
-  registrarErro('redirect_result', e);
-  if (code === 'auth/unauthorized-domain') {
-    setMensagemPortal(`Domínio não autorizado no Firebase Auth (${window.location.hostname}). Adicione em Authentication > Settings > Authorized domains.`);
-    return;
-  }
-  if (code) setMensagemPortal(`Falha ao concluir login com Google (${code}).`);
 });
 
 carregarPreCadastro();

@@ -1073,7 +1073,9 @@ function renderErrosApp() {
   historicoErros.slice(0, 20).forEach(err => {
     const data = err.at ? new Date(err.at).toLocaleString('pt-BR') : 'data não informada';
     const li = document.createElement('li');
-    li.textContent = `${err.contexto || 'contexto'} • ${err.code || 'sem-código'} • ${err.path || '--'} • ${data}`;
+    const resumo = `${err.contexto || 'contexto'} • ${err.code || 'sem-código'} • ${err.path || '--'} • ${data}`;
+    const detalhe = `${err.email ? `email: ${err.email} • ` : ''}${err.message || 'sem mensagem'}`;
+    li.textContent = `${resumo} • ${detalhe}`;
     ul.appendChild(li);
   });
 }
