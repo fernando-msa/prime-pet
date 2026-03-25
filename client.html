@@ -85,9 +85,13 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
   <div class="wrap" style="padding-top:10px;padding-bottom:0">
     <div class="card hidden" id="notas-atualizacao">
       <strong>Atualizações / Correções</strong><br>
-      • Melhorias de login e sessão<br>
-      • Correções em pendências do admin<br>
-      • Ajustes de validação de perfil e estabilidade
+      v1.0.0 • Base do portal e agenda<br>
+      v1.1.0 • Login cliente + histórico<br>
+      v1.2.0 • Fluxo de pendências no admin<br>
+      v1.3.0 • Perfil cliente e validações<br>
+      v1.4.0 • Sessão e notas de atualização<br>
+      v1.5.0 • LGPD + endurecimento de acesso admin<br>
+      v1.6.0 • Login admin somente Google + monitoramento técnico
     </div>
   </div>
 
@@ -105,6 +109,8 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
           </svg>
           Entrar com Google
         </button>
+        <button class="btn btn-outline" type="button" onclick="entrarOuCadastrarComEmail()">Entrar/Cadastrar com E-mail</button>
+        <button class="btn btn-outline" type="button" disabled title="Em breve">Entrar com Apple (em breve)</button>
         <a class="btn btn-outline" href="./index.html" style="text-decoration:none">Novo agendamento</a>
         <a class="btn btn-outline" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
       </div>
@@ -158,13 +164,15 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
     </div>
 
     <div class="card" id="portal-msg">Entre com Google para visualizar seu histórico.</div>
+    <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.6.0</span></div>
   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, get, set, remove, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -179,6 +187,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+const APP_VERSION = 'v1.6.0';
 
 let cacheSolicitacoes = [];
 let solicFiltroAtual = 'all';
@@ -381,6 +390,32 @@ window.entrarComGoogle = async function() {
   }
 };
 
+window.entrarOuCadastrarComEmail = async function() {
+  if (!garantirConsentimentoLgpd()) {
+    setMensagemPortal('É necessário aceitar os termos LGPD para continuar.');
+    return;
+  }
+  const email = window.prompt('Digite seu e-mail:');
+  if (!email) return;
+  const senha = window.prompt('Crie uma senha (mínimo 6 caracteres):');
+  if (!senha || senha.length < 6) {
+    setMensagemPortal('Senha inválida. Use ao menos 6 caracteres.');
+    return;
+  }
+  try {
+    await signInWithEmailAndPassword(auth, email.trim(), senha);
+    setMensagemPortal('Login com e-mail realizado com sucesso.');
+  } catch (_) {
+    try {
+      await createUserWithEmailAndPassword(auth, email.trim(), senha);
+      setMensagemPortal('Conta criada com sucesso e login realizado.');
+    } catch (e) {
+      registrarErro('login_email_cliente', e);
+      setMensagemPortal(`Falha no login/cadastro por e-mail (${e?.code || 'erro-desconhecido'}).`);
+    }
+  }
+};
+
 async function carregarPortalCliente(user) {
   let historicoRaw = {};
   try {
@@ -507,6 +542,15 @@ onAuthStateChanged(auth, user => {
 });
 
 carregarPreCadastro();
+document.getElementById('client-version').textContent = APP_VERSION;
+
+window.toggleNotasAtualizacao = function() {
+  document.getElementById('notas-atualizacao')?.classList.toggle('hidden');
+};
+
+document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
+  e.target.value = normalizarTelefoneBr(e.target.value);
+});
 
 window.toggleNotasAtualizacao = function() {
   document.getElementById('notas-atualizacao')?.classList.toggle('hidden');

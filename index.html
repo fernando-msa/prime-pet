@@ -636,6 +636,17 @@ body {
     <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
     <div class="session-status" id="home-release" style="display:none;text-align:left">
       <strong>Atualizações</strong><br>
+      v1.0.0 • Base do portal e agenda<br>
+      v1.1.0 • Login cliente + histórico<br>
+      v1.2.0 • Fluxo de pendências no admin<br>
+      v1.3.0 • Perfil cliente e validações<br>
+      v1.4.0 • Sessão e notas de atualização<br>
+      v1.5.0 • LGPD + endurecimento de acesso admin<br>
+      v1.6.0 • Login admin somente Google + monitoramento técnico
+    </div>
+    <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
+    <div class="session-status" id="home-release" style="display:none;text-align:left">
+      <strong>Atualizações</strong><br>
       • Correções e ajustes contínuos<br>
       • Melhorias de login/sessão<br>
       • Evoluções de segurança e validações
@@ -956,6 +967,7 @@ body {
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
     📸 <a href="https://instagram.com/prime_petoficial" target="_blank">@prime_petoficial</a><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank">github.com/fernando-msa</a>
+    <br><span id="index-version-footer">Versão atual: v1.6.0</span>
   </div>
 
 </main>
@@ -964,6 +976,7 @@ body {
 <div id="toast"></div>
 
 <script>
+const APP_VERSION = 'v1.6.0';
 /* ── HELPERS ── */
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
@@ -1023,6 +1036,7 @@ function toggleNotasAtualizacao() {
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
 atualizarStatusSessaoHome();
+document.getElementById('index-version-footer').textContent = `Versão atual: ${APP_VERSION}`;
 
 /* ── DATA ── */
 document.querySelector('input[type="date"]').value =
