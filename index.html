@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Contrato de Serviços</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -127,6 +128,33 @@ body {
   font-size: 20px;
   letter-spacing: 10px;
   opacity: .35;
+}
+.header-portals {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.portal-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+  border: 1px solid rgba(255,255,255,.28);
+  color: var(--white);
+  background: rgba(255,255,255,.08);
+  transition: all .2s ease;
+}
+.portal-link:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.16);
 }
 
 /* ── PROGRESS BAR ── */
@@ -589,6 +617,10 @@ body {
     </div>
     <p class="header-tagline">Passeios &amp; Banhos</p>
     <div class="header-contract-label">📋 Contrato de Prestação de Serviços</div>
+    <div class="header-portals">
+      <a class="portal-link" href="./client.html">👤 Portal do Cliente</a>
+      <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
+    </div>
     <p class="header-paws">🐾 🐾 🐾</p>
   </div>
 </header>
@@ -816,7 +848,7 @@ body {
         </div>
 
         <div class="info-card">
-          <strong>ℹ️ Disponibilidade:</strong> Domingo a domingo, das 09h às 17h (almoço: 12h–13h fechado). Cada sessão tem duração de 1 hora.
+          <strong>ℹ️ Disponibilidade:</strong> Segunda a sexta, das 09h às 16h (almoço: 12h–13h fechado). Cada sessão tem duração de 1 hora.
         </div>
       </div>
     </div>
@@ -895,7 +927,7 @@ body {
   <!-- SUBMIT -->
   <div class="submit-wrap">
     <button class="btn-submit" onclick="enviarWhatsApp()">
-      💬 Enviar pelo WhatsApp
+      ✅ Enviar e continuar no portal
     </button>
   </div>
 
@@ -969,7 +1001,7 @@ const io = new IntersectionObserver(entries => {
 cards.forEach(c => io.observe(c));
 
 /* ── CALENDAR ── */
-const AVAILABLE_HOURS = [9,10,11,14,15,16];
+const AVAILABLE_HOURS = [9,10,11,14,15];
 const WEEKDAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MONTHS_PT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
                      'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -1014,6 +1046,7 @@ function renderCal() {
   for (let d = 1; d <= daysIn; d++) {
     const date = new Date(calYear, calMonth, d);
     const isPast = date < today;
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
     const isToday = date.getTime() === today.getTime();
     const isSel  = selectedDate &&
       selectedDate.getFullYear() === calYear &&
@@ -1021,7 +1054,7 @@ function renderCal() {
       selectedDate.getDate()     === d;
 
     let cls = 'cal-day';
-    if (isPast)   cls += ' disabled';
+    if (isPast || isWeekend) cls += ' disabled';
     if (isToday)  cls += ' today';
     if (isSel)    cls += ' selected';
 
@@ -1034,7 +1067,7 @@ function renderCal() {
 function selectDay(y, m, d) {
   const date = new Date(y, m, d);
   const today = new Date(); today.setHours(0,0,0,0);
-  if (date < today) return;
+  if (date < today || date.getDay() === 0 || date.getDay() === 6) return;
 
   selectedDate = date;
   selectedHour = null;
@@ -1102,6 +1135,17 @@ function enviarWhatsApp() {
     return;
   }
 
+  const telDigits = (val('tutor_telefone') || '').replace(/\D/g, '');
+  if (![10,11].includes(telDigits.length)) {
+    showToast('📱 Informe um telefone válido com DDD para continuar no portal.', 'var(--cyan)');
+    return;
+  }
+
+  if (!val('tutor_endereco')) {
+    showToast('📍 Informe o endereço para concluir o pré-cadastro.', 'var(--cyan)');
+    return;
+  }
+
   const dow  = WEEKDAYS_PT[selectedDate.getDay()];
   const dStr = `${String(selectedDate.getDate()).padStart(2,'0')}/${String(selectedDate.getMonth()+1).padStart(2,'0')}/${selectedDate.getFullYear()}`;
   const fmt  = n => `${String(n).padStart(2,'0')}:00`;
@@ -1152,8 +1196,31 @@ function enviarWhatsApp() {
     `📋 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
   ];
 
-  const msg = encodeURIComponent(linhas.join('\n'));
-  window.open(`https://wa.me/5579996623050?text=${msg}`, '_blank');
+  const preCadastro = {
+    tutorNome,
+    tutorTelefone: val('tutor_telefone'),
+    tutorEndereco: val('tutor_endereco'),
+    petNome,
+    petRaca: val('pet_raca') || 'Não informado',
+    servicos,
+    data: `${dow}, ${dStr}`,
+    horario: `${fmt(selectedHour)} – ${fmt(selectedHour + 1)}`,
+    mensagemPreview: linhas.join('\n'),
+    criadoEm: Date.now()
+  };
+
+  localStorage.setItem('primepet_pre_cadastro', JSON.stringify(preCadastro));
+
+  const sessaoCliente = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
+  const jaLogado = Boolean(sessaoCliente && sessaoCliente.uid);
+
+  if (!jaLogado) {
+    showToast('🔐 Faça login/cadastro no portal para concluir seu agendamento.', 'var(--cyan)');
+    setTimeout(() => { window.location.href = './client.html?cadastro=1'; }, 600);
+    return;
+  }
+
+  window.location.href = './client.html?cadastro=0';
 }
 </script>
 </body>
