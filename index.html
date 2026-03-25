@@ -816,7 +816,7 @@ body {
         </div>
 
         <div class="info-card">
-          <strong>ℹ️ Disponibilidade:</strong> Domingo a domingo, das 09h às 17h (almoço: 12h–13h fechado). Cada sessão tem duração de 1 hora.
+          <strong>ℹ️ Disponibilidade:</strong> Segunda a sexta, das 09h às 16h (almoço: 12h–13h fechado). Cada sessão tem duração de 1 hora.
         </div>
       </div>
     </div>
@@ -969,7 +969,7 @@ const io = new IntersectionObserver(entries => {
 cards.forEach(c => io.observe(c));
 
 /* ── CALENDAR ── */
-const AVAILABLE_HOURS = [9,10,11,14,15,16];
+const AVAILABLE_HOURS = [9,10,11,14,15];
 const WEEKDAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MONTHS_PT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
                      'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -1014,6 +1014,7 @@ function renderCal() {
   for (let d = 1; d <= daysIn; d++) {
     const date = new Date(calYear, calMonth, d);
     const isPast = date < today;
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
     const isToday = date.getTime() === today.getTime();
     const isSel  = selectedDate &&
       selectedDate.getFullYear() === calYear &&
@@ -1021,7 +1022,7 @@ function renderCal() {
       selectedDate.getDate()     === d;
 
     let cls = 'cal-day';
-    if (isPast)   cls += ' disabled';
+    if (isPast || isWeekend) cls += ' disabled';
     if (isToday)  cls += ' today';
     if (isSel)    cls += ' selected';
 
@@ -1034,7 +1035,7 @@ function renderCal() {
 function selectDay(y, m, d) {
   const date = new Date(y, m, d);
   const today = new Date(); today.setHours(0,0,0,0);
-  if (date < today) return;
+  if (date < today || date.getDay() === 0 || date.getDay() === 6) return;
 
   selectedDate = date;
   selectedHour = null;
