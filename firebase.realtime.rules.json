@@ -19,7 +19,7 @@
 
     "historico_clientes": {
       ".indexOn": ["ownerUid"],
-      ".read": "auth != null && (auth.token.admin === true || (query.orderByChild === 'ownerUid' && query.equalTo === auth.uid))",
+      ".read": "auth != null",
 
       "$id": {
         ".read": "auth != null && (auth.token.admin === true || data.child('ownerUid').val() === auth.uid)",
