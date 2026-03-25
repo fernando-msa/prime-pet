@@ -156,6 +156,17 @@ body {
   transform: translateY(-1px);
   background: rgba(255,255,255,.16);
 }
+.session-status {
+  margin-top: 10px;
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
 
 /* ── PROGRESS BAR ── */
 .progress-wrap {
@@ -620,6 +631,18 @@ body {
     <div class="header-portals">
       <a class="portal-link" href="./client.html">👤 Portal do Cliente</a>
       <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
+      <button class="portal-link" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
+    </div>
+    <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
+    <div class="session-status" id="home-release" style="display:none;text-align:left">
+      <strong>Atualizações</strong><br>
+      v1.0.0 • Base do portal e agenda<br>
+      v1.1.0 • Login cliente + histórico<br>
+      v1.2.0 • Fluxo de pendências no admin<br>
+      v1.3.0 • Perfil cliente e validações<br>
+      v1.4.0 • Sessão e notas de atualização<br>
+      v1.5.0 • LGPD + endurecimento de acesso admin<br>
+      v1.6.0 • Login admin somente Google + monitoramento técnico
     </div>
     <p class="header-paws">🐾 🐾 🐾</p>
   </div>
@@ -936,6 +959,7 @@ body {
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
     📸 <a href="https://instagram.com/prime_petoficial" target="_blank">@prime_petoficial</a><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank">github.com/fernando-msa</a>
+    <br><span id="index-version-footer">Versão atual: v1.6.0</span>
   </div>
 
 </main>
@@ -944,6 +968,7 @@ body {
 <div id="toast"></div>
 
 <script>
+const APP_VERSION = 'v1.6.0';
 /* ── HELPERS ── */
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
@@ -977,6 +1002,33 @@ function showToast(msg, color) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.style.display = 'none', 3800);
 }
+
+function atualizarStatusSessaoHome() {
+  const badge = document.getElementById('home-session-status');
+  if (!badge) return;
+  const sessaoCliente = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
+  badge.textContent = sessaoCliente?.uid
+    ? '✅ Cliente logado no portal'
+    : '🔒 Cliente não logado';
+}
+function garantirConsentimentoLgpd() {
+  if (localStorage.getItem('primepet_lgpd_ok') === '1') return true;
+  const aceitou = window.confirm(
+    'LGPD: seus dados são usados para cadastro, agendamento e contato da Prime Pet, ' +
+    'armazenados com acesso restrito em infraestrutura segura (Firebase). Deseja continuar?'
+  );
+  if (aceitou) localStorage.setItem('primepet_lgpd_ok', '1');
+  return aceitou;
+}
+function toggleNotasAtualizacao() {
+  const box = document.getElementById('home-release');
+  if (!box) return;
+  box.style.display = box.style.display === 'none' ? 'inline-flex' : 'none';
+}
+window.addEventListener('storage', atualizarStatusSessaoHome);
+window.addEventListener('focus', atualizarStatusSessaoHome);
+atualizarStatusSessaoHome();
+document.getElementById('index-version-footer').textContent = `Versão atual: ${APP_VERSION}`;
 
 /* ── DATA ── */
 document.querySelector('input[type="date"]').value =
@@ -1211,10 +1263,21 @@ function enviarWhatsApp() {
 
   localStorage.setItem('primepet_pre_cadastro', JSON.stringify(preCadastro));
 
+  const mensagemWhats = encodeURIComponent(linhas.join('\n'));
+  const whatsappUrl = `https://wa.me/5579996623050?text=${mensagemWhats}`;
+  const win = window.open(whatsappUrl, '_blank');
+  if (!win) {
+    showToast('⚠️ Não consegui abrir o WhatsApp automaticamente. Verifique bloqueio de popup.', 'var(--cyan)');
+  }
+
   const sessaoCliente = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
   const jaLogado = Boolean(sessaoCliente && sessaoCliente.uid);
 
   if (!jaLogado) {
+    if (!garantirConsentimentoLgpd()) {
+      showToast('⚠️ Você precisa aceitar os termos LGPD para criar a conta.', 'var(--cyan)');
+      return;
+    }
     showToast('🔐 Faça login/cadastro no portal para concluir seu agendamento.', 'var(--cyan)');
     setTimeout(() => { window.location.href = './client.html?cadastro=1'; }, 600);
     return;

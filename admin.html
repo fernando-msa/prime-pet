@@ -152,6 +152,19 @@ body {
 .btn-login:hover  { background: var(--mocha); transform: translateY(-1px); }
 .btn-login:active { transform: translateY(0); }
 .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.oauth-wrap { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; justify-content:center; }
+.btn-oauth {
+  flex:1;
+  border:1.5px solid var(--sand);
+  background:#fff;
+  color:var(--espresso);
+  border-radius:10px;
+  padding:11px 12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-oauth:hover { border-color: var(--mocha); }
 .btn-forgot {
   display: block;
   text-align: center;
@@ -209,6 +222,15 @@ body {
   align-items: center;
   gap: 10px;
 }
+.session-pill {
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+}
 .btn-home {
   background: rgba(255,255,255,0.08);
   border: 1.5px solid rgba(255,255,255,0.25);
@@ -226,6 +248,14 @@ body {
   border-color: rgba(255,255,255,0.8);
   color: #fff;
 }
+.btn-release {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
 .btn-logout {
   background: rgba(255,255,255,0.08);
   border: 1.5px solid rgba(255,255,255,0.25);
@@ -242,6 +272,7 @@ body {
 .btn-logout:hover { border-color: #fff; color: #fff; }
 
 .admin-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+.version-footer{max-width:900px;margin:0 auto 24px;padding:0 20px;color:var(--mocha);opacity:.7;font-size:12px}
 
 .planner-head {
   display: flex;
@@ -565,6 +596,21 @@ body {
 .btn-free:hover { border-color: var(--mocha); }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--mocha); opacity: 0.45; font-size: 15px; }
+.release-panel {
+  display:none;
+  margin: 12px 20px 0;
+  padding: 12px 14px;
+  background:#fff;
+  border:1.5px solid var(--sand);
+  border-radius:10px;
+  font-size:13px;
+  color:var(--mocha);
+}
+.health-grid{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.health-card{background:#fff;border:1.5px solid var(--sand);border-radius:10px;padding:10px 12px}
+.health-k{font-size:11px;color:var(--mocha);text-transform:uppercase;letter-spacing:.8px}
+.health-v{font-size:18px;font-weight:800;color:var(--espresso)}
+@media (max-width:760px){.health-grid{grid-template-columns:1fr 1fr}}
 
 .spinner {
   display: inline-block; width: 16px; height: 16px;
@@ -590,19 +636,10 @@ body {
     <div class="login-logo"><span>Prime</span> Pet</div>
     <div class="login-sub">Painel Administrativo</div>
 
-    <div class="login-field">
-      <label>E-mail</label>
-      <input type="email" id="inp-email" placeholder="seu@email.com"
-             onkeydown="if(event.key==='Enter') document.getElementById('inp-senha').focus()">
+    <button class="btn-login" id="btn-login" onclick="fazerLoginGoogle()">Entrar com Google</button>
+    <div class="oauth-wrap">
+      <span class="btn-oauth" style="cursor:default">Acesso restrito aos e-mails de admin autorizados</span>
     </div>
-    <div class="login-field">
-      <label>Senha</label>
-      <input type="password" id="inp-senha" placeholder="••••••••"
-             onkeydown="if(event.key==='Enter') fazerLogin()">
-    </div>
-
-    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar</button>
-    <a class="btn-forgot" onclick="esqueceuSenha()">Esqueceu a senha?</a>
 
     <div class="login-error"   id="login-error"></div>
     <div class="login-success" id="login-success"></div>
@@ -614,13 +651,31 @@ body {
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
+      <button class="btn-release" onclick="toggleReleaseNotes()" title="Atualizações">🔔</button>
+      <span class="session-pill" id="status-sessoes">🔒 Sem sessão</span>
       <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
       <a class="btn-home" href="./client.html">Portal do cliente</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
   </div>
+  <div class="release-panel" id="release-panel">
+    <strong>Atualizações recentes</strong><br>
+    v1.0.0 • Base do portal e agenda<br>
+    v1.1.0 • Login cliente + histórico<br>
+    v1.2.0 • Fluxo de pendências no admin<br>
+    v1.3.0 • Perfil cliente e validações<br>
+    v1.4.0 • Sessão e notas de atualização<br>
+    v1.5.0 • LGPD + endurecimento de acesso admin<br>
+    v1.6.0 • Login admin somente Google + monitoramento técnico
+  </div>
 
   <div class="admin-wrap">
+    <div class="health-grid">
+      <div class="health-card"><div class="health-k">Saúde Auth</div><div class="health-v" id="health-auth">OK</div></div>
+      <div class="health-card"><div class="health-k">Saúde DB</div><div class="health-v" id="health-db">--</div></div>
+      <div class="health-card"><div class="health-k">Erros (24h)</div><div class="health-v" id="health-errors">0</div></div>
+      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.6.0</div></div>
+    </div>
     <div class="planner-head">
       <div>
         <h2 class="planner-title">Visão administrativa</h2>
@@ -694,9 +749,9 @@ body {
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-num pending"   id="cnt-pending">–</div><div class="stat-label">Pendentes</div></div>
-      <div class="stat-card"><div class="stat-num confirmed" id="cnt-confirmed">–</div><div class="stat-label">Confirmados</div></div>
-      <div class="stat-card"><div class="stat-num cancelled" id="cnt-cancelled">–</div><div class="stat-label">Cancelados</div></div>
+      <div class="stat-card"><div class="stat-num pending"   id="cnt-pending">–</div><div class="stat-label">Pendentes <span id="pct-pending">0%</span></div></div>
+      <div class="stat-card"><div class="stat-num confirmed" id="cnt-confirmed">–</div><div class="stat-label">Confirmados <span id="pct-confirmed">0%</span></div></div>
+      <div class="stat-card"><div class="stat-num cancelled" id="cnt-cancelled">–</div><div class="stat-label">Cancelados <span id="pct-cancelled">0%</span></div></div>
     </div>
 
     <div class="filter-bar">
@@ -714,13 +769,13 @@ body {
 </div>
 
 <div id="toast"></div>
+<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.6.0</div>
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, signInWithEmailAndPassword,
-  sendPasswordResetEmail, signOut, onAuthStateChanged
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -736,6 +791,7 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
 const auth = getAuth(app);
+const APP_VERSION = 'v1.6.0';
 
 let agendamentos = {};
 let historicoClientes = [];
@@ -748,20 +804,51 @@ let mesVisao = new Date().toISOString().slice(0, 7);
 let historyExpanded = false;
 let historyFilter = 'today';
 let adminEmailAtual = '';
+const ADMINS_AUTORIZADOS = new Set([
+  'ribeirojunior270@gmail.com',
+  'arthurleite71@gmail.com'
+]);
 
 document.getElementById('mes-referencia').value = mesVisao;
+
+function isAdminAutorizado(email) {
+  return ADMINS_AUTORIZADOS.has(String(email || '').toLowerCase().trim());
+}
+
+function atualizarStatusSessoes() {
+  const badge = document.getElementById('status-sessoes');
+  if (!badge) return;
+  const clienteSessao = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
+  const adminTxt = adminEmailAtual ? `Admin: ${adminEmailAtual}` : 'Admin: não logado';
+  const clienteTxt = clienteSessao?.uid ? 'Cliente: logado' : 'Cliente: não logado';
+  badge.textContent = `${adminTxt} • ${clienteTxt}`;
+}
+window.addEventListener('storage', atualizarStatusSessoes);
+window.addEventListener('focus', atualizarStatusSessoes);
+atualizarStatusSessoes();
+document.getElementById('health-version').textContent = APP_VERSION;
+document.getElementById('admin-version-footer').textContent = `Prime Pet • Versão atual: ${APP_VERSION}`;
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
   if (user) {
+    if (!isAdminAutorizado(user.email)) {
+      signOut(auth).catch(() => {});
+      mostrarErroLogin('Acesso negado. Esta conta não tem permissão para o portal admin.');
+      return;
+    }
     adminEmailAtual = user.email || 'admin';
+    document.getElementById('health-auth').textContent = 'OK';
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-panel').style.display  = 'block';
+    atualizarStatusSessoes();
     iniciarAdmin();
   } else {
     adminEmailAtual = '';
+    document.getElementById('health-auth').textContent = 'OFF';
     document.getElementById('admin-panel').style.display  = 'none';
     document.getElementById('login-screen').style.display = 'flex';
+    atualizarStatusSessoes();
   }
 }, () => {
   mostrarErroLogin('Não foi possível validar sua sessão. Tente entrar novamente.');
@@ -789,55 +876,18 @@ function mostrarErroLogin(msg) {
   err.style.display = 'block';
 }
 
-window.fazerLogin = async function() {
-  const email = document.getElementById('inp-email').value.trim();
-  const senha = document.getElementById('inp-senha').value;
-  const btn   = document.getElementById('btn-login');
-  const err   = document.getElementById('login-error');
-  const suc   = document.getElementById('login-success');
-
-  err.style.display = suc.style.display = 'none';
-
-  if (!email || !senha) {
-    err.textContent = 'Preencha e-mail e senha.';
-    err.style.display = 'block'; return;
-  }
-
-  btn.disabled  = true;
-  btn.innerHTML = '<span class="spinner"></span> Entrando…';
-
+window.fazerLoginGoogle = async function() {
+  const err = document.getElementById('login-error');
+  const provider = new GoogleAuthProvider();
+  err.style.display = 'none';
   try {
-    await signInWithEmailAndPassword(auth, email, senha);
-  } catch (e) {
-    mostrarErroLogin(mensagemErroAuth(e?.code));
-  } finally {
-    if (document.getElementById('login-screen').style.display !== 'none') {
-      btn.disabled  = false;
-      btn.innerHTML = 'Entrar';
+    const cred = await signInWithPopup(auth, provider);
+    if (!isAdminAutorizado(cred.user?.email)) {
+      await signOut(auth);
+      mostrarErroLogin('Conta Google sem permissão de admin.');
     }
-  }
-};
-
-// ── Esqueceu a senha ──────────────────────────────
-window.esqueceuSenha = async function() {
-  const email = document.getElementById('inp-email').value.trim();
-  const err   = document.getElementById('login-error');
-  const suc   = document.getElementById('login-success');
-
-  err.style.display = suc.style.display = 'none';
-
-  if (!email) {
-    err.textContent   = 'Digite seu e-mail acima antes de recuperar a senha.';
-    err.style.display = 'block'; return;
-  }
-
-  try {
-    await sendPasswordResetEmail(auth, email);
-    suc.textContent   = `✅ E-mail de recuperação enviado para ${email}. Verifique sua caixa de entrada.`;
-    suc.style.display = 'block';
   } catch (e) {
-    err.textContent   = 'Não foi possível enviar. Verifique o endereço de e-mail.';
-    err.style.display = 'block';
+    mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);
   }
 };
 
@@ -847,10 +897,8 @@ window.fazerLogout = async function() {
   logoutEmAndamento = true;
   try {
     await signOut(auth);
-    document.getElementById('inp-email').value = '';
-    document.getElementById('inp-senha').value = '';
     document.getElementById('btn-login').disabled  = false;
-    document.getElementById('btn-login').innerHTML = 'Entrar';
+    document.getElementById('btn-login').innerHTML = 'Entrar com Google';
   } finally {
     logoutEmAndamento = false;
   }
@@ -872,11 +920,13 @@ window.addEventListener('pagehide', () => {
 function iniciarAdmin() {
   onValue(ref(db, 'agendamentos'), snap => {
     agendamentos = snap.val() || {};
+    document.getElementById('health-db').textContent = 'OK';
     renderLista();
   });
   onValue(ref(db, 'historico_clientes'), snap => {
     const raw = snap.val() || {};
     historicoClientes = Object.entries(raw).map(([id, v]) => ({ id, ...v }));
+    sincronizarPendenciasDoHistorico().catch(() => {});
     renderHistoricoClientes();
   });
   onValue(ref(db, 'historico_acoes'), snap => {
@@ -889,6 +939,8 @@ function iniciarAdmin() {
     const raw = snap.val() || {};
     historicoErros = Object.entries(raw).map(([id, v]) => ({ id, ...v }))
       .sort((a, b) => (b.at || 0) - (a.at || 0));
+    const limite24h = Date.now() - 24*60*60*1000;
+    document.getElementById('health-errors').textContent = String(historicoErros.filter(e => (e.at || 0) >= limite24h).length);
     renderErrosApp();
   });
 }
@@ -916,10 +968,41 @@ window.setHistoryFilter = function(tipo, btn) {
 window.apagarHistoricoClientes = async function() {
   const ok = window.confirm('Tem certeza que deseja apagar TODO o histórico de clientes? Esta ação não pode ser desfeita.');
   if (!ok) return;
-  await remove(ref(db, 'historico_clientes'));
-  historicoClientes = [];
-  renderHistoricoClientes();
-  showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  try {
+    const rootRef = ref(db, 'historico_clientes');
+    const snap = await get(rootRef);
+    const raw = snap.val() || {};
+    const ids = Object.keys(raw);
+
+    if (!ids.length) {
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('Histórico já estava vazio.');
+      return;
+    }
+
+    // Remove item a item (mais compatível com regras que não permitem delete no nó raiz)
+    await Promise.all(ids.map(id => remove(ref(db, `historico_clientes/${id}`))));
+    historicoClientes = [];
+    renderHistoricoClientes();
+    showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  } catch (e) {
+    try {
+      await set(ref(db, 'historico_clientes'), {});
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('🗑️ Histórico limpo com fallback.');
+    } catch (err) {
+      console.error('Falha ao apagar histórico:', e, err);
+      showToast('❌ Sem permissão para apagar histórico. Ajuste as regras do Firebase.');
+    }
+  }
+};
+
+window.toggleReleaseNotes = function() {
+  const box = document.getElementById('release-panel');
+  if (!box) return;
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
 };
 
 function formatDateBR(date) {
@@ -1151,6 +1234,10 @@ function renderLista() {
   document.getElementById('cnt-pending').textContent   = cnts.pending;
   document.getElementById('cnt-confirmed').textContent = cnts.confirmed;
   document.getElementById('cnt-cancelled').textContent = cnts.cancelled;
+  const totalStatus = cnts.pending + cnts.confirmed + cnts.cancelled || 1;
+  document.getElementById('pct-pending').textContent = `${Math.round((cnts.pending/totalStatus)*100)}%`;
+  document.getElementById('pct-confirmed').textContent = `${Math.round((cnts.confirmed/totalStatus)*100)}%`;
+  document.getElementById('pct-cancelled').textContent = `${Math.round((cnts.cancelled/totalStatus)*100)}%`;
 
   // Pendentes primeiro, depois por data/hora
   items.sort((a, b) => {
@@ -1218,18 +1305,45 @@ async function registrarAcaoAdmin(action, date, hk) {
   });
 }
 
+async function atualizarHistoricoPorSlot(date, hk, status) {
+  const hora = hk.slice(0,2) + ':' + hk.slice(2);
+  const q = query(ref(db, 'historico_clientes'), orderByChild('dataAgendada'), equalTo(date));
+  const snap = await get(q);
+  const raw = snap.val() || {};
+  const updates = Object.entries(raw)
+    .filter(([, item]) => item?.horaAgendada === hora)
+    .map(([id]) => set(ref(db, `historico_clientes/${id}/status`), status));
+  await Promise.all(updates);
+}
+
+async function sincronizarPendenciasDoHistorico() {
+  const tarefas = historicoClientes.map(async item => {
+    if (!item?.dataAgendada || !item?.horaAgendada) return;
+    const hk = item.horaAgendada.replace(':', '');
+    const slotRef = ref(db, `agendamentos/${item.dataAgendada}/${hk}`);
+    const snap = await get(slotRef);
+    if (!snap.exists() && (item.status || 'pending') !== 'cancelled') {
+      await set(slotRef, item.status || 'pending');
+    }
+  });
+  await Promise.all(tarefas);
+}
+
 window.confirmar = async (date, hk) => {
   await set(ref(db,`agendamentos/${date}/${hk}`),'confirmed');
+  await atualizarHistoricoPorSlot(date, hk, 'confirmed');
   await registrarAcaoAdmin('confirmou', date, hk);
   showToast('✅ Confirmado! Horário reservado para o cliente.');
 };
 window.cancelar  = async (date, hk) => {
   await set(ref(db,`agendamentos/${date}/${hk}`),'cancelled');
+  await atualizarHistoricoPorSlot(date, hk, 'cancelled');
   await registrarAcaoAdmin('cancelou', date, hk);
   showToast('❌ Cancelado. O horário não está mais ativo.');
 };
 window.liberar   = async (date, hk) => {
   await remove(ref(db,`agendamentos/${date}/${hk}`));
+  await atualizarHistoricoPorSlot(date, hk, 'cancelled');
   await registrarAcaoAdmin('liberou', date, hk);
   showToast('🔓 Slot liberado. O horário voltou a ficar disponível.');
 };
