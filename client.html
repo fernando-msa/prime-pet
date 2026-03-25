@@ -4,58 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Portal do Cliente</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream:#faf7f2; --sand:#e8ddd0; --espresso:#2c1f14; --mocha:#5c3d2e;
-  --gold:#c9a84c; --sage:#7a9e7e; --rust:#b85c38; --light:#f5ede4;
+  --orange:#FF8200; --orange-lt:#FFB347; --orange-bg:#FFF4E6; --cyan:#00BFC8;
+  --dark:#1A1A2E; --dark2:#2D2D44; --white:#FFFFFF; --gray:#F5F5F7; --gray2:#E2E2EA;
+  --green:#3DBE8A; --red:#FF5A5A;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--espresso)}
-.header{background:var(--espresso);padding:26px 20px;text-align:center;color:#fff}
-.header h1{font-family:'Playfair Display',serif;font-size:30px}
-.header h1 span{color:var(--gold)}
-.header p{opacity:.75;font-size:13px;margin-top:6px}
+body{background:var(--gray);font-family:'Nunito',sans-serif;color:var(--dark)}
+.header{background:var(--dark);position:relative;overflow:hidden;padding:0}
+.header-bg-shapes{position:absolute;inset:0;pointer-events:none}
+.header-bg-shapes span{position:absolute;border-radius:50%;opacity:.13}
+.header-bg-shapes span:nth-child(1){width:280px;height:280px;background:var(--orange);top:-90px;left:-70px}
+.header-bg-shapes span:nth-child(2){width:220px;height:220px;background:var(--cyan);bottom:-80px;right:-50px}
+.header-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:34px 18px 28px;gap:8px;color:#fff;text-align:center}
+.logo-badge{display:flex;align-items:center;gap:10px}
+.logo-paw{width:44px;height:44px;background:linear-gradient(135deg,var(--orange),var(--orange-lt));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}
+.logo-text{font-family:'Baloo 2',cursive;font-size:32px;line-height:1}
+.logo-text span{color:var(--orange)}
+.header p{opacity:.78;font-size:12px;margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.header-portals{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.portal-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font-size:12px;font-weight:700}
+.portal-link:hover{background:rgba(255,255,255,.16)}
 .wrap{max-width:900px;margin:0 auto;padding:24px 16px 46px}
-.card{background:#fff;border:1.5px solid var(--sand);border-radius:12px;padding:16px;margin-bottom:14px}
+.card{background:#fff;border:1.5px solid var(--gray2);border-radius:12px;padding:16px;margin-bottom:14px}
 .login-row{display:flex;gap:8px;flex-wrap:wrap}
-input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid var(--sand);border-radius:8px;padding:11px 12px;font-size:14px}
-.btn{border:none;border-radius:8px;padding:11px 16px;background:var(--espresso);color:#fff;cursor:pointer;font-size:13px}
-.btn-outline{background:#fff;border:1.5px solid var(--sand);color:var(--mocha)}
+input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid var(--gray2);border-radius:8px;padding:11px 12px;font-size:14px}
+.btn{border:none;border-radius:8px;padding:11px 16px;background:var(--dark);color:#fff;cursor:pointer;font-size:13px}
+.btn-google{display:inline-flex;align-items:center;gap:8px}
+.g-logo{width:16px;height:16px;display:inline-block}
+.btn-outline{background:#fff;border:1.5px solid var(--gray2);color:var(--dark2)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.tab{border:1.5px solid var(--sand);background:#fff;color:var(--mocha);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px}
-.tab.active{background:var(--espresso);color:#fff;border-color:var(--espresso)}
+.tab{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px}
+.tab.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.subfilters{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
+.subfilter-btn{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:999px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700}
+.subfilter-btn.active{background:var(--orange-bg);border-color:var(--orange);color:var(--dark)}
 .list{display:flex;flex-direction:column;gap:8px}
-.item{border:1px solid var(--sand);border-radius:8px;padding:11px 12px;background:var(--light);font-size:13px;line-height:1.55}
+.item{border:1px solid var(--gray2);border-radius:8px;padding:11px 12px;background:#fff;font-size:13px;line-height:1.55}
 .badge{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;color:#fff}
-.pending{background:#b08800}.confirmed{background:#2c7a3f}.cancelled{background:var(--rust)}
-.muted{color:var(--mocha);opacity:.75;font-size:12px}
-.health{margin-top:6px;border-left:3px solid var(--rust);background:#fff5f0;padding:6px 8px;border-radius:6px}
+.pending{background:#b08800}.confirmed{background:#2c7a3f}.cancelled{background:var(--red)}
+.muted{color:var(--dark2);opacity:.75;font-size:12px}
+.health{margin-top:6px;border-left:3px solid var(--red);background:#fff5f0;padding:6px 8px;border-radius:6px}
 .item-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.btn-sm{border:1.5px solid var(--sand);background:#fff;color:var(--mocha);border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer}
+.btn-sm{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer}
 .btn-sm:disabled{opacity:.45;cursor:not-allowed}
 .hidden{display:none}
 </style>
 </head>
 <body>
   <div class="header">
-    <h1><span>Prime</span> Pet</h1>
-    <p>Portal do Cliente • Acompanhe suas solicitações e seus pets</p>
+    <div class="header-bg-shapes"><span></span><span></span></div>
+    <div class="header-inner">
+      <div class="logo-badge">
+        <div class="logo-paw">🐾</div>
+        <h1 class="logo-text"><span>Prime</span> Pet</h1>
+      </div>
+      <p>Portal do Cliente • Acompanhe suas solicitações e pets</p>
+      <div class="header-portals">
+        <a class="portal-link" href="./index.html">🏠 Home</a>
+        <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
+      </div>
+    </div>
   </div>
 
   <div class="wrap">
     <div class="card">
-      <h2 style="font-family:'Playfair Display',serif;font-size:21px;margin-bottom:10px">Entrar com seus dados</h2>
-      <p class="muted" style="margin-bottom:10px">Entre com código SMS no seu telefone.</p>
+      <h2 style="font-family:'Baloo 2',cursive;font-size:21px;margin-bottom:10px">Entrar com seus dados</h2>
+      <p class="muted" style="margin-bottom:10px">Entre com sua conta Google para acessar suas solicitações.</p>
       <div class="login-row">
-        <input type="tel" id="cliente-telefone" placeholder="(79) 99999-0000">
-        <button class="btn" onclick="enviarCodigoOTP()">Enviar código</button>
-        <input type="text" id="cliente-codigo" placeholder="Código OTP" class="hidden">
-        <button class="btn hidden" id="btn-verificar" onclick="verificarCodigoOTP()">Validar código</button>
+        <button class="btn btn-google" onclick="entrarComGoogle()">
+          <svg class="g-logo" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.2-1.4 3.5-5.5 3.5-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 2.9 14.6 2 12 2 6.5 2 2 6.5 2 12s4.5 10 10 10c5.8 0 9.6-4.1 9.6-9.8 0-.7-.1-1.3-.2-2H12z"/>
+            <path fill="#34A853" d="M2 12c0 1.6.4 3.2 1.2 4.6l3.3-2.5c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2L3.2 7.6C2.4 9 2 10.5 2 12z"/>
+            <path fill="#FBBC05" d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.2-2.6c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1l-3.3 2.5C4.8 19.9 8.1 22 12 22z"/>
+            <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.3-.2-2H12v3.9h5.5c-.3 1.5-1.1 2.7-2.1 3.5l3.2 2.6c1.9-1.8 3-4.5 3-8z"/>
+          </svg>
+          Entrar com Google
+        </button>
         <a class="btn btn-outline" href="./index.html" style="text-decoration:none">Novo agendamento</a>
         <a class="btn btn-outline" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
       </div>
-      <div id="recaptcha-container" style="margin-top:10px"></div>
     </div>
 
     <div class="card hidden" id="portal-card">
@@ -66,18 +97,24 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
         <button class="tab active" onclick="trocarAba('solicitacoes', this)">Solicitações</button>
         <button class="tab" onclick="trocarAba('pets', this)">Meus Pets</button>
       </div>
+      <div class="subfilters" id="solicitacao-filtros">
+        <button class="subfilter-btn active" onclick="setSolicFiltro('all', this)">Todos</button>
+        <button class="subfilter-btn" onclick="setSolicFiltro('pending', this)">Pendentes</button>
+        <button class="subfilter-btn" onclick="setSolicFiltro('confirmed', this)">Confirmados</button>
+        <button class="subfilter-btn" onclick="setSolicFiltro('cancelled', this)">Cancelados</button>
+      </div>
       <div id="aba-solicitacoes" class="list"></div>
       <div id="aba-pets" class="list hidden"></div>
     </div>
 
-    <div class="card" id="portal-msg">Digite telefone + nome do tutor para visualizar seu histórico.</div>
+    <div class="card" id="portal-msg">Entre com Google para visualizar seu histórico.</div>
   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, set, remove, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut
+  getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -94,10 +131,10 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 
 let cacheSolicitacoes = [];
-let otpConfirmation = null;
-let phoneAuthDigits = '';
+let solicFiltroAtual = 'all';
+const params = new URLSearchParams(window.location.search);
+const provider = new GoogleAuthProvider();
 
-function digits(v){ return (v || '').replace(/\D/g,''); }
 function statusBadge(status){
   const s = status || 'pending';
   const txt = s === 'confirmed' ? 'Aceito' : s === 'cancelled' ? 'Cancelado' : 'Pendente';
@@ -105,82 +142,85 @@ function statusBadge(status){
 }
 function podeEditar(status){ return (status || 'pending') === 'pending'; }
 
-function toE164BR(phoneDigits) {
-  if (!phoneDigits) return null;
-  return `+55${phoneDigits}`;
-}
-
 function setMensagemPortal(msg) {
   document.getElementById('portal-msg').textContent = msg;
 }
 
-const recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {
-  size: 'normal'
-});
-
-window.enviarCodigoOTP = async function() {
-  const tel = digits(document.getElementById('cliente-telefone').value);
-  if (![10,11].includes(tel.length)) {
-    setMensagemPortal('Telefone inválido. Use formato brasileiro com DDD.');
-    return;
-  }
-  const e164 = toE164BR(tel);
+async function registrarErro(contexto, erro) {
+  const code = erro?.code || 'unknown';
+  const message = erro?.message || String(erro || 'sem mensagem');
   try {
-    otpConfirmation = await signInWithPhoneNumber(auth, e164, recaptcha);
-    phoneAuthDigits = tel;
-    document.getElementById('cliente-codigo').classList.remove('hidden');
-    document.getElementById('btn-verificar').classList.remove('hidden');
-    setMensagemPortal('Código enviado por SMS. Digite o código para acessar.');
-  } catch (e) {
-    setMensagemPortal('Não foi possível enviar o código. Verifique o número e tente novamente.');
-  }
-};
-
-window.verificarCodigoOTP = async function() {
-  if (!otpConfirmation) {
-    setMensagemPortal('Solicite o código SMS primeiro.');
-    return;
-  }
-  const code = document.getElementById('cliente-codigo').value.trim();
-  if (code.length < 6) {
-    setMensagemPortal('Código inválido. Digite os 6 números recebidos por SMS.');
-    return;
-  }
-  try {
-    await otpConfirmation.confirm(code);
-    setMensagemPortal('Login realizado com sucesso.');
+    await set(push(ref(db, 'logs_erros')), {
+      contexto,
+      code,
+      message: String(message).slice(0, 500),
+      path: window.location.pathname + window.location.search,
+      userAgent: navigator.userAgent,
+      at: Date.now()
+    });
   } catch (_) {
-    setMensagemPortal('Código incorreto ou expirado. Solicite um novo código.');
+    // logging não pode quebrar UX
+  }
+}
+
+function carregarPreCadastro() {
+  const raw = localStorage.getItem('primepet_pre_cadastro');
+  if (!raw) return;
+
+  try {
+    const pre = JSON.parse(raw);
+    if (params.get('cadastro') === '1') {
+      setMensagemPortal(`Pré-cadastro recebido para ${pre?.tutorNome || 'cliente'}. Faça login com Google para concluir.`);
+    }
+  } catch (_) {
+    localStorage.removeItem('primepet_pre_cadastro');
+  }
+}
+
+window.entrarComGoogle = async function() {
+  try {
+    setMensagemPortal('Redirecionando para login Google...');
+    await signInWithRedirect(auth, provider);
+  } catch (e) {
+    const code = e?.code || '';
+    registrarErro('login_google', e);
+    if (code === 'auth/unauthorized-domain') {
+      setMensagemPortal(`Domínio não autorizado no Firebase Auth (${window.location.hostname}). Adicione em Authentication > Settings > Authorized domains.`);
+      return;
+    }
+    setMensagemPortal(`Falha no login com Google (${code || 'erro-desconhecido'}). Tente novamente.`);
   }
 };
 
 async function carregarPortalCliente(user) {
-  const [histSnap, agSnap] = await Promise.all([
-    get(ref(db, 'historico_clientes')),
-    get(ref(db, 'agendamentos'))
-  ]);
-
-  const historicoRaw = histSnap.val() || {};
-  const agRaw = agSnap.val() || {};
+  let historicoRaw = {};
+  try {
+    const histQuery = query(ref(db, 'historico_clientes'), orderByChild('ownerUid'), equalTo(user.uid));
+    const histSnap = await get(histQuery);
+    historicoRaw = histSnap.val() || {};
+  } catch (e) {
+    const code = e?.code || e?.message || '';
+    registrarErro('carregar_portal_cliente', e);
+    console.error('Erro ao carregar portal do cliente:', e);
+    if (String(code).includes('PERMISSION_DENIED')) {
+      setMensagemPortal(`Erro ao carregar dados (${code}). Sem permissão de leitura no banco.`);
+    } else {
+      setMensagemPortal(`Erro ao carregar seus dados (${code || 'desconhecido'}).`);
+    }
+    document.getElementById('portal-card').classList.add('hidden');
+    return;
+  }
 
   cacheSolicitacoes = Object.entries(historicoRaw)
     .map(([id, item]) => ({ id, ...item }))
-    .filter(item => item.ownerUid === user.uid || (!item.ownerUid && digits(item.telefone) === phoneAuthDigits))
     .map(item => {
-      const hk = (item.horaAgendada || '').replace(':','');
-      const statusAtual = agRaw?.[item.dataAgendada || '']?.[hk] || item.status || 'pending';
+      const statusAtual = item.status || 'pending';
       return { ...item, statusAtual };
     })
     .sort((a,b) => (b.criadoEm||0) - (a.criadoEm||0));
 
-  await Promise.all(
-    cacheSolicitacoes
-      .filter(item => !item.ownerUid)
-      .map(item => set(ref(db, `historico_clientes/${item.id}/ownerUid`), user.uid))
-  );
-
   if (!cacheSolicitacoes.length) {
-    setMensagemPortal('Nenhuma solicitação encontrada para este login.');
+    setMensagemPortal('Nenhuma solicitação encontrada para esta conta Google.');
     document.getElementById('portal-card').classList.add('hidden');
     return;
   }
@@ -195,18 +235,48 @@ window.sairPortal = async function() {
   await signOut(auth);
   cacheSolicitacoes = [];
   document.getElementById('portal-card').classList.add('hidden');
+  localStorage.removeItem('primepet_client_session');
   setMensagemPortal('Você saiu do portal do cliente.');
 };
 
 onAuthStateChanged(auth, user => {
-  if (user) carregarPortalCliente(user);
+  if (user) {
+    localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
+    carregarPortalCliente(user).catch(err => {
+      registrarErro('auth_state_changed', err);
+      console.error('Falha inesperada ao abrir portal:', err);
+      setMensagemPortal(`Falha ao abrir o portal (${err?.code || 'desconhecido'}).`);
+    });
+    return;
+  }
+  localStorage.removeItem('primepet_client_session');
 });
+
+getRedirectResult(auth).catch(e => {
+  const code = e?.code || '';
+  registrarErro('redirect_result', e);
+  if (code === 'auth/unauthorized-domain') {
+    setMensagemPortal(`Domínio não autorizado no Firebase Auth (${window.location.hostname}). Adicione em Authentication > Settings > Authorized domains.`);
+    return;
+  }
+  if (code) setMensagemPortal(`Falha ao concluir login com Google (${code}).`);
+});
+
+carregarPreCadastro();
 
 window.trocarAba = function(aba, btn){
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('aba-solicitacoes').classList.toggle('hidden', aba !== 'solicitacoes');
   document.getElementById('aba-pets').classList.toggle('hidden', aba !== 'pets');
+  document.getElementById('solicitacao-filtros').classList.toggle('hidden', aba !== 'solicitacoes');
+};
+
+window.setSolicFiltro = function(filtro, btn) {
+  solicFiltroAtual = filtro;
+  document.querySelectorAll('.subfilter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSolicitacoes();
 };
 
 async function atualizarSolicitacaoLocal(id) {
@@ -264,7 +334,23 @@ window.remarcarSolicitacao = async function(id){
 function renderSolicitacoes(){
   const box = document.getElementById('aba-solicitacoes');
   box.innerHTML = '';
-  cacheSolicitacoes.forEach(s => {
+  const itens = solicFiltroAtual === 'all'
+    ? cacheSolicitacoes
+    : cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === solicFiltroAtual);
+
+  if (!itens.length) {
+    box.innerHTML = `
+      <div class="item">
+        Nenhuma solicitação nesse filtro.<br>
+        <div class="item-actions">
+          <a class="btn-sm" href="./index.html" style="text-decoration:none">Novo agendamento</a>
+          <a class="btn-sm" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  itens.forEach(s => {
     const data = s.dataAgendada ? s.dataAgendada.split('-').reverse().join('/') : 'Sem data';
     const editavel = podeEditar(s.statusAtual);
     const item = document.createElement('div');
