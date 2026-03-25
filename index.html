@@ -4,153 +4,247 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Contrato de Serviços</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream: #faf7f2;
-  --sand: #e8ddd0;
-  --espresso: #2c1f14;
-  --mocha: #5c3d2e;
-  --gold: #c9a84c;
-  --sage: #7a9e7e;
-  --rust: #b85c38;
-  --light-mocha: #f0e8df;
+  --orange:     #FF8200;
+  --orange-lt:  #FFB347;
+  --orange-bg:  #FFF4E6;
+  --cyan:       #00BFC8;
+  --cyan-lt:    #7EE8EC;
+  --cyan-bg:    #E6FAFB;
+  --dark:       #1A1A2E;
+  --dark2:      #2D2D44;
+  --white:      #FFFFFF;
+  --gray:       #F5F5F7;
+  --gray2:      #E2E2EA;
+  --gray3:      #9898A8;
+  --green:      #3DBE8A;
+  --red:        #FF5A5A;
+  --radius:     16px;
+  --radius-sm:  10px;
+  --shadow:     0 8px 32px rgba(26,26,46,.10);
+  --shadow-lg:  0 16px 56px rgba(26,26,46,.16);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
 body {
-  background-color: var(--cream);
-  color: var(--espresso);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 300;
+  font-family: 'Nunito', sans-serif;
+  background: var(--gray);
+  color: var(--dark);
   min-height: 100vh;
-  padding: 0;
+  overflow-x: hidden;
 }
 
-/* Decorative header band */
-.header-band {
-  background: var(--espresso);
-  padding: 40px 24px 36px;
-  text-align: center;
+/* ── HEADER ── */
+.header {
+  background: var(--dark);
   position: relative;
   overflow: hidden;
+  padding: 0;
 }
-.header-band::before {
-  content: '';
+.header-bg-shapes {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.header-bg-shapes span {
   position: absolute;
-  top: -60px; left: -60px;
-  width: 200px; height: 200px;
   border-radius: 50%;
-  background: rgba(201,168,76,0.12);
+  opacity: .13;
 }
-.header-band::after {
-  content: '';
-  position: absolute;
-  bottom: -80px; right: -40px;
-  width: 260px; height: 260px;
-  border-radius: 50%;
-  background: rgba(201,168,76,0.08);
+.header-bg-shapes span:nth-child(1) {
+  width: 360px; height: 360px;
+  background: var(--orange);
+  top: -120px; left: -80px;
 }
-.brand-mark {
-  font-family: 'Playfair Display', serif;
-  font-size: 11px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 10px;
+.header-bg-shapes span:nth-child(2) {
+  width: 280px; height: 280px;
+  background: var(--cyan);
+  bottom: -100px; right: -60px;
 }
-.header-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(28px, 6vw, 44px);
-  color: #fff;
-  line-height: 1.1;
-  position: relative;
-  z-index: 1;
-}
-.header-title span { color: var(--gold); }
-.header-sub {
-  font-size: 13px;
-  color: rgba(255,255,255,0.5);
-  margin-top: 8px;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
-}
-.paw-deco {
-  font-size: 22px;
-  margin: 12px 0 0;
-  opacity: 0.4;
-  letter-spacing: 8px;
+.header-bg-shapes span:nth-child(3) {
+  width: 160px; height: 160px;
+  background: var(--orange-lt);
+  top: 20px; right: 120px;
 }
 
-/* Form wrapper */
-.form-wrap {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 40px 20px 60px;
+.header-inner {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 48px 24px 40px;
+  gap: 8px;
 }
 
-/* Section */
-.section {
-  margin-bottom: 36px;
-  animation: fadeUp 0.5s ease both;
+.logo-badge {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
 }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.section:nth-child(1) { animation-delay: 0.05s }
-.section:nth-child(2) { animation-delay: 0.10s }
-.section:nth-child(3) { animation-delay: 0.15s }
-.section:nth-child(4) { animation-delay: 0.20s }
-.section:nth-child(5) { animation-delay: 0.25s }
-.section:nth-child(6) { animation-delay: 0.30s }
-.section:nth-child(7) { animation-delay: 0.35s }
-.section:nth-child(8) { animation-delay: 0.40s }
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1.5px solid var(--sand);
-}
-.section-num {
-  background: var(--espresso);
-  color: var(--gold);
-  font-family: 'Playfair Display', serif;
-  font-size: 13px;
-  width: 32px; height: 32px;
+.logo-paw {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-lt));
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 18px rgba(255,130,0,.45);
+  animation: pulse-logo 2.8s ease-in-out infinite;
+}
+@keyframes pulse-logo {
+  0%,100% { transform: scale(1); box-shadow: 0 4px 18px rgba(255,130,0,.45); }
+  50%      { transform: scale(1.07); box-shadow: 0 6px 28px rgba(255,130,0,.65); }
+}
+.logo-text {
+  font-family: 'Baloo 2', cursive;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--white);
+  letter-spacing: -1px;
+}
+.logo-text span { color: var(--orange); }
+
+.header-tagline {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--cyan-lt);
+}
+.header-contract-label {
+  margin-top: 10px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 30px;
+  padding: 6px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  letter-spacing: 1px;
+}
+.header-paws {
+  margin-top: 14px;
+  font-size: 20px;
+  letter-spacing: 10px;
+  opacity: .35;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  background: var(--dark2);
+  padding: 0 24px;
+  position: sticky; top: 0; z-index: 100;
+}
+.progress-steps {
+  max-width: 760px; margin: 0 auto;
+  display: flex; align-items: center;
+  padding: 12px 0;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.progress-steps::-webkit-scrollbar { display: none; }
+.step-item {
+  display: flex; align-items: center; gap: 0;
   flex-shrink: 0;
 }
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--espresso);
+.step-dot {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  border: 2px solid rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+  color: rgba(255,255,255,.4);
+  transition: all .3s;
+  cursor: pointer;
+  position: relative;
 }
-.section-icon { font-size: 18px; margin-left: auto; opacity: 0.5; }
+.step-dot.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(255,130,0,.22);
+}
+.step-dot.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+.step-line {
+  width: 32px; height: 2px;
+  background: rgba(255,255,255,.1);
+  transition: background .3s;
+}
+.step-line.done { background: var(--green); }
 
-/* Grid */
-.grid { display: grid; gap: 16px; }
+/* ── MAIN WRAP ── */
+.main-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+/* ── SECTION CARD ── */
+.section-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+  animation: fadeUp .45s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section-card:nth-child(1)  { animation-delay: .04s }
+.section-card:nth-child(2)  { animation-delay: .08s }
+.section-card:nth-child(3)  { animation-delay: .12s }
+.section-card:nth-child(4)  { animation-delay: .16s }
+.section-card:nth-child(5)  { animation-delay: .20s }
+.section-card:nth-child(6)  { animation-delay: .24s }
+.section-card:nth-child(7)  { animation-delay: .28s }
+.section-card:nth-child(8)  { animation-delay: .32s }
+
+.card-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 20px 24px 16px;
+  border-bottom: 1.5px solid var(--gray2);
+}
+.card-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-lt));
+  color: white; font-weight: 900; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(255,130,0,.35);
+}
+.card-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 17px; font-weight: 700;
+  color: var(--dark);
+  flex: 1;
+}
+.card-icon { font-size: 22px; opacity: .65; }
+
+.card-body { padding: 22px 24px; }
+
+/* ── FIELDS ── */
+.grid { display: grid; gap: 14px; }
 .grid-2 { grid-template-columns: 1fr 1fr; }
 .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-@media (max-width: 560px) {
+.span2  { grid-column: span 2; }
+@media (max-width: 540px) {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .span2 { grid-column: span 1; }
 }
 
-/* Field */
+.field { display: flex; flex-direction: column; gap: 6px; }
 .field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--mocha);
-  margin-bottom: 6px;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 1.8px; text-transform: uppercase;
+  color: var(--gray3);
 }
 .field input[type="text"],
 .field input[type="tel"],
@@ -158,513 +252,643 @@ body {
 .field input[type="number"],
 .field select,
 .field textarea {
-  width: 100%;
-  background: #fff;
-  border: 1.5px solid var(--sand);
-  border-radius: 8px;
+  background: var(--gray);
+  border: 2px solid var(--gray2);
+  border-radius: var(--radius-sm);
   padding: 11px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--espresso);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 600;
+  color: var(--dark);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color .2s, box-shadow .2s, background .2s;
   -webkit-appearance: none;
 }
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--mocha);
-  box-shadow: 0 0 0 3px rgba(92,61,46,0.10);
+  border-color: var(--orange);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(255,130,0,.12);
 }
 .field textarea { min-height: 80px; resize: vertical; }
-.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c3d2e'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
-
-/* Radio / Checkbox cards */
-.radio-group, .check-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 2px;
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23FF8200'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-color: var(--gray);
+  padding-right: 36px; cursor: pointer;
 }
-.radio-group label, .check-group label {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: #fff;
-  border: 1.5px solid var(--sand);
-  border-radius: 8px;
-  padding: 9px 14px;
+
+/* ── RADIO / CHECK CHIPS ── */
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-group label {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gray);
+  border: 2px solid var(--gray2);
+  border-radius: 30px;
+  padding: 8px 16px;
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--espresso);
-  transition: all 0.18s;
+  font-size: 13px; font-weight: 700;
+  color: var(--dark);
+  transition: all .18s;
   user-select: none;
+  letter-spacing: 0; text-transform: none;
 }
-.radio-group input, .check-group input { display: none; }
-.radio-group label:has(input:checked),
-.check-group label:has(input:checked) {
-  background: var(--espresso);
-  color: #fff;
-  border-color: var(--espresso);
+.chip-group input { display: none; }
+.chip-group label:has(input:checked) {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: white;
+  box-shadow: 0 4px 14px rgba(255,130,0,.30);
 }
-.radio-group label:hover, .check-group label:hover {
-  border-color: var(--mocha);
-}
+.chip-group label:hover { border-color: var(--orange); }
 
-/* Conditional fields */
+/* ── CONDITIONAL ── */
 .cond-field {
-  display: none;
-  margin-top: 10px;
-  padding: 14px;
-  background: var(--light-mocha);
-  border-radius: 8px;
-  border-left: 3px solid var(--gold);
+  display: none; margin-top: 10px;
+  padding: 14px 16px;
+  background: var(--orange-bg);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--orange);
 }
 .cond-field.visible { display: block; }
-.cond-field label {
-  font-size: 11px !important;
-  margin-bottom: 6px !important;
-}
+.cond-field label { font-size: 11px !important; margin-bottom: 6px; }
 .cond-field input[type="text"] {
-  background: #fff;
-  border: 1.5px solid var(--sand);
-  border-radius: 6px;
-  padding: 9px 12px;
-  width: 100%;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--espresso);
-  outline: none;
+  background: white;
+  border: 2px solid var(--gray2);
+  border-radius: 8px;
+  padding: 9px 12px; width: 100%;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 600;
+  color: var(--dark); outline: none;
 }
-.cond-field input:focus { border-color: var(--mocha); }
+.cond-field input:focus { border-color: var(--orange); }
 
-/* Info card */
-.info-card {
-  background: var(--light-mocha);
+/* ── CALENDAR SCHEDULER ── */
+.scheduler {
+  display: flex; flex-direction: column; gap: 20px;
+}
+.cal-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.cal-month {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px; font-weight: 800;
+  color: var(--dark);
+}
+.cal-arrow {
+  width: 36px; height: 36px;
+  background: var(--gray); border: 2px solid var(--gray2);
+  border-radius: 50%; cursor: pointer;
+  font-size: 16px; font-weight: 900;
+  color: var(--dark2);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .18s;
+}
+.cal-arrow:hover { background: var(--orange); border-color: var(--orange); color: white; }
+
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-weekday {
+  text-align: center;
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gray3);
+  padding: 6px 0;
+}
+.cal-day {
+  aspect-ratio: 1;
   border-radius: 10px;
-  padding: 16px 18px;
-  font-size: 13px;
-  color: var(--mocha);
-  line-height: 1.7;
-  margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  transition: all .18s;
+  border: 2px solid transparent;
+  color: var(--dark2);
+  background: var(--gray);
+  position: relative;
 }
-.info-card strong { color: var(--espresso); font-weight: 500; }
+.cal-day:hover:not(.disabled):not(.empty) {
+  background: var(--orange-bg);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+.cal-day.selected {
+  background: var(--orange) !important;
+  border-color: var(--orange) !important;
+  color: white !important;
+  box-shadow: 0 4px 14px rgba(255,130,0,.38);
+}
+.cal-day.today {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  font-weight: 900;
+}
+.cal-day.disabled {
+  opacity: .28; cursor: default;
+}
+.cal-day.empty {
+  background: transparent; cursor: default;
+}
+.cal-day.has-dot::after {
+  content: '';
+  position: absolute; bottom: 4px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
 
-/* Responsibilities */
-.resp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 560px) { .resp-grid { grid-template-columns: 1fr; } }
+/* Time slots */
+.time-label {
+  font-size: 13px; font-weight: 800;
+  color: var(--gray3); letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+@media (max-width: 400px) { .time-grid { grid-template-columns: repeat(2,1fr); } }
+
+.time-slot {
+  background: var(--gray);
+  border: 2px solid var(--gray2);
+  border-radius: var(--radius-sm);
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .18s;
+  position: relative;
+  overflow: hidden;
+}
+.time-slot:hover:not(.closed) {
+  border-color: var(--cyan);
+  background: var(--cyan-bg);
+}
+.time-slot.selected {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: white;
+  box-shadow: 0 4px 14px rgba(0,191,200,.35);
+}
+.time-slot.closed {
+  opacity: .35; cursor: default;
+  text-decoration: line-through;
+}
+.time-slot .t-hour {
+  font-size: 15px; font-weight: 800;
+  display: block; line-height: 1.2;
+}
+.time-slot .t-end {
+  font-size: 10px; font-weight: 600;
+  opacity: .65; display: block;
+}
+.time-slot.closed .t-end::after { content: ' – fechado'; }
+
+.selected-summary {
+  background: linear-gradient(135deg, var(--orange), var(--orange-lt));
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  display: none; gap: 10px; align-items: center;
+  color: white;
+}
+.selected-summary.visible { display: flex; }
+.selected-summary .ss-icon { font-size: 24px; }
+.selected-summary .ss-text { font-size: 14px; font-weight: 700; line-height: 1.5; }
+.selected-summary .ss-text strong { font-size: 16px; display: block; }
+
+/* ── RESP CARDS ── */
+.resp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 540px) { .resp-grid { grid-template-columns: 1fr; } }
 .resp-card {
-  background: #fff;
-  border: 1.5px solid var(--sand);
-  border-radius: 10px;
+  background: var(--gray);
+  border: 2px solid var(--gray2);
+  border-radius: var(--radius-sm);
   padding: 18px;
 }
 .resp-card h4 {
-  font-family: 'Playfair Display', serif;
-  font-size: 14px;
-  margin-bottom: 12px;
-  color: var(--espresso);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 14px; font-weight: 700;
+  color: var(--dark); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
 }
-.resp-card ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.resp-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 .resp-card ul li {
-  font-size: 13px;
-  color: var(--mocha);
-  padding-left: 16px;
-  position: relative;
-  line-height: 1.5;
+  font-size: 13px; font-weight: 600;
+  color: var(--dark2); padding-left: 18px; position: relative; line-height: 1.5;
 }
 .resp-card ul li::before {
-  content: '–';
-  position: absolute;
-  left: 0;
-  color: var(--gold);
+  content: '🐾'; position: absolute; left: 0; font-size: 10px; top: 2px;
 }
 
-/* Authorization toggles */
+/* ── TOGGLE AUTH ── */
 .auth-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff;
-  border: 1.5px solid var(--sand);
-  border-radius: 10px;
-  padding: 16px 18px;
-  margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--gray); border: 2px solid var(--gray2);
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px;
+  gap: 12px;
 }
-.auth-label {
-  font-size: 14px;
-  color: var(--espresso);
-  max-width: 78%;
-  line-height: 1.4;
-}
-.toggle-wrap { display: flex; gap: 8px; }
+.auth-label { font-size: 13px; font-weight: 600; color: var(--dark); line-height: 1.4; flex: 1; }
+.toggle-wrap { display: flex; gap: 6px; flex-shrink: 0; }
 .toggle-btn {
-  border: 1.5px solid var(--sand);
-  background: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  color: var(--mocha);
-  transition: all 0.18s;
+  border: 2px solid var(--gray2); background: none;
+  border-radius: 8px; padding: 7px 14px;
+  font-size: 12px; font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer; color: var(--gray3);
+  transition: all .18s; letter-spacing: .5px;
 }
-.toggle-btn.active-yes { background: var(--sage); color: #fff; border-color: var(--sage); }
-.toggle-btn.active-no { background: var(--rust); color: #fff; border-color: var(--rust); }
+.toggle-btn.active-yes { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 3px 10px rgba(61,190,138,.3); }
+.toggle-btn.active-no  { background: var(--red);   color: white; border-color: var(--red);   box-shadow: 0 3px 10px rgba(255,90,90,.3); }
 
-/* Notice box */
+/* ── NOTICE ── */
 .notice {
-  background: var(--espresso);
-  color: rgba(255,255,255,0.82);
-  border-radius: 10px;
-  padding: 16px 18px;
-  font-size: 13px;
-  line-height: 1.7;
+  background: var(--dark); color: rgba(255,255,255,.8);
+  border-radius: var(--radius-sm); padding: 18px;
+  font-size: 13px; font-weight: 600; line-height: 1.8;
 }
-.notice strong { color: var(--gold); }
+.notice strong { color: var(--orange-lt); }
 
-/* Signature area */
-.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 560px) { .sig-row { grid-template-columns: 1fr; } }
-.sig-box {
-  border: 1.5px dashed var(--sand);
-  border-radius: 10px;
-  padding: 24px;
-  text-align: center;
-  background: #fff;
+.info-card {
+  background: var(--cyan-bg); border: 2px solid var(--cyan-lt);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  font-size: 13px; font-weight: 600; color: var(--dark2); line-height: 1.6;
 }
-.sig-box-label {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--mocha);
-  margin-bottom: 40px;
-  font-weight: 500;
-}
-.sig-line {
-  border-top: 1px solid var(--sand);
-  margin-top: 8px;
-  padding-top: 8px;
-  font-size: 11px;
-  color: #aaa;
-}
+.info-card strong { color: var(--cyan); }
 
-/* Submit */
-.submit-wrap { text-align: center; margin-top: 40px; }
+/* ── SUBMIT ── */
+.submit-wrap { text-align: center; margin-top: 12px; padding: 0 4px; }
 .btn-submit {
-  background: var(--espresso);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 16px 48px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  transition: background 0.2s, transform 0.15s;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-lt));
+  color: white; border: none; border-radius: var(--radius);
+  padding: 18px 52px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 17px; font-weight: 800;
+  cursor: pointer; letter-spacing: .5px;
+  transition: transform .15s, box-shadow .2s;
+  display: inline-flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 28px rgba(255,130,0,.38);
+  width: 100%; justify-content: center; max-width: 400px;
 }
-.btn-submit:hover { background: var(--mocha); transform: translateY(-1px); }
-.btn-submit:active { transform: translateY(0); }
+.btn-submit:hover   { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,130,0,.48); }
+.btn-submit:active  { transform: translateY(0); }
 
-/* Footer */
+/* ── FOOTER ── */
 .form-footer {
-  text-align: center;
-  margin-top: 32px;
-  font-size: 12px;
-  color: #aaa;
-  letter-spacing: 0.5px;
+  text-align: center; margin-top: 36px;
+  font-size: 12px; font-weight: 600; color: var(--gray3); line-height: 2;
 }
-.form-footer a { color: var(--mocha); text-decoration: none; }
+.form-footer a { color: var(--orange); text-decoration: none; font-weight: 700; }
+.footer-logo {
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px; font-weight: 800;
+  color: var(--dark); margin-bottom: 4px;
+}
+.footer-logo span { color: var(--orange); }
 
-/* Print */
+/* ── TOAST ── */
+#toast {
+  display: none; position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark); color: white;
+  border-radius: 14px; padding: 14px 24px;
+  font-size: 14px; font-weight: 700;
+  z-index: 9999; box-shadow: var(--shadow-lg);
+  max-width: 90vw; text-align: center;
+  font-family: 'Nunito', sans-serif;
+  border-left: 4px solid var(--orange);
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+
 @media print {
-  body { background: #fff; }
-  .btn-submit, .form-footer { display: none; }
-  .section { animation: none; }
+  body { background: white; }
+  .progress-wrap, .btn-submit, .form-footer { display: none; }
+  .section-card { animation: none; box-shadow: none; border: 1px solid #ddd; }
 }
 </style>
 </head>
 <body>
 
-<div class="header-band">
-  <p class="brand-mark">Passeios &amp; Banhos</p>
-  <h1 class="header-title"><span>Prime</span> Pet</h1>
-  <p class="header-sub">Contrato de Prestação de Serviços</p>
-  <p class="paw-deco">🐾 🐾 🐾</p>
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-bg-shapes">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="header-inner">
+    <div class="logo-badge">
+      <div class="logo-paw">🐾</div>
+      <div class="logo-text"><span>Prime</span> Pet</div>
+    </div>
+    <p class="header-tagline">Passeios &amp; Banhos</p>
+    <div class="header-contract-label">📋 Contrato de Prestação de Serviços</div>
+    <p class="header-paws">🐾 🐾 🐾</p>
+  </div>
+</header>
+
+<!-- ── PROGRESS ── -->
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressSteps">
+    <div class="step-item"><div class="step-dot active" id="dot1">1</div></div>
+    <div class="step-item"><div class="step-line" id="line1"></div><div class="step-dot" id="dot2">2</div></div>
+    <div class="step-item"><div class="step-line" id="line2"></div><div class="step-dot" id="dot3">3</div></div>
+    <div class="step-item"><div class="step-line" id="line3"></div><div class="step-dot" id="dot4">4</div></div>
+    <div class="step-item"><div class="step-line" id="line4"></div><div class="step-dot" id="dot5">5</div></div>
+    <div class="step-item"><div class="step-line" id="line5"></div><div class="step-dot" id="dot6">6</div></div>
+    <div class="step-item"><div class="step-line" id="line6"></div><div class="step-dot" id="dot7">7</div></div>
+    <div class="step-item"><div class="step-line" id="line7"></div><div class="step-dot" id="dot8">8</div></div>
+  </div>
 </div>
 
-<div class="form-wrap">
+<!-- ── MAIN ── -->
+<main class="main-wrap">
 
   <!-- 1. TUTOR -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">1</div>
-      <h2 class="section-title">Dados do Tutor</h2>
-      <span class="section-icon">👤</span>
+  <div class="section-card" data-section="1">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <h2 class="card-title">Dados do Tutor</h2>
+      <span class="card-icon">👤</span>
     </div>
-    <div class="grid grid-2">
-      <div class="field" style="grid-column: span 2">
-        <label>Nome completo</label>
-        <input type="text" id="tutor_nome" placeholder="Nome completo do tutor">
-      </div>
-      <div class="field">
-        <label>Telefone / WhatsApp</label>
-        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000">
-      </div>
-      <div class="field">
-        <label>Data de hoje</label>
-        <input type="date" id="data_hoje">
-      </div>
-      <div class="field" style="grid-column: span 2">
-        <label>Endereço</label>
-        <input type="text" id="tutor_endereco" placeholder="Rua, número, bairro, cidade">
+    <div class="card-body">
+      <div class="grid grid-2">
+        <div class="field span2">
+          <label>Nome completo</label>
+          <input type="text" id="tutor_nome" placeholder="Nome completo do tutor">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp</label>
+          <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000">
+        </div>
+        <div class="field">
+          <label>Data de hoje</label>
+          <input type="date" id="data_hoje">
+        </div>
+        <div class="field span2">
+          <label>Endereço</label>
+          <input type="text" id="tutor_endereco" placeholder="Rua, número, bairro, cidade">
+        </div>
       </div>
     </div>
   </div>
 
   <!-- 2. PET -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">2</div>
-      <h2 class="section-title">Dados do Pet</h2>
-      <span class="section-icon">🐶</span>
+  <div class="section-card" data-section="2">
+    <div class="card-header">
+      <div class="card-num">2</div>
+      <h2 class="card-title">Dados do Pet</h2>
+      <span class="card-icon">🐶</span>
     </div>
-    <div class="grid grid-2">
-      <div class="field">
-        <label>Nome do pet</label>
-        <input type="text" id="pet_nome" placeholder="Como ele se chama?">
-      </div>
-      <div class="field">
-        <label>Raça</label>
-        <input type="text" id="pet_raca" placeholder="Ex: Golden Retriever, SRD…">
-      </div>
-      <div class="field">
-        <label>Idade</label>
-        <input type="text" id="pet_idade" placeholder="Ex: 2 anos">
-      </div>
-      <div class="field">
-        <label>Peso (kg)</label>
-        <input type="number" id="pet_peso" placeholder="Ex: 8" min="0" step="0.1">
-      </div>
-      <div class="field" style="grid-column: span 2">
-        <label>Sexo</label>
-        <div class="radio-group">
-          <label><input type="radio" name="sexo" value="macho"> ♂ Macho</label>
-          <label><input type="radio" name="sexo" value="femea"> ♀ Fêmea</label>
+    <div class="card-body">
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Nome do pet</label>
+          <input type="text" id="pet_nome" placeholder="Como ele se chama?">
+        </div>
+        <div class="field">
+          <label>Raça</label>
+          <input type="text" id="pet_raca" placeholder="Ex: Golden Retriever, SRD…">
+        </div>
+        <div class="field">
+          <label>Idade</label>
+          <input type="text" id="pet_idade" placeholder="Ex: 2 anos">
+        </div>
+        <div class="field">
+          <label>Peso (kg)</label>
+          <input type="number" id="pet_peso" placeholder="Ex: 8" min="0" step="0.1">
+        </div>
+        <div class="field span2">
+          <label>Sexo</label>
+          <div class="chip-group">
+            <label><input type="radio" name="sexo" value="Macho"> ♂ Macho</label>
+            <label><input type="radio" name="sexo" value="Fêmea"> ♀ Fêmea</label>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- 3. SAÚDE -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">3</div>
-      <h2 class="section-title">Condições de Saúde</h2>
-      <span class="section-icon">🏥</span>
+  <div class="section-card" data-section="3">
+    <div class="card-header">
+      <div class="card-num">3</div>
+      <h2 class="card-title">Condições de Saúde</h2>
+      <span class="card-icon">🏥</span>
     </div>
-    <div class="grid">
-      <div class="field">
-        <label>Vacinação em dia?</label>
-        <div class="radio-group">
-          <label><input type="radio" name="vacina" value="sim"> ✓ Sim</label>
-          <label><input type="radio" name="vacina" value="nao"> ✗ Não</label>
+    <div class="card-body">
+      <div class="grid">
+        <div class="field">
+          <label>Vacinação em dia?</label>
+          <div class="chip-group">
+            <label><input type="radio" name="vacina" value="Sim"> ✓ Sim</label>
+            <label><input type="radio" name="vacina" value="Não"> ✗ Não</label>
+          </div>
         </div>
-      </div>
-      <div class="field">
-        <label>Possui alguma doença ou comorbidade?</label>
-        <div class="radio-group" id="doenca-grp">
-          <label><input type="radio" name="doenca" value="nao" onchange="toggle('doenca-detail', false)"> Não</label>
-          <label><input type="radio" name="doenca" value="sim" onchange="toggle('doenca-detail', true)"> Sim</label>
+        <div class="field">
+          <label>Possui alguma doença ou comorbidade?</label>
+          <div class="chip-group">
+            <label><input type="radio" name="doenca" value="Não" onchange="toggle('doenca-detail',false)"> Não</label>
+            <label><input type="radio" name="doenca" value="Sim" onchange="toggle('doenca-detail',true)"> Sim</label>
+          </div>
+          <div class="cond-field" id="doenca-detail">
+            <label>Qual(is) doença(s)?</label>
+            <input type="text" id="doenca_desc" placeholder="Descreva aqui">
+          </div>
         </div>
-        <div class="cond-field" id="doenca-detail">
-          <label>Qual(is) doença(s)?</label>
-          <input type="text" id="doenca_desc" placeholder="Descreva aqui">
+        <div class="field">
+          <label>Faz uso de medicação?</label>
+          <div class="chip-group">
+            <label><input type="radio" name="med" value="Não" onchange="toggle('med-detail',false)"> Não</label>
+            <label><input type="radio" name="med" value="Sim" onchange="toggle('med-detail',true)"> Sim</label>
+          </div>
+          <div class="cond-field" id="med-detail">
+            <label>Qual(is) medicação(ões) e horários?</label>
+            <input type="text" id="med_desc" placeholder="Ex: Comfortis 10mg – 1x ao dia, às 8h">
+          </div>
         </div>
-      </div>
-      <div class="field">
-        <label>Faz uso de medicação?</label>
-        <div class="radio-group">
-          <label><input type="radio" name="med" value="nao" onchange="toggle('med-detail', false)"> Não</label>
-          <label><input type="radio" name="med" value="sim" onchange="toggle('med-detail', true)"> Sim</label>
-        </div>
-        <div class="cond-field" id="med-detail">
-          <label>Qual(is) medicação(ões) e horários?</label>
-          <input type="text" id="med_desc" placeholder="Ex: Comfortis 10mg – 1x ao dia, às 8h">
-        </div>
-      </div>
-      <div class="field">
-        <label>Possui alergias?</label>
-        <div class="radio-group">
-          <label><input type="radio" name="alergia" value="nao" onchange="toggle('alergia-detail', false)"> Não</label>
-          <label><input type="radio" name="alergia" value="sim" onchange="toggle('alergia-detail', true)"> Sim</label>
-        </div>
-        <div class="cond-field" id="alergia-detail">
-          <label>Qual(is) alergia(s)?</label>
-          <input type="text" id="alergia_desc" placeholder="Ex: alergia a certos shampoos, alimentos…">
+        <div class="field">
+          <label>Possui alergias?</label>
+          <div class="chip-group">
+            <label><input type="radio" name="alergia" value="Não" onchange="toggle('alergia-detail',false)"> Não</label>
+            <label><input type="radio" name="alergia" value="Sim" onchange="toggle('alergia-detail',true)"> Sim</label>
+          </div>
+          <div class="cond-field" id="alergia-detail">
+            <label>Qual(is) alergia(s)?</label>
+            <input type="text" id="alergia_desc" placeholder="Ex: alergia a certos shampoos, alimentos…">
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- 4. COMPORTAMENTO -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">4</div>
-      <h2 class="section-title">Comportamento do Pet</h2>
-      <span class="section-icon">🐾</span>
+  <div class="section-card" data-section="4">
+    <div class="card-header">
+      <div class="card-num">4</div>
+      <h2 class="card-title">Comportamento do Pet</h2>
+      <span class="card-icon">🐾</span>
     </div>
-    <div class="grid">
-      <div class="field">
-        <label>Perfil geral (pode marcar mais de um)</label>
-        <div class="check-group">
-          <label><input type="checkbox" name="comp" value="Dócil"> 😇 Dócil</label>
-          <label><input type="checkbox" name="comp" value="Agressivo"> 😠 Agressivo</label>
-          <label><input type="checkbox" name="comp" value="Medroso"> 😨 Medroso</label>
-          <label><input type="checkbox" name="comp" value="Agitado"> ⚡ Agitado</label>
-        </div>
-      </div>
-      <div class="grid grid-2">
+    <div class="card-body">
+      <div class="grid">
         <div class="field">
-          <label>Já apresentou comportamento agressivo?</label>
-          <div class="radio-group">
-            <label><input type="radio" name="agress" value="sim"> Sim</label>
-            <label><input type="radio" name="agress" value="nao"> Não</label>
+          <label>Perfil geral (pode marcar mais de um)</label>
+          <div class="chip-group">
+            <label><input type="checkbox" name="comp" value="Dócil"> 😇 Dócil</label>
+            <label><input type="checkbox" name="comp" value="Agressivo"> 😠 Agressivo</label>
+            <label><input type="checkbox" name="comp" value="Medroso"> 😨 Medroso</label>
+            <label><input type="checkbox" name="comp" value="Agitado"> ⚡ Agitado</label>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Já apresentou comportamento agressivo?</label>
+            <div class="chip-group">
+              <label><input type="radio" name="agress" value="Sim"> Sim</label>
+              <label><input type="radio" name="agress" value="Não"> Não</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Costuma fugir / escapar?</label>
+            <div class="chip-group">
+              <label><input type="radio" name="fuga" value="Sim"> Sim</label>
+              <label><input type="radio" name="fuga" value="Não"> Não</label>
+            </div>
           </div>
         </div>
         <div class="field">
-          <label>Costuma fugir / escapar?</label>
-          <div class="radio-group">
-            <label><input type="radio" name="fuga" value="sim"> Sim</label>
-            <label><input type="radio" name="fuga" value="nao"> Não</label>
-          </div>
+          <label>Observações adicionais sobre comportamento</label>
+          <textarea id="obs_comp" placeholder="Qualquer detalhe que nos ajude a cuidar melhor do seu pet…"></textarea>
         </div>
-      </div>
-      <div class="field">
-        <label>Observações adicionais sobre comportamento</label>
-        <textarea id="obs_comp" placeholder="Qualquer detalhe que nos ajude a cuidar melhor do seu pet…"></textarea>
       </div>
     </div>
   </div>
 
-  <!-- 5. SERVIÇOS -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">5</div>
-      <h2 class="section-title">Serviços Contratados</h2>
-      <span class="section-icon">✂️</span>
+  <!-- 5. AGENDAMENTO -->
+  <div class="section-card" data-section="5">
+    <div class="card-header">
+      <div class="card-num">5</div>
+      <h2 class="card-title">Agendamento</h2>
+      <span class="card-icon">📅</span>
     </div>
-    <div class="grid">
-      <div class="field">
-        <label>Serviço(s) escolhido(s)</label>
-        <div class="check-group">
-          <label><input type="checkbox" name="serv" value="Banho"> 🛁 Banho</label>
-          <label><input type="checkbox" name="serv" value="Visita"> 🏠 Visita (alimentação, limpeza, cuidados)</label>
-        </div>
-      </div>
-      <!-- CAMPO "Dias contratados" REMOVIDO -->
-      <div class="grid grid-2">
+    <div class="card-body">
+      <div class="scheduler">
+
+        <!-- Serviço -->
         <div class="field">
-          <label>Horário combinado</label>
-          <input type="text" id="horario" placeholder="Ex: 09:00h">
+          <label>Serviço escolhido</label>
+          <div class="chip-group">
+            <label><input type="checkbox" name="serv" value="🛁 Banho"> 🛁 Banho</label>
+            <label><input type="checkbox" name="serv" value="🏠 Visita"> 🏠 Visita (alimentação, limpeza, cuidados)</label>
+          </div>
         </div>
-        <div class="field">
-          <label>Forma de pagamento</label>
-          <select id="pagamento">
-            <option value="">Selecione…</option>
-            <option>Pix</option>
-            <option>Dinheiro</option>
-            <option>Cartão de débito</option>
-            <option>Cartão de crédito</option>
-          </select>
+
+        <!-- Calendário -->
+        <div>
+          <div class="cal-nav">
+            <button class="cal-arrow" onclick="changeMonth(-1)">&#8249;</button>
+            <div class="cal-month" id="calMonthLabel"></div>
+            <button class="cal-arrow" onclick="changeMonth(1)">&#8250;</button>
+          </div>
+          <div class="cal-grid" id="calWeekdays"></div>
+          <div class="cal-grid" id="calDays" style="margin-top:4px"></div>
         </div>
-      </div>
-      <div class="field">
-        <label>Data de pagamento</label>
-        <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
-      </div>
-      <div class="info-card">
-        <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
+
+        <!-- Horários -->
+        <div id="timeSlotsWrap" style="display:none">
+          <div class="time-label" id="timeSlotsLabel">Escolha o horário</div>
+          <div class="time-grid" id="timeSlots"></div>
+        </div>
+
+        <!-- Resumo selecionado -->
+        <div class="selected-summary" id="selectedSummary">
+          <div class="ss-icon">✅</div>
+          <div class="ss-text">
+            <strong id="summaryText">–</strong>
+            Sessão de 1 hora · Prime Pet
+          </div>
+        </div>
+
+        <div class="info-card">
+          <strong>ℹ️ Disponibilidade:</strong> Domingo a domingo, das 09h às 17h (almoço: 12h–13h fechado). Cada sessão tem duração de 1 hora.
+        </div>
       </div>
     </div>
   </div>
 
   <!-- 6. RESPONSABILIDADES -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">6</div>
-      <h2 class="section-title">Responsabilidades</h2>
-      <span class="section-icon">📋</span>
+  <div class="section-card" data-section="6">
+    <div class="card-header">
+      <div class="card-num">6</div>
+      <h2 class="card-title">Responsabilidades</h2>
+      <span class="card-icon">📋</span>
     </div>
-    <div class="resp-grid">
-      <div class="resp-card">
-        <h4>🐾 Prime Pet</h4>
-        <ul>
-          <li>Garantir a segurança, cuidado e bem-estar do pet</li>
-          <li>Utilizar equipamentos adequados e seguros</li>
-          <li>Informar qualquer problema ao tutor imediatamente</li>
-        </ul>
-      </div>
-      <div class="resp-card">
-        <h4>👤 Tutor</h4>
-        <ul>
-          <li>Fornecer informações verdadeiras sobre o pet</li>
-          <li>Informar condições de saúde ou comportamento</li>
-          <li>Garantir acesso ao pet no horário combinado</li>
-        </ul>
+    <div class="card-body">
+      <div class="resp-grid">
+        <div class="resp-card">
+          <h4>🐾 Prime Pet</h4>
+          <ul>
+            <li>Garantir a segurança, cuidado e bem-estar do pet</li>
+            <li>Utilizar equipamentos adequados e seguros</li>
+            <li>Informar qualquer problema ao tutor imediatamente</li>
+          </ul>
+        </div>
+        <div class="resp-card">
+          <h4>👤 Tutor</h4>
+          <ul>
+            <li>Fornecer informações verdadeiras sobre o pet</li>
+            <li>Informar condições de saúde ou comportamento</li>
+            <li>Garantir acesso ao pet no horário combinado</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- 7. AUTORIZAÇÕES -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">7</div>
-      <h2 class="section-title">Autorizações</h2>
-      <span class="section-icon">✅</span>
+  <div class="section-card" data-section="7">
+    <div class="card-header">
+      <div class="card-num">7</div>
+      <h2 class="card-title">Autorizações</h2>
+      <span class="card-icon">✅</span>
     </div>
-    <div class="auth-row">
-      <span class="auth-label">Autorizo atendimento emergencial veterinário, caso necessário durante o serviço.</span>
-      <div class="toggle-wrap">
-        <button class="toggle-btn" onclick="setToggle(this,'yes','emer')">Sim</button>
-        <button class="toggle-btn" onclick="setToggle(this,'no','emer')">Não</button>
+    <div class="card-body">
+      <div class="auth-row">
+        <span class="auth-label">Autorizo atendimento emergencial veterinário, caso necessário durante o serviço.</span>
+        <div class="toggle-wrap">
+          <button class="toggle-btn" onclick="setToggle(this,'yes','emer')">Sim</button>
+          <button class="toggle-btn" onclick="setToggle(this,'no','emer')">Não</button>
+        </div>
       </div>
-    </div>
-    <div class="auth-row">
-      <span class="auth-label">Autorizo o uso de imagem / foto do meu pet para fins de divulgação nas redes sociais da Prime Pet.</span>
-      <div class="toggle-wrap">
-        <button class="toggle-btn" onclick="setToggle(this,'yes','img')">Sim</button>
-        <button class="toggle-btn" onclick="setToggle(this,'no','img')">Não</button>
+      <div class="auth-row">
+        <span class="auth-label">Autorizo o uso de imagem / foto do meu pet para fins de divulgação nas redes sociais da Prime Pet.</span>
+        <div class="toggle-wrap">
+          <button class="toggle-btn" onclick="setToggle(this,'yes','img')">Sim</button>
+          <button class="toggle-btn" onclick="setToggle(this,'no','img')">Não</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- 8. CANCELAMENTO -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">8</div>
-      <h2 class="section-title">Cancelamento &amp; Vigência</h2>
-      <span class="section-icon">📅</span>
+  <div class="section-card" data-section="8">
+    <div class="card-header">
+      <div class="card-num">8</div>
+      <h2 class="card-title">Cancelamento &amp; Vigência</h2>
+      <span class="card-icon">📅</span>
     </div>
-    <div class="notice">
-      <strong>Cancelamentos</strong> devem ser informados com antecedência mínima de <strong>24 horas</strong>.<br>
-      Em caso de ausência sem aviso, poderá ser cobrada uma taxa de cancelamento.<br><br>
-      <strong>Vigência:</strong> Este contrato entra em vigor na data da assinatura e permanece válido enquanto os serviços estiverem ativos.
+    <div class="card-body">
+      <div class="notice">
+        <strong>Cancelamentos</strong> devem ser informados com antecedência mínima de <strong>24 horas</strong>.<br>
+        Em caso de ausência sem aviso, poderá ser cobrada uma taxa de cancelamento.<br><br>
+        <strong>Vigência:</strong> Este contrato entra em vigor na data da assinatura e permanece válido enquanto os serviços estiverem ativos.
+      </div>
     </div>
   </div>
 
@@ -676,37 +900,27 @@ body {
   </div>
 
   <div class="form-footer">
-    <strong>Prime Pet – Passeios &amp; Banhos</strong><br>
+    <div class="footer-logo"><span>Prime</span> Pet 🐾</div>
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
-    📸 <a href="https://instagram.com/prime_petoficial" target="_blank">@prime_petoficial</a><br><br>
+    📸 <a href="https://instagram.com/prime_petoficial" target="_blank">@prime_petoficial</a><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank">github.com/fernando-msa</a>
   </div>
 
-</div><!-- /form-wrap -->
+</main>
 
-<!-- Toast de validação -->
-<div id="toast" style="
-  display:none; position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
-  background:#b85c38; color:#fff; border-radius:12px; padding:14px 24px;
-  font-size:14px; z-index:999; box-shadow:0 8px 32px rgba(0,0,0,.25);
-  max-width:90vw; text-align:center; font-family:'DM Sans',sans-serif;
-">⚠️ Preencha pelo menos o nome do tutor e o nome do pet!</div>
+<!-- TOAST -->
+<div id="toast"></div>
 
 <script>
+/* ── HELPERS ── */
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
 }
-
 function setToggle(btn, val, group) {
-  const wrap = btn.closest('.toggle-wrap');
-  wrap.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
+  btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn')
+    .forEach(b => b.classList.remove('active-yes','active-no'));
   btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
 }
-
-// Data de hoje como padrão
-const dateInput = document.querySelector('input[type="date"]');
-if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-
 function val(id) {
   const el = document.getElementById(id);
   return el ? el.value.trim() : '';
@@ -719,42 +933,183 @@ function checkboxes(name) {
   return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
 }
 function toggleVal(group) {
-  const btn = document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`);
-  const btnNo = document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`);
-  if (btn) return 'Sim';
-  if (btnNo) return 'Não';
+  if (document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`)) return 'Sim ✅';
+  if (document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`))  return 'Não ❌';
   return 'Não respondido';
 }
-function simNao(v) {
-  if (v === 'sim') return 'Sim ✅';
-  if (v === 'nao') return 'Não ❌';
-  return 'Não respondido';
-}
-function showToast(msg) {
+function showToast(msg, color) {
   const t = document.getElementById('toast');
   t.textContent = msg;
+  t.style.borderLeftColor = color || 'var(--orange)';
   t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 3500);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.display = 'none', 3800);
 }
 
+/* ── DATA ── */
+document.querySelector('input[type="date"]').value =
+  new Date().toISOString().split('T')[0];
+
+/* ── PROGRESS OBSERVER ── */
+const cards = document.querySelectorAll('.section-card');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const n = +e.target.dataset.section;
+      for (let i = 1; i <= 8; i++) {
+        const dot  = document.getElementById('dot' + i);
+        const line = document.getElementById('line' + i);
+        if (i < n)       { dot.className = 'step-dot done'; if (line) line.className = 'step-line done'; }
+        else if (i === n){ dot.className = 'step-dot active'; if (line) line.className = 'step-line done'; }
+        else             { dot.className = 'step-dot'; if (line) line.className = 'step-line'; }
+      }
+    }
+  });
+}, { threshold: 0.4 });
+cards.forEach(c => io.observe(c));
+
+/* ── CALENDAR ── */
+const AVAILABLE_HOURS = [9,10,11,14,15,16];
+const WEEKDAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MONTHS_PT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+let calYear, calMonth, selectedDate = null, selectedHour = null;
+
+function initCal() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderWeekdays();
+  renderCal();
+}
+
+function renderWeekdays() {
+  const wd = document.getElementById('calWeekdays');
+  wd.innerHTML = WEEKDAYS_PT.map(d =>
+    `<div class="cal-weekday">${d}</div>`
+  ).join('');
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCal();
+}
+
+function renderCal() {
+  document.getElementById('calMonthLabel').textContent =
+    `${MONTHS_PT[calMonth]} ${calYear}`;
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysIn   = new Date(calYear, calMonth+1, 0).getDate();
+
+  let html = '';
+  for (let i = 0; i < firstDay; i++)
+    html += `<div class="cal-day empty"></div>`;
+
+  for (let d = 1; d <= daysIn; d++) {
+    const date = new Date(calYear, calMonth, d);
+    const isPast = date < today;
+    const isToday = date.getTime() === today.getTime();
+    const isSel  = selectedDate &&
+      selectedDate.getFullYear() === calYear &&
+      selectedDate.getMonth()    === calMonth &&
+      selectedDate.getDate()     === d;
+
+    let cls = 'cal-day';
+    if (isPast)   cls += ' disabled';
+    if (isToday)  cls += ' today';
+    if (isSel)    cls += ' selected';
+
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="${cls}" onclick="selectDay(${calYear},${calMonth},${d})">${d}</div>`;
+  }
+  document.getElementById('calDays').innerHTML = html;
+}
+
+function selectDay(y, m, d) {
+  const date = new Date(y, m, d);
+  const today = new Date(); today.setHours(0,0,0,0);
+  if (date < today) return;
+
+  selectedDate = date;
+  selectedHour = null;
+  document.getElementById('selectedSummary').classList.remove('visible');
+
+  renderCal();
+  renderTimeSlots();
+}
+
+function renderTimeSlots() {
+  const wrap = document.getElementById('timeSlotsWrap');
+  const label = document.getElementById('timeSlotsLabel');
+  const grid  = document.getElementById('timeSlots');
+  wrap.style.display = 'block';
+
+  const dow  = WEEKDAYS_PT[selectedDate.getDay()];
+  const dStr = `${String(selectedDate.getDate()).padStart(2,'0')}/${String(selectedDate.getMonth()+1).padStart(2,'0')}`;
+  label.textContent = `Horários disponíveis – ${dow}, ${dStr}`;
+
+  grid.innerHTML = AVAILABLE_HOURS.map(h => {
+    const end  = h + 1;
+    const fmt  = n => `${String(n).padStart(2,'0')}:00`;
+    const isSel = selectedHour === h;
+    return `<div class="time-slot${isSel ? ' selected' : ''}" onclick="selectHour(${h})">
+      <span class="t-hour">${fmt(h)}</span>
+      <span class="t-end">até ${fmt(end)}</span>
+    </div>`;
+  }).join('');
+}
+
+function selectHour(h) {
+  selectedHour = h;
+  renderTimeSlots();
+
+  const dow  = WEEKDAYS_PT[selectedDate.getDay()];
+  const dStr = `${String(selectedDate.getDate()).padStart(2,'0')}/${String(selectedDate.getMonth()+1).padStart(2,'0')}/${selectedDate.getFullYear()}`;
+  const end  = h + 1;
+  const fmt  = n => `${String(n).padStart(2,'0')}:00`;
+
+  document.getElementById('summaryText').textContent =
+    `${dow}, ${dStr} · ${fmt(h)} – ${fmt(end)}`;
+  document.getElementById('selectedSummary').classList.add('visible');
+}
+
+initCal();
+
+/* ── WHATSAPP ── */
 function enviarWhatsApp() {
   const tutorNome = val('tutor_nome');
   const petNome   = val('pet_nome');
 
   if (!tutorNome || !petNome) {
-    showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
+    showToast('⚠️ Preencha o nome do tutor e o nome do pet!');
     return;
   }
 
-  const sexo     = radio('sexo') || 'Não informado';
-  const vacina   = radio('vacina');
-  const doenca   = radio('doenca');
-  const med      = radio('med');
-  const alergia  = radio('alergia');
-  const agress   = radio('agress');
-  const fuga     = radio('fuga');
-  const comp     = checkboxes('comp');
   const servicos = checkboxes('serv');
+  if (!servicos.length) {
+    showToast('⚠️ Selecione pelo menos um serviço!');
+    return;
+  }
+
+  if (!selectedDate || selectedHour === null) {
+    showToast('📅 Escolha uma data e horário no calendário!', 'var(--cyan)');
+    return;
+  }
+
+  const dow  = WEEKDAYS_PT[selectedDate.getDay()];
+  const dStr = `${String(selectedDate.getDate()).padStart(2,'0')}/${String(selectedDate.getMonth()+1).padStart(2,'0')}/${selectedDate.getFullYear()}`;
+  const fmt  = n => `${String(n).padStart(2,'0')}:00`;
+
+  const doenca  = radio('doenca');
+  const med     = radio('med');
+  const alergia = radio('alergia');
+  const comp    = checkboxes('comp');
 
   const linhas = [
     '🐾 *PRIME PET – Novo Contrato*',
@@ -770,38 +1125,36 @@ function enviarWhatsApp() {
     `• Raça: ${val('pet_raca') || 'Não informado'}`,
     `• Idade: ${val('pet_idade') || 'Não informado'}`,
     `• Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
-    `• Sexo: ${sexo}`,
+    `• Sexo: ${radio('sexo') || 'Não informado'}`,
     '',
     '🏥 *SAÚDE*',
-    `• Vacinado: ${simNao(vacina)}`,
-    `• Doença/comorbidade: ${doenca === 'sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
-    `• Medicação: ${med === 'sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
-    `• Alergia: ${alergia === 'sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Vacinado: ${radio('vacina') || 'Não informado'}`,
+    `• Doença/comorbidade: ${doenca === 'Sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Medicação: ${med === 'Sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Alergia: ${alergia === 'Sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
     '',
     '🐾 *COMPORTAMENTO*',
     `• Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
-    `• Histórico agressivo: ${simNao(agress)}`,
-    `• Costuma fugir: ${simNao(fuga)}`,
+    `• Histórico agressivo: ${radio('agress') || 'Não informado'}`,
+    `• Costuma fugir: ${radio('fuga') || 'Não informado'}`,
     `• Observações: ${val('obs_comp') || 'Nenhuma'}`,
     '',
-    '✂️ *SERVIÇOS*',
-    `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
-    `• Horário: ${val('horario') || 'Não informado'}`,
-    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
+    '📅 *AGENDAMENTO*',
+    `• Serviço(s): ${servicos.join(', ')}`,
+    `• Data: ${dow}, ${dStr}`,
+    `• Horário: ${fmt(selectedHour)} – ${fmt(selectedHour + 1)} (1h)`,
     '',
     '✅ *AUTORIZAÇÕES*',
     `• Emergência vet.: ${toggleVal('emer')}`,
     `• Uso de imagem: ${toggleVal('img')}`,
     '',
     '━━━━━━━━━━━━━━━━━━━━',
-    `📅 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
+    `📋 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
   ];
 
-  const msg    = encodeURIComponent(linhas.join('\n'));
-  const numero = '5579996623050';
-  window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
+  const msg = encodeURIComponent(linhas.join('\n'));
+  window.open(`https://wa.me/5579996623050?text=${msg}`, '_blank');
 }
 </script>
-
 </body>
 </html>
