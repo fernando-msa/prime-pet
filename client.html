@@ -552,6 +552,14 @@ document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
   e.target.value = normalizarTelefoneBr(e.target.value);
 });
 
+window.toggleNotasAtualizacao = function() {
+  document.getElementById('notas-atualizacao')?.classList.toggle('hidden');
+};
+
+document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
+  e.target.value = normalizarTelefoneBr(e.target.value);
+});
+
 window.trocarAba = function(aba, btn){
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
