@@ -666,6 +666,13 @@ body {
       </ul>
     </div>
 
+    <div class="actions-log">
+      <h3>Log de erros da aplicação (cliente/portal)</h3>
+      <ul id="erros-app-list">
+        <li>Nenhum erro registrado ainda.</li>
+      </ul>
+    </div>
+
     <div class="history-wrap">
       <div class="history-head">
         <h3 class="history-title">Histórico de clientes</h3>
@@ -733,6 +740,7 @@ const auth = getAuth(app);
 let agendamentos = {};
 let historicoClientes = [];
 let historicoAcoes = [];
+let historicoErros = [];
 let filtroAtual  = 'all';
 let buscaAgenda = '';
 let logoutEmAndamento = false;
@@ -876,6 +884,12 @@ function iniciarAdmin() {
     historicoAcoes = Object.entries(raw).map(([id, v]) => ({ id, ...v }))
       .sort((a, b) => (b.at || 0) - (a.at || 0));
     renderAcoesAdmin();
+  });
+  onValue(ref(db, 'logs_erros'), snap => {
+    const raw = snap.val() || {};
+    historicoErros = Object.entries(raw).map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => (b.at || 0) - (a.at || 0));
+    renderErrosApp();
   });
 }
 
@@ -1042,6 +1056,24 @@ function renderAcoesAdmin() {
     const data = acao.at ? new Date(acao.at).toLocaleString('pt-BR') : 'data não informada';
     const li = document.createElement('li');
     li.textContent = `${acao.by || 'admin'} • ${acao.action || 'ação'} • ${acao.date || '--/--/----'} ${acao.hour || '--:--'} • ${data}`;
+    ul.appendChild(li);
+  });
+}
+
+function renderErrosApp() {
+  const ul = document.getElementById('erros-app-list');
+  if (!ul) return;
+  ul.innerHTML = '';
+
+  if (!historicoErros.length) {
+    ul.innerHTML = '<li>Nenhum erro registrado ainda.</li>';
+    return;
+  }
+
+  historicoErros.slice(0, 20).forEach(err => {
+    const data = err.at ? new Date(err.at).toLocaleString('pt-BR') : 'data não informada';
+    const li = document.createElement('li');
+    li.textContent = `${err.contexto || 'contexto'} • ${err.code || 'sem-código'} • ${err.path || '--'} • ${data}`;
     ul.appendChild(li);
   });
 }

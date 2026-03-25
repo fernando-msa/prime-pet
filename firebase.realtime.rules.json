@@ -17,6 +17,19 @@
       ".write": "auth != null && auth.token.admin === true"
     },
 
+    "logs_erros": {
+      ".read": "auth != null && auth.token.admin === true",
+      "$logId": {
+        ".write": "auth != null",
+        "contexto": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "code": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "message": { ".validate": "newData.isString() && newData.val().length <= 500" },
+        "path": { ".validate": "newData.isString() && newData.val().length <= 200" },
+        "userAgent": { ".validate": "newData.isString() && newData.val().length <= 400" },
+        "at": { ".validate": "newData.isNumber()" }
+      }
+    },
+
     "historico_clientes": {
       ".indexOn": ["ownerUid"],
       ".read": "auth != null",
