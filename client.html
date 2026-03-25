@@ -75,10 +75,19 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       <div class="header-portals">
         <a class="portal-link" href="./index.html">🏠 Home</a>
         <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
+        <button class="portal-link" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
       </div>
       <div class="header-session" id="header-session">
         <span class="session-chip">🔒 Não logado</span>
       </div>
+    </div>
+  </div>
+  <div class="wrap" style="padding-top:10px;padding-bottom:0">
+    <div class="card hidden" id="notas-atualizacao">
+      <strong>Atualizações / Correções</strong><br>
+      • Melhorias de login e sessão<br>
+      • Correções em pendências do admin<br>
+      • Ajustes de validação de perfil e estabilidade
     </div>
   </div>
 
@@ -189,6 +198,17 @@ function atualizarHeaderSessao(user) {
     <button class="portal-link" type="button" onclick="editarPerfilCliente()">✏️ Editar perfil</button>
     <button class="portal-link" type="button" onclick="sairPortal()">🚪 Sair</button>
   `;
+}
+
+function garantirConsentimentoLgpd() {
+  if (localStorage.getItem('primepet_lgpd_ok') === '1') return true;
+  const aceitou = window.confirm(
+    'LGPD: tratamos seus dados apenas para cadastro, agendamento e contato da Prime Pet. ' +
+    'Armazenamos em infraestrutura segura (Firebase), com acesso restrito e uso mínimo necessário. ' +
+    'Ao continuar, você concorda com este tratamento.'
+  );
+  if (aceitou) localStorage.setItem('primepet_lgpd_ok', '1');
+  return aceitou;
 }
 
 function statusBadge(status){
@@ -335,6 +355,10 @@ function carregarPreCadastro() {
 
 window.entrarComGoogle = async function() {
   try {
+    if (!garantirConsentimentoLgpd()) {
+      setMensagemPortal('É necessário aceitar os termos LGPD para continuar.');
+      return;
+    }
     setMensagemPortal('Abrindo login Google...');
     await signInWithPopup(auth, provider);
     setMensagemPortal('Login com Google realizado com sucesso.');
@@ -483,6 +507,10 @@ onAuthStateChanged(auth, user => {
 });
 
 carregarPreCadastro();
+
+window.toggleNotasAtualizacao = function() {
+  document.getElementById('notas-atualizacao')?.classList.toggle('hidden');
+};
 
 document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
   e.target.value = normalizarTelefoneBr(e.target.value);

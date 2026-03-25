@@ -248,6 +248,14 @@ body {
   border-color: rgba(255,255,255,0.8);
   color: #fff;
 }
+.btn-release {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
 .btn-logout {
   background: rgba(255,255,255,0.08);
   border: 1.5px solid rgba(255,255,255,0.25);
@@ -587,6 +595,16 @@ body {
 .btn-free:hover { border-color: var(--mocha); }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--mocha); opacity: 0.45; font-size: 15px; }
+.release-panel {
+  display:none;
+  margin: 12px 20px 0;
+  padding: 12px 14px;
+  background:#fff;
+  border:1.5px solid var(--sand);
+  border-radius:10px;
+  font-size:13px;
+  color:var(--mocha);
+}
 
 .spinner {
   display: inline-block; width: 16px; height: 16px;
@@ -626,7 +644,7 @@ body {
     <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar</button>
     <div class="oauth-wrap">
       <button class="btn-oauth" onclick="fazerLoginGoogle()">Entrar com Google</button>
-      <button class="btn-oauth" onclick="fazerLoginApple()">Entrar com Apple</button>
+      <button class="btn-oauth" onclick="focarLoginEmail()">Entrar com E-mail</button>
     </div>
     <a class="btn-forgot" onclick="esqueceuSenha()">Esqueceu a senha?</a>
 
@@ -640,11 +658,18 @@ body {
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
+      <button class="btn-release" onclick="toggleReleaseNotes()" title="Atualizações">🔔</button>
       <span class="session-pill" id="status-sessoes">🔒 Sem sessão</span>
       <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
       <a class="btn-home" href="./client.html">Portal do cliente</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
+  </div>
+  <div class="release-panel" id="release-panel">
+    <strong>Atualizações recentes</strong><br>
+    • Melhorias no login e sessão<br>
+    • Correções de fluxo do portal admin/cliente<br>
+    • Ajustes de estabilidade e validações de dados
   </div>
 
   <div class="admin-wrap">
@@ -746,7 +771,7 @@ body {
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, signInWithEmailAndPassword, GoogleAuthProvider, OAuthProvider, signInWithPopup,
+  getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup,
   sendPasswordResetEmail, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -891,23 +916,8 @@ window.fazerLoginGoogle = async function() {
   }
 };
 
-window.fazerLoginApple = async function() {
-  const err = document.getElementById('login-error');
-  const provider = new OAuthProvider('apple.com');
-  err.style.display = 'none';
-  try {
-    const cred = await signInWithPopup(auth, provider);
-    if (!isAdminAutorizado(cred.user?.email)) {
-      await signOut(auth);
-      mostrarErroLogin('Conta Apple sem permissão de admin.');
-    }
-  } catch (e) {
-    if (e?.code === 'auth/operation-not-allowed') {
-      mostrarErroLogin('Login Apple não habilitado no Firebase Auth deste projeto.');
-      return;
-    }
-    mostrarErroLogin(`Falha no login Apple (${e?.code || 'erro-desconhecido'}).`);
-  }
+window.focarLoginEmail = function() {
+  document.getElementById('inp-email').focus();
 };
 
 // ── Esqueceu a senha ──────────────────────────────
@@ -1028,9 +1038,22 @@ window.apagarHistoricoClientes = async function() {
     renderHistoricoClientes();
     showToast('🗑️ Histórico de clientes apagado com sucesso.');
   } catch (e) {
-    console.error('Falha ao apagar histórico:', e);
-    showToast('❌ Não foi possível apagar o histórico. Verifique permissões no Firebase.');
+    try {
+      await set(ref(db, 'historico_clientes'), {});
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('🗑️ Histórico limpo com fallback.');
+    } catch (err) {
+      console.error('Falha ao apagar histórico:', e, err);
+      showToast('❌ Sem permissão para apagar histórico. Ajuste as regras do Firebase.');
+    }
   }
+};
+
+window.toggleReleaseNotes = function() {
+  const box = document.getElementById('release-panel');
+  if (!box) return;
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
 };
 
 function formatDateBR(date) {
