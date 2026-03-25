@@ -1211,6 +1211,13 @@ function enviarWhatsApp() {
 
   localStorage.setItem('primepet_pre_cadastro', JSON.stringify(preCadastro));
 
+  const mensagemWhats = encodeURIComponent(linhas.join('\n'));
+  const whatsappUrl = `https://wa.me/5579996623050?text=${mensagemWhats}`;
+  const win = window.open(whatsappUrl, '_blank');
+  if (!win) {
+    showToast('⚠️ Não consegui abrir o WhatsApp automaticamente. Verifique bloqueio de popup.', 'var(--cyan)');
+  }
+
   const sessaoCliente = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
   const jaLogado = Boolean(sessaoCliente && sessaoCliente.uid);
 

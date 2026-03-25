@@ -26,6 +26,8 @@ body{background:var(--gray);font-family:'Nunito',sans-serif;color:var(--dark)}
 .logo-text span{color:var(--orange)}
 .header p{opacity:.78;font-size:12px;margin-top:2px;letter-spacing:1px;text-transform:uppercase}
 .header-portals{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.header-session{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.session-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);font-size:12px;font-weight:700;color:#fff}
 .portal-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font-size:12px;font-weight:700}
 .portal-link:hover{background:rgba(255,255,255,.16)}
 .wrap{max-width:900px;margin:0 auto;padding:24px 16px 46px}
@@ -68,6 +70,9 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       <div class="header-portals">
         <a class="portal-link" href="./index.html">🏠 Home</a>
         <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
+      </div>
+      <div class="header-session" id="header-session">
+        <span class="session-chip">🔒 Não logado</span>
       </div>
     </div>
   </div>
@@ -118,7 +123,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, get, set, remove, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -138,6 +143,21 @@ let cacheSolicitacoes = [];
 let solicFiltroAtual = 'all';
 const params = new URLSearchParams(window.location.search);
 const provider = new GoogleAuthProvider();
+
+function atualizarHeaderSessao(user) {
+  const box = document.getElementById('header-session');
+  if (!box) return;
+  if (!user) {
+    box.innerHTML = '<span class="session-chip">🔒 Não logado</span>';
+    return;
+  }
+  const nome = user.displayName || user.email || 'Cliente';
+  box.innerHTML = `
+    <span class="session-chip">✅ Logado: ${nome}</span>
+    <button class="portal-link" type="button" onclick="editarPerfilCliente()">✏️ Editar perfil</button>
+    <button class="portal-link" type="button" onclick="sairPortal()">🚪 Sair</button>
+  `;
+}
 
 function statusBadge(status){
   const s = status || 'pending';
@@ -207,6 +227,15 @@ async function importarPreCadastroSeExistir(user) {
       criadoEm: pre.criadoEm || Date.now(),
       origem: 'pre_cadastro_portal'
     };
+
+    const slotKey = (registro.horaAgendada || '').replace(':', '');
+    if (registro.dataAgendada && slotKey) {
+      const slotRef = ref(db, `agendamentos/${registro.dataAgendada}/${slotKey}`);
+      const slotSnap = await get(slotRef);
+      if (!slotSnap.exists()) {
+        await set(slotRef, 'pending');
+      }
+    }
 
     await set(push(ref(db, 'historico_clientes')), registro);
     localStorage.setItem(chaveImportacao, '1');
@@ -301,9 +330,35 @@ window.sairPortal = async function() {
   document.getElementById('portal-card').classList.add('hidden');
   localStorage.removeItem('primepet_client_session');
   setMensagemPortal('Você saiu do portal do cliente.');
+  atualizarHeaderSessao(null);
+};
+
+window.editarPerfilCliente = async function() {
+  const user = auth.currentUser;
+  if (!user) {
+    setMensagemPortal('Faça login para editar seu perfil.');
+    return;
+  }
+  const novoNome = window.prompt('Como seu nome deve aparecer no portal?', user.displayName || '');
+  if (novoNome === null) return;
+  const nomeLimpo = novoNome.trim();
+  if (!nomeLimpo) {
+    setMensagemPortal('Nome inválido. Informe ao menos 1 caractere.');
+    return;
+  }
+  try {
+    await updateProfile(user, { displayName: nomeLimpo });
+  } catch (e) {
+    registrarErro('editar_perfil_cliente', e);
+    setMensagemPortal('Não foi possível atualizar o perfil agora.');
+    return;
+  }
+  setMensagemPortal('Perfil atualizado com sucesso.');
+  atualizarHeaderSessao({ ...user, displayName: nomeLimpo });
 };
 
 onAuthStateChanged(auth, user => {
+  atualizarHeaderSessao(user || null);
   if (user) {
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
     setMensagemPortal(`Logado como ${user.email || 'usuário Google'}. Carregando seus dados...`);
@@ -317,6 +372,9 @@ onAuthStateChanged(auth, user => {
     return;
   }
   localStorage.removeItem('primepet_client_session');
+  document.getElementById('portal-card').classList.add('hidden');
+  cacheSolicitacoes = [];
+  setMensagemPortal('Entre com Google para visualizar seu histórico.');
 });
 
 carregarPreCadastro();
