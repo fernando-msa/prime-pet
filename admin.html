@@ -4,23 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Painel Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream: #faf7f2;
-  --sand: #e8ddd0;
-  --espresso: #2c1f14;
-  --mocha: #5c3d2e;
-  --gold: #c9a84c;
-  --sage: #7a9e7e;
-  --rust: #b85c38;
-  --light-mocha: #f0e8df;
+  --orange:#FF8200;
+  --orange-lt:#FFB347;
+  --orange-bg:#FFF4E6;
+  --cyan:#00BFC8;
+  --dark:#1A1A2E;
+  --dark2:#2D2D44;
+  --white:#FFFFFF;
+  --gray:#F5F5F7;
+  --gray2:#E2E2EA;
+  --green:#3DBE8A;
+  --red:#FF5A5A;
+  --cream: var(--gray);
+  --sand: var(--gray2);
+  --espresso: var(--dark);
+  --mocha: var(--dark2);
+  --gold: var(--orange);
+  --sage: var(--green);
+  --rust: var(--red);
+  --light-mocha: #ffffff;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--cream);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 300;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
   color: var(--espresso);
   min-height: 100vh;
 }
@@ -75,7 +87,7 @@ body {
   margin-bottom: 20px;
 }
 .login-logo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 34px;
   color: var(--espresso);
   text-align: center;
@@ -187,9 +199,9 @@ body {
   flex-wrap: nowrap;
 }
 .admin-logo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Baloo 2', cursive;
   color: #fff;
-  font-size: 18px;
+  font-size: 24px;
 }
 .admin-logo span { color: var(--gold); }
 .admin-actions {
@@ -477,6 +489,16 @@ body {
 .stat-label { font-size: 11px; color: var(--mocha); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; opacity: 0.7; }
 
 .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-input {
+  min-width: 220px;
+  border: 1.5px solid var(--sand);
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: var(--mocha);
+}
 .filter-btn {
   border: 1.5px solid var(--sand);
   background: #fff;
@@ -593,9 +615,9 @@ body {
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
       <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
+      <a class="btn-home" href="./client.html">Portal do cliente</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
-    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
   </div>
 
   <div class="admin-wrap">
@@ -644,6 +666,13 @@ body {
       </ul>
     </div>
 
+    <div class="actions-log">
+      <h3>Log de erros da aplicação (cliente/portal)</h3>
+      <ul id="erros-app-list">
+        <li>Nenhum erro registrado ainda.</li>
+      </ul>
+    </div>
+
     <div class="history-wrap">
       <div class="history-head">
         <h3 class="history-title">Histórico de clientes</h3>
@@ -671,6 +700,7 @@ body {
     </div>
 
     <div class="filter-bar">
+      <input class="filter-input" type="search" placeholder="Buscar por data, hora ou status..." oninput="setBuscaAgenda(this.value)">
       <button class="filter-btn active" onclick="setFiltro('all',this)">Todos</button>
       <button class="filter-btn" onclick="setFiltro('pending',this)">Pendentes</button>
       <button class="filter-btn" onclick="setFiltro('confirmed',this)">Confirmados</button>
@@ -710,7 +740,9 @@ const auth = getAuth(app);
 let agendamentos = {};
 let historicoClientes = [];
 let historicoAcoes = [];
+let historicoErros = [];
 let filtroAtual  = 'all';
+let buscaAgenda = '';
 let logoutEmAndamento = false;
 let mesVisao = new Date().toISOString().slice(0, 7);
 let historyExpanded = false;
@@ -852,6 +884,12 @@ function iniciarAdmin() {
     historicoAcoes = Object.entries(raw).map(([id, v]) => ({ id, ...v }))
       .sort((a, b) => (b.at || 0) - (a.at || 0));
     renderAcoesAdmin();
+  });
+  onValue(ref(db, 'logs_erros'), snap => {
+    const raw = snap.val() || {};
+    historicoErros = Object.entries(raw).map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => (b.at || 0) - (a.at || 0));
+    renderErrosApp();
   });
 }
 
@@ -1022,6 +1060,26 @@ function renderAcoesAdmin() {
   });
 }
 
+function renderErrosApp() {
+  const ul = document.getElementById('erros-app-list');
+  if (!ul) return;
+  ul.innerHTML = '';
+
+  if (!historicoErros.length) {
+    ul.innerHTML = '<li>Nenhum erro registrado ainda.</li>';
+    return;
+  }
+
+  historicoErros.slice(0, 20).forEach(err => {
+    const data = err.at ? new Date(err.at).toLocaleString('pt-BR') : 'data não informada';
+    const li = document.createElement('li');
+    const resumo = `${err.contexto || 'contexto'} • ${err.code || 'sem-código'} • ${err.path || '--'} • ${data}`;
+    const detalhe = `${err.email ? `email: ${err.email} • ` : ''}${err.message || 'sem mensagem'}`;
+    li.textContent = `${resumo} • ${detalhe}`;
+    ul.appendChild(li);
+  });
+}
+
 window.exportarMesGoogle = function() {
   const itemsMes = [];
   Object.entries(agendamentos).forEach(([date, slots]) => {
@@ -1102,15 +1160,22 @@ function renderLista() {
   });
 
   const visíveis = filtroAtual === 'all' ? items : items.filter(i => i.status === filtroAtual);
+  const termoBusca = buscaAgenda.trim().toLowerCase();
+  const filtradosBusca = !termoBusca ? visíveis : visíveis.filter(i => {
+    const [y, m, d] = i.date.split('-');
+    const dataBR = `${d}/${m}/${y}`;
+    const statusTxt = i.status === 'pending' ? 'pendente' : i.status === 'confirmed' ? 'confirmado' : 'cancelado';
+    return `${dataBR} ${i.hour} ${statusTxt}`.toLowerCase().includes(termoBusca);
+  });
   const itensMes = items.filter(i => i.date.startsWith(mesVisao));
   renderResumoMes(itensMes);
 
-  if (visíveis.length === 0) {
+  if (filtradosBusca.length === 0) {
     lista.innerHTML = '<div class="empty-state">🐾 Nenhum agendamento encontrado.</div>';
     return;
   }
 
-  visíveis.forEach(({ date, hour, hourKey, status }) => {
+  filtradosBusca.forEach(({ date, hour, hourKey, status }) => {
     const [y, m, d] = date.split('-');
     const dtFmt = `${d}/${m}/${y}`;
 
@@ -1172,6 +1237,10 @@ window.setFiltro = (filtro, btn) => {
   filtroAtual = filtro;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  renderLista();
+};
+window.setBuscaAgenda = (valor) => {
+  buscaAgenda = valor || '';
   renderLista();
 };
 
