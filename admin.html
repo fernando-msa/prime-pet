@@ -209,6 +209,15 @@ body {
   align-items: center;
   gap: 10px;
 }
+.session-pill {
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+}
 .btn-home {
   background: rgba(255,255,255,0.08);
   border: 1.5px solid rgba(255,255,255,0.25);
@@ -614,6 +623,7 @@ body {
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
+      <span class="session-pill" id="status-sessoes">🔒 Sem sessão</span>
       <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
       <a class="btn-home" href="./client.html">Portal do cliente</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
@@ -717,7 +727,7 @@ body {
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
   getAuth, signInWithEmailAndPassword,
   sendPasswordResetEmail, signOut, onAuthStateChanged
@@ -751,17 +761,31 @@ let adminEmailAtual = '';
 
 document.getElementById('mes-referencia').value = mesVisao;
 
+function atualizarStatusSessoes() {
+  const badge = document.getElementById('status-sessoes');
+  if (!badge) return;
+  const clienteSessao = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
+  const adminTxt = adminEmailAtual ? `Admin: ${adminEmailAtual}` : 'Admin: não logado';
+  const clienteTxt = clienteSessao?.uid ? 'Cliente: logado' : 'Cliente: não logado';
+  badge.textContent = `${adminTxt} • ${clienteTxt}`;
+}
+window.addEventListener('storage', atualizarStatusSessoes);
+window.addEventListener('focus', atualizarStatusSessoes);
+atualizarStatusSessoes();
+
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
   if (user) {
     adminEmailAtual = user.email || 'admin';
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-panel').style.display  = 'block';
+    atualizarStatusSessoes();
     iniciarAdmin();
   } else {
     adminEmailAtual = '';
     document.getElementById('admin-panel').style.display  = 'none';
     document.getElementById('login-screen').style.display = 'flex';
+    atualizarStatusSessoes();
   }
 }, () => {
   mostrarErroLogin('Não foi possível validar sua sessão. Tente entrar novamente.');
@@ -877,6 +901,7 @@ function iniciarAdmin() {
   onValue(ref(db, 'historico_clientes'), snap => {
     const raw = snap.val() || {};
     historicoClientes = Object.entries(raw).map(([id, v]) => ({ id, ...v }));
+    sincronizarPendenciasDoHistorico().catch(() => {});
     renderHistoricoClientes();
   });
   onValue(ref(db, 'historico_acoes'), snap => {
@@ -916,10 +941,28 @@ window.setHistoryFilter = function(tipo, btn) {
 window.apagarHistoricoClientes = async function() {
   const ok = window.confirm('Tem certeza que deseja apagar TODO o histórico de clientes? Esta ação não pode ser desfeita.');
   if (!ok) return;
-  await remove(ref(db, 'historico_clientes'));
-  historicoClientes = [];
-  renderHistoricoClientes();
-  showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  try {
+    const rootRef = ref(db, 'historico_clientes');
+    const snap = await get(rootRef);
+    const raw = snap.val() || {};
+    const ids = Object.keys(raw);
+
+    if (!ids.length) {
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('Histórico já estava vazio.');
+      return;
+    }
+
+    // Remove item a item (mais compatível com regras que não permitem delete no nó raiz)
+    await Promise.all(ids.map(id => remove(ref(db, `historico_clientes/${id}`))));
+    historicoClientes = [];
+    renderHistoricoClientes();
+    showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  } catch (e) {
+    console.error('Falha ao apagar histórico:', e);
+    showToast('❌ Não foi possível apagar o histórico. Verifique permissões no Firebase.');
+  }
 };
 
 function formatDateBR(date) {
@@ -1218,18 +1261,45 @@ async function registrarAcaoAdmin(action, date, hk) {
   });
 }
 
+async function atualizarHistoricoPorSlot(date, hk, status) {
+  const hora = hk.slice(0,2) + ':' + hk.slice(2);
+  const q = query(ref(db, 'historico_clientes'), orderByChild('dataAgendada'), equalTo(date));
+  const snap = await get(q);
+  const raw = snap.val() || {};
+  const updates = Object.entries(raw)
+    .filter(([, item]) => item?.horaAgendada === hora)
+    .map(([id]) => set(ref(db, `historico_clientes/${id}/status`), status));
+  await Promise.all(updates);
+}
+
+async function sincronizarPendenciasDoHistorico() {
+  const tarefas = historicoClientes.map(async item => {
+    if (!item?.dataAgendada || !item?.horaAgendada) return;
+    const hk = item.horaAgendada.replace(':', '');
+    const slotRef = ref(db, `agendamentos/${item.dataAgendada}/${hk}`);
+    const snap = await get(slotRef);
+    if (!snap.exists() && (item.status || 'pending') !== 'cancelled') {
+      await set(slotRef, item.status || 'pending');
+    }
+  });
+  await Promise.all(tarefas);
+}
+
 window.confirmar = async (date, hk) => {
   await set(ref(db,`agendamentos/${date}/${hk}`),'confirmed');
+  await atualizarHistoricoPorSlot(date, hk, 'confirmed');
   await registrarAcaoAdmin('confirmou', date, hk);
   showToast('✅ Confirmado! Horário reservado para o cliente.');
 };
 window.cancelar  = async (date, hk) => {
   await set(ref(db,`agendamentos/${date}/${hk}`),'cancelled');
+  await atualizarHistoricoPorSlot(date, hk, 'cancelled');
   await registrarAcaoAdmin('cancelou', date, hk);
   showToast('❌ Cancelado. O horário não está mais ativo.');
 };
 window.liberar   = async (date, hk) => {
   await remove(ref(db,`agendamentos/${date}/${hk}`));
+  await atualizarHistoricoPorSlot(date, hk, 'cancelled');
   await registrarAcaoAdmin('liberou', date, hk);
   showToast('🔓 Slot liberado. O horário voltou a ficar disponível.');
 };
