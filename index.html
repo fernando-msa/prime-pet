@@ -18,56 +18,22 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   background-color: var(--cream);
   color: var(--espresso);
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
   min-height: 100vh;
+  padding: 0;
 }
 
+/* Decorative header band */
 .header-band {
   background: var(--espresso);
   padding: 40px 24px 36px;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-.header-quick-links {
-  position: absolute;
-  top: 16px;
-  right: 18px;
-  z-index: 2;
-  display: flex;
-  gap: 8px;
-}
-.header-link-btn {
-  border: 1.5px solid rgba(255,255,255,0.25);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2px;
-  transition: all 0.2s;
-  background: rgba(255,255,255,0.08);
-  font-family: 'DM Sans', sans-serif;
-}
-.header-link-btn:hover {
-  background: rgba(255,255,255,0.18);
-  border-color: rgba(255,255,255,0.8);
-}
-@media (max-width: 560px) {
-  .header-quick-links {
-    top: 12px;
-    right: 12px;
-  }
-  .header-link-btn {
-    padding: 7px 12px;
-    font-size: 11px;
-  }
 }
 .header-band::before {
   content: '';
@@ -117,40 +83,21 @@ body {
   letter-spacing: 8px;
 }
 
+/* Form wrapper */
 .form-wrap {
   max-width: 760px;
   margin: 0 auto;
   padding: 40px 20px 60px;
 }
 
-.admin-access {
-  margin-bottom: 24px;
-  padding: 14px 16px;
-  border: 1.5px solid var(--sand);
-  border-radius: 10px;
-  background: #fff;
-  text-align: center;
-  font-size: 13px;
-  color: var(--mocha);
-}
-.admin-access a {
-  color: var(--espresso);
-  font-weight: 500;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s;
-}
-.admin-access a:hover {
-  border-color: var(--espresso);
-}
-
+/* Section */
 .section {
   margin-bottom: 36px;
   animation: fadeUp 0.5s ease both;
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .section:nth-child(1) { animation-delay: 0.05s }
 .section:nth-child(2) { animation-delay: 0.10s }
@@ -160,7 +107,6 @@ body {
 .section:nth-child(6) { animation-delay: 0.30s }
 .section:nth-child(7) { animation-delay: 0.35s }
 .section:nth-child(8) { animation-delay: 0.40s }
-.section:nth-child(9) { animation-delay: 0.45s }
 
 .section-header {
   display: flex;
@@ -188,6 +134,7 @@ body {
 }
 .section-icon { font-size: 18px; margin-left: auto; opacity: 0.5; }
 
+/* Grid */
 .grid { display: grid; gap: 16px; }
 .grid-2 { grid-template-columns: 1fr 1fr; }
 .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
@@ -195,6 +142,7 @@ body {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
 }
 
+/* Field */
 .field label {
   display: block;
   font-size: 11px;
@@ -229,20 +177,9 @@ body {
   box-shadow: 0 0 0 3px rgba(92,61,46,0.10);
 }
 .field textarea { min-height: 80px; resize: vertical; }
-.field select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c3d2e'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  cursor: pointer;
-}
-.field-hint {
-  font-size: 12px;
-  color: var(--mocha);
-  margin-top: 6px;
-  opacity: 0.75;
-}
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c3d2e'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
 
+/* Radio / Checkbox cards */
 .radio-group, .check-group {
   display: flex;
   flex-wrap: wrap;
@@ -277,6 +214,7 @@ body {
   border-color: var(--mocha);
 }
 
+/* Conditional fields */
 .cond-field {
   display: none;
   margin-top: 10px;
@@ -286,7 +224,10 @@ body {
   border-left: 3px solid var(--gold);
 }
 .cond-field.visible { display: block; }
-.cond-field label { font-size: 11px !important; margin-bottom: 6px !important; }
+.cond-field label {
+  font-size: 11px !important;
+  margin-bottom: 6px !important;
+}
 .cond-field input[type="text"] {
   background: #fff;
   border: 1.5px solid var(--sand);
@@ -300,6 +241,7 @@ body {
 }
 .cond-field input:focus { border-color: var(--mocha); }
 
+/* Info card */
 .info-card {
   background: var(--light-mocha);
   border-radius: 10px;
@@ -311,170 +253,7 @@ body {
 }
 .info-card strong { color: var(--espresso); font-weight: 500; }
 
-/* ── CALENDÁRIO ── */
-.cal-wrap {
-  background: #fff;
-  border: 1.5px solid var(--sand);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.cal-header {
-  background: var(--espresso);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-}
-.cal-header button {
-  background: none;
-  border: none;
-  color: var(--gold);
-  font-size: 20px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 4px;
-}
-.cal-header button:disabled { opacity: 0.3; cursor: default; }
-.cal-month {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-}
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-}
-.cal-dow {
-  text-align: center;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--mocha);
-  padding: 10px 0 6px;
-  border-bottom: 1px solid var(--sand);
-}
-.cal-day {
-  text-align: center;
-  padding: 10px 4px;
-  font-size: 13px;
-  cursor: pointer;
-  border-radius: 6px;
-  margin: 2px;
-  transition: all 0.15s;
-  position: relative;
-}
-.cal-day:hover:not(.cal-empty):not(.cal-past):not(.cal-sunday) {
-  background: var(--light-mocha);
-}
-.cal-day.cal-empty { cursor: default; }
-.cal-day.cal-past  { color: #ccc; cursor: default; }
-.cal-day.cal-sunday { color: #e0bcbc; cursor: default; }
-.cal-day.cal-selected {
-  background: var(--espresso);
-  color: #fff;
-  font-weight: 500;
-}
-.cal-day.cal-today { font-weight: 700; color: var(--mocha); }
-.cal-day.cal-has-pending::after {
-  content: '';
-  display: block;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: #e0b840;
-  margin: 2px auto 0;
-}
-.cal-day.cal-has-full::after {
-  content: '';
-  display: block;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--rust);
-  margin: 2px auto 0;
-}
-
-/* ── SLOTS ── */
-.slots-wrap {
-  margin-top: 16px;
-}
-.slots-label {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--mocha);
-  margin-bottom: 10px;
-}
-.slots-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.slot-btn {
-  border: 1.5px solid var(--sand);
-  background: #fff;
-  border-radius: 8px;
-  padding: 9px 18px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: var(--espresso);
-  cursor: pointer;
-  transition: all 0.18s;
-  position: relative;
-}
-.slot-btn:hover:not(:disabled) {
-  border-color: var(--mocha);
-}
-.slot-btn.selected {
-  background: var(--espresso);
-  color: #fff;
-  border-color: var(--espresso);
-}
-.slot-btn.pending {
-  background: #fff8e1;
-  border-color: #e0b840;
-  color: #7a6000;
-  cursor: not-allowed;
-}
-.slot-btn.occupied {
-  background: #fdf0eb;
-  border-color: #e0bcbc;
-  color: #c08080;
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-.slot-btn.past {
-  background: #f6f2ec;
-  border-color: #e2d7ca;
-  color: #b4a79a;
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-.slots-loading {
-  font-size: 13px;
-  color: var(--mocha);
-  opacity: 0.6;
-  padding: 8px 0;
-}
-
-/* legenda */
-.cal-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 12px;
-  font-size: 12px;
-  color: var(--mocha);
-}
-.leg-dot {
-  display: inline-block;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  margin-right: 4px;
-  vertical-align: middle;
-}
-
-/* resp-grid */
+/* Responsibilities */
 .resp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 560px) { .resp-grid { grid-template-columns: 1fr; } }
 .resp-card {
@@ -492,7 +271,12 @@ body {
   align-items: center;
   gap: 8px;
 }
-.resp-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.resp-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .resp-card ul li {
   font-size: 13px;
   color: var(--mocha);
@@ -500,8 +284,14 @@ body {
   position: relative;
   line-height: 1.5;
 }
-.resp-card ul li::before { content: '–'; position: absolute; left: 0; color: var(--gold); }
+.resp-card ul li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
 
+/* Authorization toggles */
 .auth-row {
   display: flex;
   justify-content: space-between;
@@ -512,7 +302,12 @@ body {
   padding: 16px 18px;
   margin-bottom: 10px;
 }
-.auth-label { font-size: 14px; color: var(--espresso); max-width: 78%; line-height: 1.4; }
+.auth-label {
+  font-size: 14px;
+  color: var(--espresso);
+  max-width: 78%;
+  line-height: 1.4;
+}
 .toggle-wrap { display: flex; gap: 8px; }
 .toggle-btn {
   border: 1.5px solid var(--sand);
@@ -526,8 +321,9 @@ body {
   transition: all 0.18s;
 }
 .toggle-btn.active-yes { background: var(--sage); color: #fff; border-color: var(--sage); }
-.toggle-btn.active-no  { background: var(--rust); color: #fff; border-color: var(--rust); }
+.toggle-btn.active-no { background: var(--rust); color: #fff; border-color: var(--rust); }
 
+/* Notice box */
 .notice {
   background: var(--espresso);
   color: rgba(255,255,255,0.82);
@@ -538,6 +334,33 @@ body {
 }
 .notice strong { color: var(--gold); }
 
+/* Signature area */
+.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .sig-row { grid-template-columns: 1fr; } }
+.sig-box {
+  border: 1.5px dashed var(--sand);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  background: #fff;
+}
+.sig-box-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mocha);
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+.sig-line {
+  border-top: 1px solid var(--sand);
+  margin-top: 8px;
+  padding-top: 8px;
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* Submit */
 .submit-wrap { text-align: center; margin-top: 40px; }
 .btn-submit {
   background: var(--espresso);
@@ -558,6 +381,7 @@ body {
 .btn-submit:hover { background: var(--mocha); transform: translateY(-1px); }
 .btn-submit:active { transform: translateY(0); }
 
+/* Footer */
 .form-footer {
   text-align: center;
   margin-top: 32px;
@@ -567,6 +391,7 @@ body {
 }
 .form-footer a { color: var(--mocha); text-decoration: none; }
 
+/* Print */
 @media print {
   body { background: #fff; }
   .btn-submit, .form-footer { display: none; }
@@ -577,10 +402,6 @@ body {
 <body>
 
 <div class="header-band">
-  <div class="header-quick-links">
-    <a class="header-link-btn" href="./client.html">Portal Cliente</a>
-    <a class="header-link-btn" href="./admin.html">Área Admin</a>
-  </div>
   <p class="brand-mark">Passeios &amp; Banhos</p>
   <h1 class="header-title"><span>Prime</span> Pet</h1>
   <p class="header-sub">Contrato de Prestação de Serviços</p>
@@ -588,6 +409,7 @@ body {
 </div>
 
 <div class="form-wrap">
+
   <!-- 1. TUTOR -->
   <div class="section">
     <div class="section-header">
@@ -602,7 +424,7 @@ body {
       </div>
       <div class="field">
         <label>Telefone / WhatsApp</label>
-        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000" pattern="^\\(?[1-9]{2}\\)?\\s?9?\\d{4}-?\\d{4}$" title="Informe um telefone brasileiro válido, ex: (79) 99999-0000">
+        <input type="tel" id="tutor_telefone" placeholder="(79) 99999-0000">
       </div>
       <div class="field">
         <label>Data de hoje</label>
@@ -610,12 +432,7 @@ body {
       </div>
       <div class="field" style="grid-column: span 2">
         <label>Endereço</label>
-        <input type="text" id="tutor_endereco" list="sugestoes_endereco" placeholder="Rua, número, bairro, cidade">
-        <datalist id="sugestoes_endereco"></datalist>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-          <button type="button" class="toggle-btn" onclick="usarLocalizacaoNavegador()">📍 Usar minha localização</button>
-        </div>
-        <p class="field-hint">Digite o endereço para receber sugestões automáticas e facilitar o mapa no WhatsApp.</p>
+        <input type="text" id="tutor_endereco" placeholder="Rua, número, bairro, cidade">
       </div>
     </div>
   </div>
@@ -671,7 +488,7 @@ body {
       </div>
       <div class="field">
         <label>Possui alguma doença ou comorbidade?</label>
-        <div class="radio-group">
+        <div class="radio-group" id="doenca-grp">
           <label><input type="radio" name="doenca" value="nao" onchange="toggle('doenca-detail', false)"> Não</label>
           <label><input type="radio" name="doenca" value="sim" onchange="toggle('doenca-detail', true)"> Sim</label>
         </div>
@@ -760,60 +577,30 @@ body {
           <label><input type="checkbox" name="serv" value="Visita"> 🏠 Visita (alimentação, limpeza, cuidados)</label>
         </div>
       </div>
+      <!-- CAMPO "Dias contratados" REMOVIDO -->
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Horário combinado</label>
+          <input type="text" id="horario" placeholder="Ex: 09:00h">
+        </div>
+        <div class="field">
+          <label>Forma de pagamento</label>
+          <select id="pagamento">
+            <option value="">Selecione…</option>
+            <option>Pix</option>
+            <option>Dinheiro</option>
+            <option>Cartão de débito</option>
+            <option>Cartão de crédito</option>
+          </select>
+        </div>
+      </div>
       <div class="field">
-        <label>Dias contratados</label>
-        <input type="text" id="dias" placeholder="Ex: Seg, Qua, Sex">
+        <label>Data de pagamento</label>
+        <input type="text" id="data_pag" placeholder="Ex: todo dia 5">
       </div>
       <div class="info-card">
         <strong>ℹ️ Observação:</strong> O valor do banho é cobrado <strong>por pet</strong>. Em caso de mais de um animal, consulte os valores com antecedência.
       </div>
-      <div class="info-card" style="border-left: 3px solid var(--rust); background: #fdf0eb;">
-        <strong>💳 Pagamento:</strong> O pagamento deve ser realizado <strong>após a conclusão do serviço prestado</strong>.
-      </div>
-    </div>
-  </div>
-
-  <!-- 5b. AGENDAMENTO -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">📅</div>
-      <h2 class="section-title">Agendamento</h2>
-      <span class="section-icon">🗓️</span>
-    </div>
-
-    <!-- Calendário -->
-    <div class="cal-wrap">
-      <div class="cal-header">
-        <button id="btn-prev" onclick="mudaMes(-1)">‹</button>
-        <span class="cal-month" id="cal-mes">…</span>
-        <button id="btn-next" onclick="mudaMes(1)">›</button>
-      </div>
-      <div class="cal-grid" id="cal-grid">
-        <div class="cal-dow">Dom</div>
-        <div class="cal-dow">Seg</div>
-        <div class="cal-dow">Ter</div>
-        <div class="cal-dow">Qua</div>
-        <div class="cal-dow">Qui</div>
-        <div class="cal-dow">Sex</div>
-        <div class="cal-dow">Sáb</div>
-      </div>
-    </div>
-
-    <!-- Legenda -->
-    <div class="cal-legend">
-      <span><span class="leg-dot" style="background:#e0b840"></span> Pendente (aguardando confirmação)</span>
-      <span><span class="leg-dot" style="background:var(--rust)"></span> Ocupado</span>
-      <span><span class="leg-dot" style="background:var(--espresso)"></span> Selecionado</span>
-    </div>
-
-    <!-- Slots de horário -->
-    <div class="slots-wrap" id="slots-wrap" style="display:none">
-      <p class="slots-label" id="slots-label">Horários disponíveis</p>
-      <div class="slots-grid" id="slots-grid"></div>
-    </div>
-
-    <div id="agend-resumo" style="display:none; margin-top:14px;" class="info-card">
-      📌 <strong>Agendamento selecionado:</strong> <span id="agend-txt"></span>
     </div>
   </div>
 
@@ -891,476 +678,34 @@ body {
   <div class="form-footer">
     <strong>Prime Pet – Passeios &amp; Banhos</strong><br>
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
-    📸 <a href="https://instagram.com/Prime_Pet" target="_blank">@Prime_Pet</a>
-    <br><br>
+    📸 <a href="https://instagram.com/prime_petoficial" target="_blank">@prime_petoficial</a><br><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank">github.com/fernando-msa</a>
   </div>
 
-</div>
+</div><!-- /form-wrap -->
 
-<!-- Toast -->
+<!-- Toast de validação -->
 <div id="toast" style="
   display:none; position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
   background:#b85c38; color:#fff; border-radius:12px; padding:14px 24px;
   font-size:14px; z-index:999; box-shadow:0 8px 32px rgba(0,0,0,.25);
   max-width:90vw; text-align:center; font-family:'DM Sans',sans-serif;
-"></div>
+">⚠️ Preencha pelo menos o nome do tutor e o nome do pet!</div>
 
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, push, set }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-// ════════════════════════════════════════════════
-// 🔧 CONFIGURAÇÃO FIREBASE — substitua pelos seus dados
-// ════════════════════════════════════════════════
-const firebaseConfig = {
-  apiKey:            "AIzaSyCBvnGzJ1rVrg-kOmxWaYFB0Fzn1_HGNH8",
-  authDomain:        "prime-pet.firebaseapp.com",
-  databaseURL:       "https://prime-pet-default-rtdb.firebaseio.com",
-  projectId:         "prime-pet",
-  storageBucket:     "prime-pet.firebasestorage.app",
-  messagingSenderId: "716091719601",
-  appId:             "1:716091719601:web:89e7ff08dc887ad4254790"
-};
-// ════════════════════════════════════════════════
-
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
-
-const HORARIOS = ['09:00','10:00','11:00','14:00','15:00','16:00'];
-const MESES    = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-let viewYear, viewMonth;
-let agendamentos = {};   // { "2025-07-10": { "09:00": "pending"|"confirmed", ... } }
-let selectedDate = null;
-let selectedHour = null;
-let debounceEndereco = null;
-
-// ── Init ──────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  const hoje = new Date();
-  viewYear   = hoje.getFullYear();
-  viewMonth  = hoje.getMonth();
-  document.getElementById('data_hoje').value = hoje.toISOString().split('T')[0];
-  iniciarSugestoesEndereco();
-  subscribeAgendamentos();
-});
-
-function iniciarSugestoesEndereco() {
-  const input = document.getElementById('tutor_endereco');
-  const list  = document.getElementById('sugestoes_endereco');
-  if (!input || !list) return;
-
-  input.addEventListener('input', () => {
-    const termo = input.value.trim();
-    if (debounceEndereco) clearTimeout(debounceEndereco);
-    if (termo.length < 5) {
-      list.innerHTML = '';
-      return;
-    }
-    debounceEndereco = setTimeout(async () => {
-      const sugestoes = await buscarSugestoesEndereco(termo);
-      list.innerHTML = '';
-      sugestoes.forEach(s => {
-        const option = document.createElement('option');
-        option.value = s;
-        list.appendChild(option);
-      });
-    }, 400);
-  });
-}
-
-async function buscarSugestoesEndereco(termo) {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&countrycodes=br&q=${encodeURIComponent(termo)}`;
-  try {
-    const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    if (!Array.isArray(data)) return [];
-    return data.map(item => item.display_name).filter(Boolean);
-  } catch (_) {
-    return [];
-  }
-}
-
-// ── Firebase: ouve mudanças em tempo real ─────────
-function subscribeAgendamentos() {
-  const r = ref(db, 'agendamentos');
-  onValue(r, snap => {
-    agendamentos = snap.val() || {};
-    renderCalendario();
-    if (selectedDate) renderSlots(selectedDate);
-  });
-}
-
-// ── Calendário ────────────────────────────────────
-function renderCalendario() {
-  const grid  = document.getElementById('cal-grid');
-  const label = document.getElementById('cal-mes');
-  const hoje  = new Date();
-  hoje.setHours(0,0,0,0);
-
-  label.textContent = `${MESES[viewMonth]} ${viewYear}`;
-
-  // remove dias antigos (mantém os 7 cabeçalhos)
-  while (grid.children.length > 7) grid.removeChild(grid.lastChild);
-
-  const primeiro = new Date(viewYear, viewMonth, 1).getDay(); // 0=Dom
-  const total    = new Date(viewYear, viewMonth+1, 0).getDate();
-
-  // células vazias antes do dia 1
-  for (let i = 0; i < primeiro; i++) {
-    const el = document.createElement('div');
-    el.className = 'cal-day cal-empty';
-    grid.appendChild(el);
-  }
-
-  for (let d = 1; d <= total; d++) {
-    const data    = new Date(viewYear, viewMonth, d);
-    const dataStr = formatDate(viewYear, viewMonth+1, d);
-    const el      = document.createElement('div');
-    el.className  = 'cal-day';
-    el.textContent = d;
-
-    const passado = data < hoje;
-    const domingo = data.getDay() === 0;
-
-    if (passado)  el.classList.add('cal-past');
-    if (domingo)  el.classList.add('cal-sunday');
-    if (data.toDateString() === hoje.toDateString()) el.classList.add('cal-today');
-    if (dataStr === selectedDate) el.classList.add('cal-selected');
-
-    // dots de status
-    const slots = agendamentos[dataStr] || {};
-    const vals  = Object.values(slots);
-    const temConfirmado = vals.includes('confirmed');
-    const temPendente   = vals.some(v => v === 'pending');
-    const todosOcupados = HORARIOS.every(h => slots[h] === 'confirmed' || slots[h] === 'pending');
-
-    if (todosOcupados)   el.classList.add('cal-has-full');
-    else if (temConfirmado || temPendente) el.classList.add('cal-has-pending');
-
-    if (!passado && !domingo) {
-      el.onclick = () => selecionaData(dataStr);
-    }
-
-    grid.appendChild(el);
-  }
-
-  // botão prev: desabilita se já estamos no mês atual
-  document.getElementById('btn-prev').disabled =
-    (viewYear === hoje.getFullYear() && viewMonth === hoje.getMonth());
-}
-
-window.mudaMes = function(delta) {
-  viewMonth += delta;
-  if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
-  if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
-  renderCalendario();
-  if (selectedDate) {
-    // se data selecionada saiu do mês visível, limpa
-    const [y, m] = selectedDate.split('-').map(Number);
-    if (y !== viewYear || m !== viewMonth+1) {
-      selectedDate = null;
-      selectedHour = null;
-      document.getElementById('slots-wrap').style.display = 'none';
-      document.getElementById('agend-resumo').style.display = 'none';
-    }
-  }
-};
-
-function selecionaData(dataStr) {
-  selectedDate = dataStr;
-  selectedHour = null;
-  document.getElementById('agend-resumo').style.display = 'none';
-  renderCalendario();
-  renderSlots(dataStr);
-}
-
-// ── Slots ─────────────────────────────────────────
-function renderSlots(dataStr) {
-  const wrap  = document.getElementById('slots-wrap');
-  const grid  = document.getElementById('slots-grid');
-  const label = document.getElementById('slots-label');
-
-  const [y, m, d] = dataStr.split('-');
-  const dtFmt = `${d}/${m}/${y}`;
-  label.textContent = `Horários disponíveis — ${dtFmt}`;
-
-  grid.innerHTML = '<div class="slots-loading">Carregando…</div>';
-  wrap.style.display = 'block';
-
-  const slots = (agendamentos[dataStr] || {});
-  grid.innerHTML = '';
-
-  HORARIOS.forEach(h => {
-    const btn = document.createElement('button');
-    btn.className  = 'slot-btn';
-    btn.textContent = h;
-
-    const status = slots[h];
-    const expirado = slotJaPassou(dataStr, h);
-    if (status === 'confirmed') {
-      btn.classList.add('occupied');
-      btn.title    = 'Horário ocupado';
-      btn.disabled = true;
-    } else if (status === 'pending') {
-      btn.classList.add('pending');
-      btn.title    = 'Aguardando confirmação';
-      btn.disabled = true;
-    } else if (expirado) {
-      btn.classList.add('past');
-      btn.title    = 'Horário já passou';
-      btn.disabled = true;
-      if (selectedHour === h) selectedHour = null;
-    } else {
-      if (h === selectedHour) btn.classList.add('selected');
-      btn.onclick = () => selecionaHorario(h, btn);
-    }
-
-    grid.appendChild(btn);
-  });
-
-  if (!selectedHour) {
-    document.getElementById('agend-resumo').style.display = 'none';
-  }
-}
-
-function selecionaHorario(h, btn) {
-  selectedHour = h;
-  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-
-  const [y, m, d] = selectedDate.split('-');
-  const dtFmt = `${d}/${m}/${y}`;
-  document.getElementById('agend-txt').textContent = `${dtFmt} às ${h}`;
-  document.getElementById('agend-resumo').style.display = 'block';
-}
-
-// ── Helpers ───────────────────────────────────────
-function formatDate(y, m, d) {
-  return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-}
-
-function slotJaPassou(dataStr, hora) {
-  const [y, m, d] = dataStr.split('-').map(Number);
-  const [hh, mm]  = hora.split(':').map(Number);
-  const inicioSlot = new Date(y, m - 1, d, hh, mm, 0, 0);
-  return inicioSlot <= new Date();
-}
-
-// ── Salva agendamento pendente no Firebase ─────────
-async function salvarPendente() {
-  if (!selectedDate || !selectedHour) return;
-  const path = `agendamentos/${selectedDate}/${selectedHour.replace(':','')}`;
-  // Verifica de novo antes de salvar (race condition)
-  const current = (agendamentos[selectedDate] || {})[selectedHour];
-  if (current === 'confirmed' || current === 'pending') return;
-  await set(ref(db, path), 'pending');
-}
-
-async function validarEnderecoNoMapa(endereco) {
-  if (!endereco) return null;
-  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(endereco)}`;
-  const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
-  if (!resp.ok) return null;
-  const data = await resp.json();
-  if (!Array.isArray(data) || !data.length) return null;
-
-  const local = data[0];
-  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${local.lat},${local.lon}`;
-  return {
-    enderecoFormatado: local.display_name || endereco,
-    lat: local.lat,
-    lon: local.lon,
-    mapsLink
-  };
-}
-
-async function reverseGeocode(lat, lon) {
-  const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
-  const resp = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
-  if (!resp.ok) return null;
-  const data = await resp.json();
-  return data?.display_name || null;
-}
-
-window.usarLocalizacaoNavegador = function() {
-  if (!navigator.geolocation) {
-    showToast('Seu navegador não suporta geolocalização.');
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const { latitude, longitude } = pos.coords;
-    const endereco = await reverseGeocode(latitude, longitude);
-    if (endereco) {
-      document.getElementById('tutor_endereco').value = endereco;
-      showToast('📍 Localização preenchida com base no seu navegador.');
-    } else {
-      document.getElementById('tutor_endereco').value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-      showToast('📍 Coordenadas obtidas. Complete o endereço, se necessário.');
-    }
-  }, () => {
-    showToast('Não foi possível obter sua localização.');
-  }, { enableHighAccuracy: true, timeout: 10000 });
-};
-
-async function salvarHistoricoCliente({ tutorNome, petNome, telefone, endereco, mapsLink, dataAgendada, horaAgendada, saude }) {
-  const payload = {
-    tutorNome,
-    petNome,
-    telefone: telefone || '',
-    endereco: endereco || '',
-    mapsLink: mapsLink || '',
-    dataAgendada,
-    horaAgendada,
-    status: 'pending',
-    saude: saude || {},
-    criadoEm: Date.now()
-  };
-  await set(push(ref(db, 'historico_clientes')), payload);
-}
-
-function limparTelefone(telefone) {
-  return (telefone || '').replace(/\D/g, '');
-}
-
-function telefoneValidoBR(telefone) {
-  const d = limparTelefone(telefone);
-  if (![10, 11].includes(d.length)) return false;
-  const ddd = Number(d.slice(0, 2));
-  if (ddd < 11 || ddd > 99) return false;
-  if (d.length === 11 && d[2] !== '9') return false;
-  return true;
-}
-
-// ── Envio WhatsApp ────────────────────────────────
-window.enviarWhatsApp = async function() {
-  const tutorNome = val('tutor_nome');
-  const petNome   = val('pet_nome');
-  const enderecoTutor = val('tutor_endereco');
-  const telefoneTutor = val('tutor_telefone');
-
-  if (!tutorNome || !petNome) {
-    showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
-    return;
-  }
-  if (!telefoneValidoBR(telefoneTutor)) {
-    showToast('⚠️ Informe um telefone brasileiro válido (ex: 79 99999-0000).');
-    return;
-  }
-  if (!selectedDate || !selectedHour) {
-    showToast('⚠️ Selecione uma data e horário no calendário!');
-    return;
-  }
-
-  let localizacao = null;
-  if (enderecoTutor) {
-    try {
-      localizacao = await validarEnderecoNoMapa(enderecoTutor);
-    } catch (_) {
-      localizacao = null;
-    }
-    if (!localizacao) {
-      showToast('⚠️ Endereço não encontrado/validado. Revise o endereço para continuar.');
-      return;
-    }
-  }
-
-  // Salva como pendente no Firebase
-  await salvarPendente();
-
-  const [y, m, d] = selectedDate.split('-');
-  const dtFmt = `${d}/${m}/${y}`;
-
-  const sexo     = radio('sexo') || 'Não informado';
-  const vacina   = radio('vacina');
-  const doenca   = radio('doenca');
-  const med      = radio('med');
-  const alergia  = radio('alergia');
-  const agress   = radio('agress');
-  const fuga     = radio('fuga');
-  const comp     = checkboxes('comp');
-  const servicos = checkboxes('serv');
-
-  const linhas = [
-    '🐾 *PRIME PET - NOVO AGENDAMENTO*',
-    '------------------------------',
-    `📅 *Quando:* ${dtFmt} às ${selectedHour}`,
-    '⏳ *Status:* PENDENTE (aguarda confirmação)',
-    '',
-    '👤 *TUTOR*',
-    `- Nome: ${tutorNome}`,
-    `- Telefone: ${telefoneTutor || 'Não informado'}`,
-    `- Endereço: ${localizacao?.enderecoFormatado || enderecoTutor || 'Não informado'}`,
-    `🗺️ Mapa: ${localizacao?.mapsLink || 'Não informado'}`,
-    '',
-    '🐶 *PET*',
-    `- Nome: ${petNome}`,
-    `- Raça: ${val('pet_raca') || 'Não informado'}`,
-    `- Idade: ${val('pet_idade') || 'Não informado'}`,
-    `- Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
-    `- Sexo: ${sexo}`,
-    '',
-    '🏥 *SAÚDE*',
-    `- Vacinação: ${simNao(vacina)}`,
-    `- Doença/comorbidade: ${doenca === 'sim' ? 'Sim - ' + (val('doenca_desc') || 'sem descrição') : 'Não'}`,
-    `- Medicação: ${med === 'sim' ? 'Sim - ' + (val('med_desc') || 'sem descrição') : 'Não'}`,
-    `- Alergia: ${alergia === 'sim' ? 'Sim - ' + (val('alergia_desc') || 'sem descrição') : 'Não'}`,
-    '',
-    '🐾 *COMPORTAMENTO*',
-    `- Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
-    `- Histórico agressivo: ${simNao(agress)}`,
-    `- Costuma fugir: ${simNao(fuga)}`,
-    `- Observações: ${val('obs_comp') || 'Nenhuma'}`,
-    '',
-    '✂️ *SERVIÇOS*',
-    `- Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
-    `- Dias: ${val('dias') || 'Não informado'}`,
-    '',
-    '✅ *AUTORIZAÇÕES*',
-    `- Emergência vet.: ${toggleVal('emer')}`,
-    `- Uso de imagem: ${toggleVal('img')}`,
-    '',
-    `🕒 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
-    '------------------------------',
-  ];
-
-  const msg    = encodeURIComponent(linhas.join('\n'));
-  const numero = '5579996623050';
-  await salvarHistoricoCliente({
-    tutorNome,
-    petNome,
-    telefone: telefoneTutor,
-    endereco: localizacao?.enderecoFormatado || enderecoTutor,
-    mapsLink: localizacao?.mapsLink || '',
-    dataAgendada: selectedDate,
-    horaAgendada: selectedHour,
-    saude: {
-      vacinado: simNao(vacina),
-      doenca: doenca === 'sim' ? (val('doenca_desc') || 'Sim (sem descrição)') : 'Não',
-      medicacao: med === 'sim' ? (val('med_desc') || 'Sim (sem descrição)') : 'Não',
-      alergia: alergia === 'sim' ? (val('alergia_desc') || 'Sim (sem descrição)') : 'Não'
-    }
-  });
-  window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
-};
-
-// ── Utilitários ───────────────────────────────────
+<script>
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
 }
-window.toggle = toggle;
 
-function setToggle(btn, v, group) {
-  btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn')
-     .forEach(b => b.classList.remove('active-yes','active-no'));
-  btn.classList.add(v === 'yes' ? 'active-yes' : 'active-no');
+function setToggle(btn, val, group) {
+  const wrap = btn.closest('.toggle-wrap');
+  wrap.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
+  btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
 }
-window.setToggle = setToggle;
+
+// Data de hoje como padrão
+const dateInput = document.querySelector('input[type="date"]');
+if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
 
 function val(id) {
   const el = document.getElementById(id);
@@ -1374,9 +719,11 @@ function checkboxes(name) {
   return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
 }
 function toggleVal(group) {
-  const y = document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`);
-  const n = document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`);
-  return y ? 'Sim' : n ? 'Não' : 'Não respondido';
+  const btn = document.querySelector(`.toggle-btn.active-yes[onclick*="${group}"]`);
+  const btnNo = document.querySelector(`.toggle-btn.active-no[onclick*="${group}"]`);
+  if (btn) return 'Sim';
+  if (btnNo) return 'Não';
+  return 'Não respondido';
 }
 function simNao(v) {
   if (v === 'sim') return 'Sim ✅';
@@ -1388,6 +735,71 @@ function showToast(msg) {
   t.textContent = msg;
   t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 3500);
+}
+
+function enviarWhatsApp() {
+  const tutorNome = val('tutor_nome');
+  const petNome   = val('pet_nome');
+
+  if (!tutorNome || !petNome) {
+    showToast('⚠️ Preencha pelo menos o nome do tutor e o nome do pet!');
+    return;
+  }
+
+  const sexo     = radio('sexo') || 'Não informado';
+  const vacina   = radio('vacina');
+  const doenca   = radio('doenca');
+  const med      = radio('med');
+  const alergia  = radio('alergia');
+  const agress   = radio('agress');
+  const fuga     = radio('fuga');
+  const comp     = checkboxes('comp');
+  const servicos = checkboxes('serv');
+
+  const linhas = [
+    '🐾 *PRIME PET – Novo Contrato*',
+    '━━━━━━━━━━━━━━━━━━━━',
+    '',
+    '👤 *DADOS DO TUTOR*',
+    `• Nome: ${tutorNome}`,
+    `• Telefone: ${val('tutor_telefone') || 'Não informado'}`,
+    `• Endereço: ${val('tutor_endereco') || 'Não informado'}`,
+    '',
+    '🐶 *DADOS DO PET*',
+    `• Nome: ${petNome}`,
+    `• Raça: ${val('pet_raca') || 'Não informado'}`,
+    `• Idade: ${val('pet_idade') || 'Não informado'}`,
+    `• Peso: ${val('pet_peso') ? val('pet_peso') + ' kg' : 'Não informado'}`,
+    `• Sexo: ${sexo}`,
+    '',
+    '🏥 *SAÚDE*',
+    `• Vacinado: ${simNao(vacina)}`,
+    `• Doença/comorbidade: ${doenca === 'sim' ? 'Sim – ' + (val('doenca_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Medicação: ${med === 'sim' ? 'Sim – ' + (val('med_desc') || 'sem descrição') : 'Não ❌'}`,
+    `• Alergia: ${alergia === 'sim' ? 'Sim – ' + (val('alergia_desc') || 'sem descrição') : 'Não ❌'}`,
+    '',
+    '🐾 *COMPORTAMENTO*',
+    `• Perfil: ${comp.length ? comp.join(', ') : 'Não informado'}`,
+    `• Histórico agressivo: ${simNao(agress)}`,
+    `• Costuma fugir: ${simNao(fuga)}`,
+    `• Observações: ${val('obs_comp') || 'Nenhuma'}`,
+    '',
+    '✂️ *SERVIÇOS*',
+    `• Serviços: ${servicos.length ? servicos.join(', ') : 'Não informado'}`,
+    `• Horário: ${val('horario') || 'Não informado'}`,
+    `• Pagamento: ${val('pagamento') || 'Não informado'} – ${val('data_pag') || 'Não informado'}`,
+    '',
+    '✅ *AUTORIZAÇÕES*',
+    `• Emergência vet.: ${toggleVal('emer')}`,
+    `• Uso de imagem: ${toggleVal('img')}`,
+    '',
+    '━━━━━━━━━━━━━━━━━━━━',
+    `📅 Enviado em: ${new Date().toLocaleString('pt-BR')}`,
+  ];
+
+  const msg    = encodeURIComponent(linhas.join('\n'));
+  const numero = '5579996623050';
+  window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
 }
 </script>
 
