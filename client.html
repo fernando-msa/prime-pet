@@ -55,7 +55,12 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .btn-sm:disabled{opacity:.45;cursor:not-allowed}
 .mini-stats{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
 .mini-chip{border:1px solid var(--gray2);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;background:#fff;color:var(--dark2)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.profile-grid .full{grid-column:1/-1}
+.profile-label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--dark2)}
+.profile-label input{border:1.5px solid var(--gray2);border-radius:8px;padding:10px 11px;font-size:14px}
 .hidden{display:none}
+@media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -105,6 +110,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       <div class="tabs">
         <button class="tab active" onclick="trocarAba('solicitacoes', this)">Solicitações</button>
         <button class="tab" onclick="trocarAba('pets', this)">Meus Pets</button>
+        <button class="tab" onclick="trocarAba('perfil', this)">Meu Perfil</button>
       </div>
       <div class="subfilters" id="solicitacao-filtros">
         <button class="subfilter-btn active" onclick="setSolicFiltro('all', this)">Todos</button>
@@ -114,6 +120,32 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       </div>
       <div id="aba-solicitacoes" class="list"></div>
       <div id="aba-pets" class="list hidden"></div>
+      <div id="aba-perfil" class="list hidden">
+        <div class="item">
+          <strong>Dados do perfil</strong><br>
+          <span class="muted">Esses dados podem ser reutilizados em novos agendamentos.</span>
+          <div class="profile-grid" style="margin-top:10px">
+            <label class="profile-label">Nome completo
+              <input type="text" id="perfil-nome" placeholder="Seu nome">
+            </label>
+            <label class="profile-label">Telefone
+              <input type="text" id="perfil-telefone" placeholder="(00) 00000-0000">
+            </label>
+            <label class="profile-label full">Endereço
+              <input type="text" id="perfil-endereco" placeholder="Rua, número, bairro, cidade">
+            </label>
+            <label class="profile-label">Nome preferido do pet
+              <input type="text" id="perfil-pet" placeholder="Ex.: Thor">
+            </label>
+            <label class="profile-label">Raça do pet
+              <input type="text" id="perfil-raca" placeholder="Ex.: SRD, Poodle">
+            </label>
+          </div>
+          <div class="item-actions">
+            <button class="btn-sm" onclick="salvarPerfilCompleto()">💾 Salvar perfil</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card" id="portal-msg">Entre com Google para visualizar seu histórico.</div>
@@ -168,6 +200,16 @@ function podeEditar(status){ return (status || 'pending') === 'pending'; }
 
 function setMensagemPortal(msg) {
   document.getElementById('portal-msg').textContent = msg;
+}
+
+async function carregarPerfil(user) {
+  const snap = await get(ref(db, `clientes_perfis/${user.uid}`));
+  const p = snap.val() || {};
+  document.getElementById('perfil-nome').value = p.nome || user.displayName || '';
+  document.getElementById('perfil-telefone').value = p.telefone || '';
+  document.getElementById('perfil-endereco').value = p.endereco || '';
+  document.getElementById('perfil-pet').value = p.petNome || '';
+  document.getElementById('perfil-raca').value = p.petRaca || '';
 }
 
 async function registrarErro(contexto, erro) {
@@ -315,6 +357,7 @@ async function carregarPortalCliente(user) {
     document.getElementById('portal-card').classList.remove('hidden');
     renderSolicitacoes();
     renderPets();
+    carregarPerfil(user).catch(() => {});
     return;
   }
 
@@ -322,6 +365,7 @@ async function carregarPortalCliente(user) {
   document.getElementById('portal-card').classList.remove('hidden');
   renderSolicitacoes();
   renderPets();
+  carregarPerfil(user).catch(() => {});
 }
 
 window.sairPortal = async function() {
@@ -357,6 +401,29 @@ window.editarPerfilCliente = async function() {
   atualizarHeaderSessao({ ...user, displayName: nomeLimpo });
 };
 
+window.salvarPerfilCompleto = async function() {
+  const user = auth.currentUser;
+  if (!user) {
+    setMensagemPortal('Faça login para salvar seu perfil.');
+    return;
+  }
+  const perfil = {
+    nome: document.getElementById('perfil-nome').value.trim(),
+    telefone: document.getElementById('perfil-telefone').value.trim(),
+    endereco: document.getElementById('perfil-endereco').value.trim(),
+    petNome: document.getElementById('perfil-pet').value.trim(),
+    petRaca: document.getElementById('perfil-raca').value.trim(),
+    email: user.email || '',
+    atualizadoEm: Date.now()
+  };
+  await set(ref(db, `clientes_perfis/${user.uid}`), perfil);
+  if (perfil.nome) {
+    try { await updateProfile(user, { displayName: perfil.nome }); } catch (_) {}
+    atualizarHeaderSessao({ ...user, displayName: perfil.nome });
+  }
+  setMensagemPortal('Perfil salvo com sucesso.');
+};
+
 onAuthStateChanged(auth, user => {
   atualizarHeaderSessao(user || null);
   if (user) {
@@ -384,6 +451,7 @@ window.trocarAba = function(aba, btn){
   btn.classList.add('active');
   document.getElementById('aba-solicitacoes').classList.toggle('hidden', aba !== 'solicitacoes');
   document.getElementById('aba-pets').classList.toggle('hidden', aba !== 'pets');
+  document.getElementById('aba-perfil').classList.toggle('hidden', aba !== 'perfil');
   document.getElementById('solicitacao-filtros').classList.toggle('hidden', aba !== 'solicitacoes');
 };
 
