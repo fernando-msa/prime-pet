@@ -152,6 +152,19 @@ body {
 .btn-login:hover  { background: var(--mocha); transform: translateY(-1px); }
 .btn-login:active { transform: translateY(0); }
 .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.oauth-wrap { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.btn-oauth {
+  flex:1;
+  border:1.5px solid var(--sand);
+  background:#fff;
+  color:var(--espresso);
+  border-radius:10px;
+  padding:11px 12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-oauth:hover { border-color: var(--mocha); }
 .btn-forgot {
   display: block;
   text-align: center;
@@ -209,6 +222,15 @@ body {
   align-items: center;
   gap: 10px;
 }
+.session-pill {
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+}
 .btn-home {
   background: rgba(255,255,255,0.08);
   border: 1.5px solid rgba(255,255,255,0.25);
@@ -225,6 +247,14 @@ body {
 .btn-home:hover {
   border-color: rgba(255,255,255,0.8);
   color: #fff;
+}
+.btn-release {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
 }
 .btn-logout {
   background: rgba(255,255,255,0.08);
@@ -565,6 +595,16 @@ body {
 .btn-free:hover { border-color: var(--mocha); }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--mocha); opacity: 0.45; font-size: 15px; }
+.release-panel {
+  display:none;
+  margin: 12px 20px 0;
+  padding: 12px 14px;
+  background:#fff;
+  border:1.5px solid var(--sand);
+  border-radius:10px;
+  font-size:13px;
+  color:var(--mocha);
+}
 
 .spinner {
   display: inline-block; width: 16px; height: 16px;
@@ -602,6 +642,10 @@ body {
     </div>
 
     <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="oauth-wrap">
+      <button class="btn-oauth" onclick="fazerLoginGoogle()">Entrar com Google</button>
+      <button class="btn-oauth" onclick="focarLoginEmail()">Entrar com E-mail</button>
+    </div>
     <a class="btn-forgot" onclick="esqueceuSenha()">Esqueceu a senha?</a>
 
     <div class="login-error"   id="login-error"></div>
@@ -614,10 +658,18 @@ body {
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
+      <button class="btn-release" onclick="toggleReleaseNotes()" title="Atualizações">🔔</button>
+      <span class="session-pill" id="status-sessoes">🔒 Sem sessão</span>
       <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
       <a class="btn-home" href="./client.html">Portal do cliente</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
+  </div>
+  <div class="release-panel" id="release-panel">
+    <strong>Atualizações recentes</strong><br>
+    • Melhorias no login e sessão<br>
+    • Correções de fluxo do portal admin/cliente<br>
+    • Ajustes de estabilidade e validações de dados
   </div>
 
   <div class="admin-wrap">
@@ -717,9 +769,9 @@ body {
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, signInWithEmailAndPassword,
+  getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup,
   sendPasswordResetEmail, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -748,20 +800,47 @@ let mesVisao = new Date().toISOString().slice(0, 7);
 let historyExpanded = false;
 let historyFilter = 'today';
 let adminEmailAtual = '';
+const ADMINS_AUTORIZADOS = new Set([
+  'ribeirojunior270@gmail.com',
+  'arthurleite71@gmail.com'
+]);
 
 document.getElementById('mes-referencia').value = mesVisao;
+
+function isAdminAutorizado(email) {
+  return ADMINS_AUTORIZADOS.has(String(email || '').toLowerCase().trim());
+}
+
+function atualizarStatusSessoes() {
+  const badge = document.getElementById('status-sessoes');
+  if (!badge) return;
+  const clienteSessao = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
+  const adminTxt = adminEmailAtual ? `Admin: ${adminEmailAtual}` : 'Admin: não logado';
+  const clienteTxt = clienteSessao?.uid ? 'Cliente: logado' : 'Cliente: não logado';
+  badge.textContent = `${adminTxt} • ${clienteTxt}`;
+}
+window.addEventListener('storage', atualizarStatusSessoes);
+window.addEventListener('focus', atualizarStatusSessoes);
+atualizarStatusSessoes();
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
   if (user) {
+    if (!isAdminAutorizado(user.email)) {
+      signOut(auth).catch(() => {});
+      mostrarErroLogin('Acesso negado. Esta conta não tem permissão para o portal admin.');
+      return;
+    }
     adminEmailAtual = user.email || 'admin';
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-panel').style.display  = 'block';
+    atualizarStatusSessoes();
     iniciarAdmin();
   } else {
     adminEmailAtual = '';
     document.getElementById('admin-panel').style.display  = 'none';
     document.getElementById('login-screen').style.display = 'flex';
+    atualizarStatusSessoes();
   }
 }, () => {
   mostrarErroLogin('Não foi possível validar sua sessão. Tente entrar novamente.');
@@ -802,6 +881,10 @@ window.fazerLogin = async function() {
     err.textContent = 'Preencha e-mail e senha.';
     err.style.display = 'block'; return;
   }
+  if (!isAdminAutorizado(email)) {
+    err.textContent = 'Conta sem permissão de admin.';
+    err.style.display = 'block'; return;
+  }
 
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span> Entrando…';
@@ -816,6 +899,25 @@ window.fazerLogin = async function() {
       btn.innerHTML = 'Entrar';
     }
   }
+};
+
+window.fazerLoginGoogle = async function() {
+  const err = document.getElementById('login-error');
+  const provider = new GoogleAuthProvider();
+  err.style.display = 'none';
+  try {
+    const cred = await signInWithPopup(auth, provider);
+    if (!isAdminAutorizado(cred.user?.email)) {
+      await signOut(auth);
+      mostrarErroLogin('Conta Google sem permissão de admin.');
+    }
+  } catch (e) {
+    mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);
+  }
+};
+
+window.focarLoginEmail = function() {
+  document.getElementById('inp-email').focus();
 };
 
 // ── Esqueceu a senha ──────────────────────────────
@@ -877,6 +979,7 @@ function iniciarAdmin() {
   onValue(ref(db, 'historico_clientes'), snap => {
     const raw = snap.val() || {};
     historicoClientes = Object.entries(raw).map(([id, v]) => ({ id, ...v }));
+    sincronizarPendenciasDoHistorico().catch(() => {});
     renderHistoricoClientes();
   });
   onValue(ref(db, 'historico_acoes'), snap => {
@@ -916,10 +1019,41 @@ window.setHistoryFilter = function(tipo, btn) {
 window.apagarHistoricoClientes = async function() {
   const ok = window.confirm('Tem certeza que deseja apagar TODO o histórico de clientes? Esta ação não pode ser desfeita.');
   if (!ok) return;
-  await remove(ref(db, 'historico_clientes'));
-  historicoClientes = [];
-  renderHistoricoClientes();
-  showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  try {
+    const rootRef = ref(db, 'historico_clientes');
+    const snap = await get(rootRef);
+    const raw = snap.val() || {};
+    const ids = Object.keys(raw);
+
+    if (!ids.length) {
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('Histórico já estava vazio.');
+      return;
+    }
+
+    // Remove item a item (mais compatível com regras que não permitem delete no nó raiz)
+    await Promise.all(ids.map(id => remove(ref(db, `historico_clientes/${id}`))));
+    historicoClientes = [];
+    renderHistoricoClientes();
+    showToast('🗑️ Histórico de clientes apagado com sucesso.');
+  } catch (e) {
+    try {
+      await set(ref(db, 'historico_clientes'), {});
+      historicoClientes = [];
+      renderHistoricoClientes();
+      showToast('🗑️ Histórico limpo com fallback.');
+    } catch (err) {
+      console.error('Falha ao apagar histórico:', e, err);
+      showToast('❌ Sem permissão para apagar histórico. Ajuste as regras do Firebase.');
+    }
+  }
+};
+
+window.toggleReleaseNotes = function() {
+  const box = document.getElementById('release-panel');
+  if (!box) return;
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
 };
 
 function formatDateBR(date) {
@@ -1218,18 +1352,45 @@ async function registrarAcaoAdmin(action, date, hk) {
   });
 }
 
+async function atualizarHistoricoPorSlot(date, hk, status) {
+  const hora = hk.slice(0,2) + ':' + hk.slice(2);
+  const q = query(ref(db, 'historico_clientes'), orderByChild('dataAgendada'), equalTo(date));
+  const snap = await get(q);
+  const raw = snap.val() || {};
+  const updates = Object.entries(raw)
+    .filter(([, item]) => item?.horaAgendada === hora)
+    .map(([id]) => set(ref(db, `historico_clientes/${id}/status`), status));
+  await Promise.all(updates);
+}
+
+async function sincronizarPendenciasDoHistorico() {
+  const tarefas = historicoClientes.map(async item => {
+    if (!item?.dataAgendada || !item?.horaAgendada) return;
+    const hk = item.horaAgendada.replace(':', '');
+    const slotRef = ref(db, `agendamentos/${item.dataAgendada}/${hk}`);
+    const snap = await get(slotRef);
+    if (!snap.exists() && (item.status || 'pending') !== 'cancelled') {
+      await set(slotRef, item.status || 'pending');
+    }
+  });
+  await Promise.all(tarefas);
+}
+
 window.confirmar = async (date, hk) => {
   await set(ref(db,`agendamentos/${date}/${hk}`),'confirmed');
+  await atualizarHistoricoPorSlot(date, hk, 'confirmed');
   await registrarAcaoAdmin('confirmou', date, hk);
   showToast('✅ Confirmado! Horário reservado para o cliente.');
 };
 window.cancelar  = async (date, hk) => {
   await set(ref(db,`agendamentos/${date}/${hk}`),'cancelled');
+  await atualizarHistoricoPorSlot(date, hk, 'cancelled');
   await registrarAcaoAdmin('cancelou', date, hk);
   showToast('❌ Cancelado. O horário não está mais ativo.');
 };
 window.liberar   = async (date, hk) => {
   await remove(ref(db,`agendamentos/${date}/${hk}`));
+  await atualizarHistoricoPorSlot(date, hk, 'cancelled');
   await registrarAcaoAdmin('liberou', date, hk);
   showToast('🔓 Slot liberado. O horário voltou a ficar disponível.');
 };
