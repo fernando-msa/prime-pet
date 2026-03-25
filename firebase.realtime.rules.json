@@ -1,0 +1,46 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "agendamentos": {
+      ".read": "auth != null && auth.token.admin === true",
+      "$date": {
+        "$hour": {
+          ".write": "auth != null && auth.token.admin === true"
+        }
+      }
+    },
+
+    "historico_acoes": {
+      ".read": "auth != null && auth.token.admin === true",
+      ".write": "auth != null && auth.token.admin === true"
+    },
+
+    "historico_clientes": {
+      ".indexOn": ["ownerUid"],
+      ".read": "auth != null && (auth.token.admin === true || (query.orderByChild === 'ownerUid' && query.equalTo === auth.uid))",
+
+      "$id": {
+        ".read": "auth != null && (auth.token.admin === true || data.child('ownerUid').val() === auth.uid)",
+        ".write": "(auth != null && auth.token.admin === true) || (auth != null && ((data.exists() && data.child('ownerUid').val() === auth.uid) || (!data.exists() && newData.child('ownerUid').val() === auth.uid)))",
+
+        "ownerUid": {
+          ".validate": "newData.isString() && (auth.token.admin === true || newData.val() === auth.uid)"
+        },
+
+        "telefone": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^[0-9()+\\-\\s]{10,20}$/))"
+        },
+
+        "mapsLink": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\/.+/))"
+        },
+
+        "status": {
+          ".validate": "!newData.exists() || (newData.isString() && (newData.val() === 'pending' || newData.val() === 'confirmed' || newData.val() === 'cancelled'))"
+        }
+      }
+    }
+  }
+}
