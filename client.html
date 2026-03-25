@@ -96,6 +96,7 @@ const auth = getAuth(app);
 let cacheSolicitacoes = [];
 let otpConfirmation = null;
 let phoneAuthDigits = '';
+const params = new URLSearchParams(window.location.search);
 
 function digits(v){ return (v || '').replace(/\D/g,''); }
 function statusBadge(status){
@@ -112,6 +113,25 @@ function toE164BR(phoneDigits) {
 
 function setMensagemPortal(msg) {
   document.getElementById('portal-msg').textContent = msg;
+}
+
+function carregarPreCadastro() {
+  const raw = localStorage.getItem('primepet_pre_cadastro');
+  if (!raw) return;
+
+  try {
+    const pre = JSON.parse(raw);
+    if (pre?.tutorTelefone) {
+      document.getElementById('cliente-telefone').value = pre.tutorTelefone;
+      phoneAuthDigits = digits(pre.tutorTelefone);
+    }
+
+    if (params.get('cadastro') === '1') {
+      setMensagemPortal(`Pré-cadastro recebido para ${pre?.tutorNome || 'cliente'}. Faça login via SMS para concluir.`);
+    }
+  } catch (_) {
+    localStorage.removeItem('primepet_pre_cadastro');
+  }
 }
 
 const recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -195,12 +215,20 @@ window.sairPortal = async function() {
   await signOut(auth);
   cacheSolicitacoes = [];
   document.getElementById('portal-card').classList.add('hidden');
+  localStorage.removeItem('primepet_client_session');
   setMensagemPortal('Você saiu do portal do cliente.');
 };
 
 onAuthStateChanged(auth, user => {
-  if (user) carregarPortalCliente(user);
+  if (user) {
+    localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
+    carregarPortalCliente(user);
+    return;
+  }
+  localStorage.removeItem('primepet_client_session');
 });
+
+carregarPreCadastro();
 
 window.trocarAba = function(aba, btn){
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
