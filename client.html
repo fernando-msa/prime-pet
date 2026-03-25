@@ -112,7 +112,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, set, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -179,29 +179,30 @@ window.entrarComGoogle = async function() {
 };
 
 async function carregarPortalCliente(user) {
-  const [histSnap, agSnap] = await Promise.all([
-    get(ref(db, 'historico_clientes')),
-    get(ref(db, 'agendamentos'))
-  ]);
-
-  const historicoRaw = histSnap.val() || {};
-  const agRaw = agSnap.val() || {};
+  let historicoRaw = {};
+  try {
+    const histQuery = query(ref(db, 'historico_clientes'), orderByChild('ownerUid'), equalTo(user.uid));
+    const histSnap = await get(histQuery);
+    historicoRaw = histSnap.val() || {};
+  } catch (e) {
+    const code = e?.code || e?.message || '';
+    console.error('Erro ao carregar portal do cliente:', e);
+    if (String(code).includes('PERMISSION_DENIED')) {
+      setMensagemPortal('Login concluído, mas seu usuário não tem permissão de leitura no banco. Verifique as regras do Firebase Realtime Database.');
+    } else {
+      setMensagemPortal('Login concluído, mas não foi possível carregar seus dados agora. Tente novamente em instantes.');
+    }
+    document.getElementById('portal-card').classList.add('hidden');
+    return;
+  }
 
   cacheSolicitacoes = Object.entries(historicoRaw)
     .map(([id, item]) => ({ id, ...item }))
-    .filter(item => item.ownerUid === user.uid)
     .map(item => {
-      const hk = (item.horaAgendada || '').replace(':','');
-      const statusAtual = agRaw?.[item.dataAgendada || '']?.[hk] || item.status || 'pending';
+      const statusAtual = item.status || 'pending';
       return { ...item, statusAtual };
     })
     .sort((a,b) => (b.criadoEm||0) - (a.criadoEm||0));
-
-  await Promise.all(
-    cacheSolicitacoes
-      .filter(item => !item.ownerUid)
-      .map(item => set(ref(db, `historico_clientes/${item.id}/ownerUid`), user.uid))
-  );
 
   if (!cacheSolicitacoes.length) {
     setMensagemPortal('Nenhuma solicitação encontrada para esta conta Google.');
@@ -226,7 +227,10 @@ window.sairPortal = async function() {
 onAuthStateChanged(auth, user => {
   if (user) {
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
-    carregarPortalCliente(user);
+    carregarPortalCliente(user).catch(err => {
+      console.error('Falha inesperada ao abrir portal:', err);
+      setMensagemPortal('Login concluído, mas ocorreu uma falha ao abrir o portal.');
+    });
     return;
   }
   localStorage.removeItem('primepet_client_session');
