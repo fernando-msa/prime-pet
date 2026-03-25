@@ -51,6 +51,8 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .item-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .btn-sm{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer}
 .btn-sm:disabled{opacity:.45;cursor:not-allowed}
+.mini-stats{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.mini-chip{border:1px solid var(--gray2);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;background:#fff;color:var(--dark2)}
 .hidden{display:none}
 </style>
 </head>
@@ -91,8 +93,10 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 
     <div class="card hidden" id="portal-card">
       <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+        <button class="btn-sm" onclick="recarregarPortal()">Atualizar</button>
         <button class="btn-sm" onclick="sairPortal()">Sair</button>
       </div>
+      <div class="mini-stats" id="solicitacao-stats"></div>
       <div class="tabs">
         <button class="tab active" onclick="trocarAba('solicitacoes', this)">Solicitações</button>
         <button class="tab" onclick="trocarAba('pets', this)">Meus Pets</button>
@@ -161,6 +165,54 @@ async function registrarErro(contexto, erro) {
     });
   } catch (_) {
     // logging não pode quebrar UX
+  }
+}
+
+function normalizarDataPreCadastro(dataTexto) {
+  if (!dataTexto) return '';
+  const match = dataTexto.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (!match) return '';
+  const [, dd, mm, yyyy] = match;
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function normalizarHoraPreCadastro(horaTexto) {
+  if (!horaTexto) return '';
+  const match = horaTexto.match(/(\d{2}:\d{2})/);
+  return match ? match[1] : '';
+}
+
+async function importarPreCadastroSeExistir(user) {
+  const raw = localStorage.getItem('primepet_pre_cadastro');
+  if (!raw) return;
+
+  try {
+    const pre = JSON.parse(raw);
+    const idLocal = String(pre?.criadoEm || '');
+    const chaveImportacao = `primepet_pre_cadastro_importado_${idLocal}`;
+    if (!idLocal || localStorage.getItem(chaveImportacao) === '1') return;
+
+    const registro = {
+      tutorNome: pre.tutorNome || 'Não informado',
+      telefone: pre.tutorTelefone || '',
+      endereco: pre.tutorEndereco || '',
+      petNome: pre.petNome || 'Pet',
+      petRaca: pre.petRaca || 'Não informado',
+      servicos: pre.servicos || [],
+      dataAgendada: normalizarDataPreCadastro(pre.data),
+      horaAgendada: normalizarHoraPreCadastro(pre.horario),
+      status: 'pending',
+      ownerUid: user.uid,
+      ownerEmail: user.email || '',
+      criadoEm: pre.criadoEm || Date.now(),
+      origem: 'pre_cadastro_portal'
+    };
+
+    await set(push(ref(db, 'historico_clientes')), registro);
+    localStorage.setItem(chaveImportacao, '1');
+    setMensagemPortal('✅ Pré-cadastro importado como pendente no seu portal.');
+  } catch (e) {
+    registrarErro('importar_pre_cadastro', e);
   }
 }
 
@@ -255,7 +307,9 @@ onAuthStateChanged(auth, user => {
   if (user) {
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
     setMensagemPortal(`Logado como ${user.email || 'usuário Google'}. Carregando seus dados...`);
-    carregarPortalCliente(user).catch(err => {
+    importarPreCadastroSeExistir(user)
+      .then(() => carregarPortalCliente(user))
+      .catch(err => {
       registrarErro('auth_state_changed', err);
       console.error('Falha inesperada ao abrir portal:', err);
       setMensagemPortal(`Falha ao abrir o portal (${err?.code || 'desconhecido'}).`);
@@ -280,6 +334,12 @@ window.setSolicFiltro = function(filtro, btn) {
   document.querySelectorAll('.subfilter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderSolicitacoes();
+};
+
+window.recarregarPortal = async function() {
+  if (!auth.currentUser) return;
+  setMensagemPortal('Atualizando suas solicitações...');
+  await carregarPortalCliente(auth.currentUser);
 };
 
 async function atualizarSolicitacaoLocal(id) {
@@ -336,7 +396,19 @@ window.remarcarSolicitacao = async function(id){
 
 function renderSolicitacoes(){
   const box = document.getElementById('aba-solicitacoes');
+  const stats = document.getElementById('solicitacao-stats');
   box.innerHTML = '';
+  const total = cacheSolicitacoes.length;
+  const pend = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'pending').length;
+  const conf = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'confirmed').length;
+  const canc = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'cancelled').length;
+  stats.innerHTML = `
+    <span class="mini-chip">Total: ${total}</span>
+    <span class="mini-chip">Pendentes: ${pend}</span>
+    <span class="mini-chip">Confirmados: ${conf}</span>
+    <span class="mini-chip">Cancelados: ${canc}</span>
+  `;
+
   const itens = solicFiltroAtual === 'all'
     ? cacheSolicitacoes
     : cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === solicFiltroAtual);
@@ -356,12 +428,18 @@ function renderSolicitacoes(){
   itens.forEach(s => {
     const data = s.dataAgendada ? s.dataAgendada.split('-').reverse().join('/') : 'Sem data';
     const editavel = podeEditar(s.statusAtual);
+    const etapa = s.statusAtual === 'confirmed'
+      ? 'Fluxo: criado ➜ pendente ➜ confirmado'
+      : s.statusAtual === 'cancelled'
+        ? 'Fluxo: criado ➜ pendente ➜ cancelado'
+        : 'Fluxo: criado ➜ pendente (aguardando)';
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `
       <strong>${s.petNome || 'Pet'}</strong> • ${statusBadge(s.statusAtual)}<br>
       📅 ${data} às ${s.horaAgendada || '--:--'}<br>
       📍 ${s.endereco || 'Sem endereço'}
+      <br><span class="muted">${etapa}</span>
       ${s.mapsLink ? `<br><a href="${s.mapsLink}" target="_blank">Abrir localização</a>` : ''}
       <div class="item-actions">
         <button class="btn-sm" onclick="editarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Editar dados</button>
