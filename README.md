@@ -1,86 +1,103 @@
-# 🐾 Prime Pet — Formulário de Contrato
+# 🐾 Prime Pet — Plataforma de Agendamento
 
-> Formulário digital de prestação de serviços para a **Prime Pet – Passeios & Banhos**, hospedado no Vercel e integrado com WhatsApp.
+Aplicação web estática da **Prime Pet** com:
+- formulário público de contratação/agendamento (`index.html`);
+- portal do cliente com autenticação Google (`client.html`);
+- painel administrativo (`admin.html`).
 
-[![Deploy](https://img.shields.io/badge/Vercel-Live-black?style=flat-square&logo=vercel)](https://prime-pet.vercel.app)
-[![HTML](https://img.shields.io/badge/HTML-100%25-orange?style=flat-square&logo=html5)](https://github.com/fernando-msa/prime-pet)
-[![License](https://img.shields.io/github/license/fernando-msa/prime-pet?style=flat-square)](LICENSE)
+Projeto hospedado no Vercel e integrado ao Firebase (Auth + Realtime Database).
 
 ---
 
 ## ✨ Funcionalidades
 
-- **Formulário completo** com dados do tutor, do pet, condições de saúde, comportamento, serviços e autorizações
-- **Campos condicionais** — campos extras aparecem dinamicamente conforme as respostas (doença, medicação, alergia)
-- **Envio via WhatsApp** — ao clicar em "Enviar", abre o WhatsApp com a mensagem já formatada com todos os dados preenchidos
-- **Validação** — impede envio sem os campos obrigatórios (nome do tutor e do pet)
-- **100% estático** — sem backend, sem banco de dados, sem custos
+### 1) Formulário público (Home)
+- Coleta dados do tutor e do pet.
+- Agenda data/horário com regras de disponibilidade.
+- Bloqueia finais de semana e horários fora da janela configurada.
+- Salva pré-cadastro no `localStorage` para continuar fluxo no portal.
+
+### 2) Portal do cliente
+- Login com Google (`signInWithPopup`).
+- Visualização de solicitações vinculadas ao `ownerUid`.
+- Edição de dados e remarcação (quando status pendente).
+- Filtros rápidos de solicitações por status.
+
+### 3) Portal admin
+- Login administrativo via Firebase Auth.
+- Gestão de agendamentos (confirmar, cancelar, liberar).
+- Busca e filtros por status/data/hora.
+- Histórico de clientes e ações administrativas.
 
 ---
 
-## 🚀 Demo
+## 🧱 Stack
 
-Acesse o formulário em produção:
-**[prime-pet.vercel.app](https://prime-pet.vercel.app)**
-
----
-
-## 🛠️ Tecnologias
-
-| Tecnologia | Uso |
-|---|---|
-| HTML5 + CSS3 | Interface e estilização |
-| JavaScript (Vanilla) | Lógica do formulário e integração WhatsApp |
-| Google Fonts | Tipografia (Playfair Display + DM Sans) |
-| WhatsApp API (`wa.me`) | Envio dos dados ao dono |
-| Vercel | Hospedagem estática gratuita |
+- **Frontend:** HTML, CSS e JavaScript (vanilla, sem framework)
+- **Auth:** Firebase Authentication (Google Sign-In)
+- **Banco:** Firebase Realtime Database
+- **Hospedagem:** Vercel
 
 ---
 
-## 📋 Seções do Formulário
+## 📁 Estrutura
 
-1. **Dados do Tutor** — nome, telefone, endereço
-2. **Dados do Pet** — nome, raça, idade, peso, sexo
-3. **Condições de Saúde** — vacinação, doenças, medicação, alergias
-4. **Comportamento** — perfil, histórico de agressividade, observações
-5. **Serviços Contratados** — banho, visita, dias, horário, pagamento
-6. **Responsabilidades** — obrigações da Prime Pet e do tutor
-7. **Autorizações** — emergência veterinária, uso de imagem
+```txt
+.
+├── index.html                    # Formulário público
+├── client.html                   # Portal do cliente
+├── admin.html                    # Portal administrativo
+├── firebase.realtime.rules.json  # Regras sugeridas do Realtime Database
+├── favicon.svg                   # Ícone do projeto
+└── README.md
+```
 
 ---
 
-## 📦 Como usar localmente
+## 🚀 Rodando localmente
 
-Basta clonar e abrir o `index.html` no navegador — não requer instalação nem servidor:
+Como é um projeto estático, você pode abrir os arquivos diretamente no navegador.
 
 ```bash
 git clone https://github.com/fernando-msa/prime-pet.git
 cd prime-pet
-# abra o index.html no seu navegador
 ```
+
+Depois, abra `index.html` (ou use uma extensão/live server no VSCode).
 
 ---
 
-## 🔄 Deploy
+## 🔐 Configuração Firebase (essencial)
 
-O projeto é deployado automaticamente no **Vercel** a cada push na branch `main`.
+### Authentication
+1. Habilite **Google** em `Authentication > Sign-in method`.
+2. Adicione domínios em `Authentication > Settings > Authorized domains`:
+   - `localhost` (desenvolvimento)
+   - seu domínio de produção (ex.: `prime-pet.vercel.app`)
 
-Para fazer o deploy manualmente:
-1. Faça fork/clone deste repositório
-2. Conecte ao Vercel via [vercel.com/new](https://vercel.com/new)
-3. Importe o repositório — o Vercel detecta automaticamente que é um site estático
+### Realtime Database
+1. Publique as regras de `firebase.realtime.rules.json`.
+2. Confirme que os dados de cliente usam `ownerUid` para vincular registros ao usuário logado.
 
 ---
 
-## 📱 Fluxo de uso
+## ✅ Fluxo recomendado
 
-```
-Cliente acessa o link  →  Preenche o formulário
-      →  Clica em "Enviar pelo WhatsApp"
-      →  WhatsApp abre com mensagem formatada
-      →  Cliente envia para o dono da Prime Pet
-      →  Dono recebe os dados e entra em contato ✅
-```
+1. Cliente preenche o formulário na home.
+2. Sistema cria `pre-cadastro` no navegador.
+3. Cliente é direcionado ao portal para autenticar com Google.
+4. Após login, cliente acompanha e gerencia suas solicitações.
+5. Admin gerencia agenda e confirma/cancela atendimentos.
+
+---
+
+## 🧭 Observações importantes
+
+- Se aparecer erro de domínio no login Google:
+  - revise **Authorized domains** no Firebase Auth.
+- Se autenticar e não carregar dados:
+  - revise regras do Realtime Database e vínculo `ownerUid`.
+- O projeto é frontend estático; toda segurança de dados depende das regras do Firebase.
 
 ---
 
