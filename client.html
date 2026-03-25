@@ -71,16 +71,13 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
   <div class="wrap">
     <div class="card">
       <h2 style="font-family:'Baloo 2',cursive;font-size:21px;margin-bottom:10px">Entrar com seus dados</h2>
-      <p class="muted" style="margin-bottom:10px">Entre com código SMS no seu telefone.</p>
+      <p class="muted" style="margin-bottom:10px">Entre com sua conta Google. Telefone é opcional para localizar históricos antigos.</p>
       <div class="login-row">
         <input type="tel" id="cliente-telefone" placeholder="(79) 99999-0000">
-        <button class="btn" onclick="enviarCodigoOTP()">Enviar código</button>
-        <input type="text" id="cliente-codigo" placeholder="Código OTP" class="hidden">
-        <button class="btn hidden" id="btn-verificar" onclick="verificarCodigoOTP()">Validar código</button>
+        <button class="btn" onclick="entrarComGoogle()">Entrar com Google</button>
         <a class="btn btn-outline" href="./index.html" style="text-decoration:none">Novo agendamento</a>
         <a class="btn btn-outline" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
       </div>
-      <div id="recaptcha-container" style="margin-top:10px"></div>
     </div>
 
     <div class="card hidden" id="portal-card">
@@ -101,14 +98,14 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       <div id="aba-pets" class="list hidden"></div>
     </div>
 
-    <div class="card" id="portal-msg">Digite telefone + nome do tutor para visualizar seu histórico.</div>
+    <div class="card" id="portal-msg">Entre com Google para visualizar seu histórico. Informe telefone para localizar registros antigos.</div>
   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -125,10 +122,10 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 
 let cacheSolicitacoes = [];
-let otpConfirmation = null;
 let phoneAuthDigits = '';
 let solicFiltroAtual = 'all';
 const params = new URLSearchParams(window.location.search);
+const provider = new GoogleAuthProvider();
 
 function digits(v){ return (v || '').replace(/\D/g,''); }
 function statusBadge(status){
@@ -137,11 +134,6 @@ function statusBadge(status){
   return `<span class="badge ${s}">${txt}</span>`;
 }
 function podeEditar(status){ return (status || 'pending') === 'pending'; }
-
-function toE164BR(phoneDigits) {
-  if (!phoneDigits) return null;
-  return `+55${phoneDigits}`;
-}
 
 function setMensagemPortal(msg) {
   document.getElementById('portal-msg').textContent = msg;
@@ -159,79 +151,34 @@ function carregarPreCadastro() {
     }
 
     if (params.get('cadastro') === '1') {
-      setMensagemPortal(`Pré-cadastro recebido para ${pre?.tutorNome || 'cliente'}. Faça login via SMS para concluir.`);
+      setMensagemPortal(`Pré-cadastro recebido para ${pre?.tutorNome || 'cliente'}. Faça login com Google para concluir.`);
     }
   } catch (_) {
     localStorage.removeItem('primepet_pre_cadastro');
   }
 }
 
-const recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {
-  size: 'normal'
-});
-let recaptchaWidgetId = null;
-
-function mensagemErroOTP(error) {
-  const code = error?.code || '';
-  const msg = error?.message || '';
-  if (code === 'auth/invalid-phone-number') return 'Número inválido. Revise DDD + número (ex.: 79999990000).';
-  if (code === 'auth/too-many-requests') return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
-  if (code === 'auth/quota-exceeded') return 'Limite de SMS atingido no Firebase. Tente mais tarde.';
-  if (code === 'auth/captcha-check-failed') return 'Falha no reCAPTCHA. Marque novamente o "não sou robô".';
-  if (code === 'auth/operation-not-allowed') return 'Login por telefone não está habilitado no Firebase.';
-  if (code === 'auth/invalid-app-credential' || /INVALID_APP_CREDENTIAL|app credential/i.test(msg)) {
-    return 'Credencial inválida do app. Verifique Domínios autorizados no Firebase Auth (inclua este domínio).';
-  }
-  return 'Não foi possível enviar o código. Verifique o número e tente novamente.';
-}
-
-window.enviarCodigoOTP = async function() {
+window.entrarComGoogle = async function() {
   const tel = digits(document.getElementById('cliente-telefone').value);
-  if (![10,11].includes(tel.length)) {
-    setMensagemPortal('Telefone inválido. Use formato brasileiro com DDD.');
+  if (tel && ![10,11].includes(tel.length)) {
+    setMensagemPortal('Telefone inválido. Use formato brasileiro com DDD ou deixe em branco.');
     return;
   }
-  const e164 = toE164BR(tel);
+  phoneAuthDigits = tel;
   try {
-    if (recaptchaWidgetId === null) recaptchaWidgetId = await recaptcha.render();
-    otpConfirmation = await signInWithPhoneNumber(auth, e164, recaptcha);
-    phoneAuthDigits = tel;
-    document.getElementById('cliente-codigo').classList.remove('hidden');
-    document.getElementById('btn-verificar').classList.remove('hidden');
-    setMensagemPortal('Código enviado por SMS. Digite o código para acessar.');
+    await signInWithPopup(auth, provider);
+    setMensagemPortal('Login com Google realizado com sucesso.');
   } catch (e) {
-    if (recaptchaWidgetId !== null && window.grecaptcha) {
-      window.grecaptcha.reset(recaptchaWidgetId);
-    }
-    setMensagemPortal(mensagemErroOTP(e));
-    console.error('Erro ao enviar OTP:', e?.code || e?.message || e);
-  }
-};
-
-window.verificarCodigoOTP = async function() {
-  if (!otpConfirmation) {
-    setMensagemPortal('Solicite o código SMS primeiro.');
-    return;
-  }
-  const code = document.getElementById('cliente-codigo').value.trim();
-  if (code.length < 6) {
-    setMensagemPortal('Código inválido. Digite os 6 números recebidos por SMS.');
-    return;
-  }
-  try {
-    await otpConfirmation.confirm(code);
-    setMensagemPortal('Login realizado com sucesso.');
-  } catch (e) {
-    const codeErro = e?.code || '';
-    if (codeErro === 'auth/invalid-verification-code') {
-      setMensagemPortal('Código incorreto. Confira o SMS e tente novamente.');
+    const code = e?.code || '';
+    if (code === 'auth/popup-closed-by-user') {
+      setMensagemPortal('Login cancelado. Abra o popup do Google para continuar.');
       return;
     }
-    if (codeErro === 'auth/code-expired') {
-      setMensagemPortal('Código expirado. Solicite um novo SMS.');
+    if (code === 'auth/unauthorized-domain') {
+      setMensagemPortal('Domínio não autorizado no Firebase Auth. Adicione o domínio atual em Authorized domains.');
       return;
     }
-    setMensagemPortal('Falha ao validar código. Solicite um novo SMS e tente novamente.');
+    setMensagemPortal('Falha no login com Google. Tente novamente.');
   }
 };
 
@@ -261,7 +208,7 @@ async function carregarPortalCliente(user) {
   );
 
   if (!cacheSolicitacoes.length) {
-    setMensagemPortal('Nenhuma solicitação encontrada para este login.');
+    setMensagemPortal('Nenhuma solicitação encontrada. Se você tinha cadastro antigo, informe o telefone e entre novamente com Google.');
     document.getElementById('portal-card').classList.add('hidden');
     return;
   }
