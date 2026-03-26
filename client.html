@@ -30,7 +30,7 @@ body{background:var(--gray);font-family:'Nunito',sans-serif;color:var(--dark)}
 .session-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);font-size:12px;font-weight:700;color:#fff}
 .portal-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font-size:12px;font-weight:700}
 .portal-link:hover{background:rgba(255,255,255,.16)}
-.wrap{max-width:900px;margin:0 auto;padding:24px 16px 46px}
+.wrap{max-width:1060px;margin:0 auto;padding:24px 16px 46px}
 .card{background:#fff;border:1.5px solid var(--gray2);border-radius:12px;padding:16px;margin-bottom:14px}
 .login-row{display:flex;gap:8px;flex-wrap:wrap}
 input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid var(--gray2);border-radius:8px;padding:11px 12px;font-size:14px}
@@ -60,6 +60,14 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .profile-label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--dark2)}
 .profile-label input{border:1.5px solid var(--gray2);border-radius:8px;padding:10px 11px;font-size:14px}
 .hidden{display:none}
+@keyframes floatPortal{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.header-bg-shapes span{animation:floatPortal 8s ease-in-out infinite}
+.header-bg-shapes span:nth-child(2){animation-delay:1.2s}
+.btn,.btn-sm,.portal-link,.subfilter-btn,.tab{transition:all .2s ease}
+.btn:hover,.btn-sm:hover,.subfilter-btn:hover,.tab:hover{transform:translateY(-1px)}
+.contact-footer{display:flex;justify-content:center;margin-top:16px}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:linear-gradient(135deg,var(--orange),var(--orange-lt));color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 24px rgba(255,130,0,.24)}
+.contact-btn:hover{transform:translateY(-2px)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -112,7 +120,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
         <button class="btn btn-outline" type="button" onclick="entrarOuCadastrarComEmail()">Entrar/Cadastrar com E-mail</button>
         <button class="btn btn-outline" type="button" disabled title="Em breve">Entrar com Apple (em breve)</button>
         <a class="btn btn-outline" href="./index.html" style="text-decoration:none">Novo agendamento</a>
-        <a class="btn btn-outline" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
+        <a class="btn btn-outline" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer" style="text-decoration:none">Fale conosco</a>
       </div>
     </div>
 
@@ -164,6 +172,9 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
     </div>
 
     <div class="card" id="portal-msg">Entre com Google para visualizar seu histórico.</div>
+    <div class="contact-footer">
+      <a class="contact-btn" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
+    </div>
     <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.6.0</span></div>
   </div>
 
@@ -193,6 +204,18 @@ let cacheSolicitacoes = [];
 let solicFiltroAtual = 'all';
 const params = new URLSearchParams(window.location.search);
 const provider = new GoogleAuthProvider();
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
+}
+function safeMapsLink(url) {
+  try {
+    const parsed = new URL(String(url || ''), window.location.origin);
+    if (parsed.protocol !== 'https:') return '';
+    return parsed.href;
+  } catch (_) {
+    return '';
+  }
+}
 
 function atualizarHeaderSessao(user) {
   const box = document.getElementById('header-session');
@@ -552,14 +575,6 @@ document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
   e.target.value = normalizarTelefoneBr(e.target.value);
 });
 
-window.toggleNotasAtualizacao = function() {
-  document.getElementById('notas-atualizacao')?.classList.toggle('hidden');
-};
-
-document.getElementById('perfil-telefone')?.addEventListener('input', (e) => {
-  e.target.value = normalizarTelefoneBr(e.target.value);
-});
-
 window.trocarAba = function(aba, btn){
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
@@ -659,7 +674,7 @@ function renderSolicitacoes(){
         Nenhuma solicitação nesse filtro.<br>
         <div class="item-actions">
           <a class="btn-sm" href="./index.html" style="text-decoration:none">Novo agendamento</a>
-          <a class="btn-sm" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
+          <a class="btn-sm" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer" style="text-decoration:none">Fale conosco</a>
         </div>
       </div>`;
     return;
@@ -675,16 +690,20 @@ function renderSolicitacoes(){
         : 'Fluxo: criado ➜ pendente (aguardando)';
     const item = document.createElement('div');
     item.className = 'item';
+    const petNome = escapeHtml(s.petNome || 'Pet');
+    const hora = escapeHtml(s.horaAgendada || '--:--');
+    const endereco = escapeHtml(s.endereco || 'Sem endereço');
+    const mapa = safeMapsLink(s.mapsLink);
     item.innerHTML = `
-      <strong>${s.petNome || 'Pet'}</strong> • ${statusBadge(s.statusAtual)}<br>
-      📅 ${data} às ${s.horaAgendada || '--:--'}<br>
-      📍 ${s.endereco || 'Sem endereço'}
+      <strong>${petNome}</strong> • ${statusBadge(s.statusAtual)}<br>
+      📅 ${data} às ${hora}<br>
+      📍 ${endereco}
       <br><span class="muted">${etapa}</span>
-      ${s.mapsLink ? `<br><a href="${s.mapsLink}" target="_blank">Abrir localização</a>` : ''}
+      ${mapa ? `<br><a href="${mapa}" target="_blank" rel="noopener noreferrer">Abrir localização</a>` : ''}
       <div class="item-actions">
         <button class="btn-sm" onclick="editarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Editar dados</button>
         <button class="btn-sm" onclick="remarcarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Remarcar</button>
-        <a class="btn-sm" href="https://wa.me/5579996623050" target="_blank" style="text-decoration:none">Fale conosco</a>
+        <a class="btn-sm" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer" style="text-decoration:none">Fale conosco</a>
       </div>
       ${editavel ? '<span class=\"muted\">Você pode editar/remarcar enquanto estiver pendente.</span>' : '<span class=\"muted\">Solicitação já finalizada. Para alterações, use Fale conosco.</span>'}
     `;
@@ -714,13 +733,13 @@ function renderPets(){
       saude.doenca && saude.doenca !== 'Não' ? `Doença: ${saude.doenca}` : null,
       saude.medicacao && saude.medicacao !== 'Não' ? `Medicação: ${saude.medicacao}` : null,
       saude.alergia && saude.alergia !== 'Não' ? `Alergia: ${saude.alergia}` : null,
-    ].filter(Boolean);
+    ].filter(Boolean).map(escapeHtml);
 
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `
-      <strong>🐶 ${s.petNome}</strong><br>
-      Tutor: ${s.tutorNome || 'Não informado'}<br>
+      <strong>🐶 ${escapeHtml(s.petNome || 'Pet')}</strong><br>
+      Tutor: ${escapeHtml(s.tutorNome || 'Não informado')}<br>
       ${health.length ? `<div class="health">⚠️ ${health.join(' • ')}</div>` : '<span class="muted">Sem alertas de saúde.</span>'}
     `;
     box.appendChild(item);
