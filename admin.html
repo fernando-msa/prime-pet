@@ -271,8 +271,13 @@ body {
 }
 .btn-logout:hover { border-color: #fff; color: #fff; }
 
-.admin-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+.admin-wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 60px; }
 .version-footer{max-width:900px;margin:0 auto 24px;padding:0 20px;color:var(--mocha);opacity:.7;font-size:12px}
+#login-screen::before,#login-screen::after{animation:floatBg 9s ease-in-out infinite}
+#login-screen::after{animation-delay:1.1s}
+@keyframes floatBg{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.contact-admin{display:flex;justify-content:center;padding:0 20px 28px}
+.contact-admin a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--orange),var(--orange-lt));padding:12px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 28px rgba(255,130,0,.25)}
 
 .planner-head {
   display: flex;
@@ -768,6 +773,9 @@ body {
   </div>
 </div>
 
+<div class="contact-admin">
+  <a href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
+</div>
 <div id="toast"></div>
 <div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.6.0</div>
 
@@ -804,6 +812,18 @@ let mesVisao = new Date().toISOString().slice(0, 7);
 let historyExpanded = false;
 let historyFilter = 'today';
 let adminEmailAtual = '';
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
+}
+function safeMapsLink(url) {
+  try {
+    const parsed = new URL(String(url || ''), window.location.origin);
+    if (parsed.protocol !== 'https:') return '';
+    return parsed.href;
+  } catch (_) {
+    return '';
+  }
+}
 const ADMINS_AUTORIZADOS = new Set([
   'ribeirojunior270@gmail.com',
   'arthurleite71@gmail.com'
@@ -1108,17 +1128,18 @@ function renderHistoricoClientes() {
     ].filter(Boolean);
 
     const saudeHtml = alertasSaude.length
-      ? `<div class="health-alert"><strong>⚠️ Atenção saúde:</strong><br>${alertasSaude.map(t => `• ${t}`).join('<br>')}</div>`
+      ? `<div class="health-alert"><strong>⚠️ Atenção saúde:</strong><br>${alertasSaude.map(t => `• ${escapeHtml(t)}`).join('<br>')}</div>`
       : '';
+    const mapa = safeMapsLink(item.mapsLink);
 
     const card = document.createElement('div');
     card.className = 'history-item';
     card.innerHTML = `
-      <strong>${item.tutorNome || 'Tutor não informado'}</strong> • ${item.petNome || 'Pet não informado'}<br>
-      📅 ${data} às ${hora}<br>
-      📞 ${item.telefone || 'Sem telefone'}<br>
-      📍 ${item.endereco || 'Sem endereço'}
-      ${item.mapsLink ? `<br><a href="${item.mapsLink}" target="_blank">Abrir localização no mapa</a>` : ''}
+      <strong>${escapeHtml(item.tutorNome || 'Tutor não informado')}</strong> • ${escapeHtml(item.petNome || 'Pet não informado')}<br>
+      📅 ${data} às ${escapeHtml(hora)}<br>
+      📞 ${escapeHtml(item.telefone || 'Sem telefone')}<br>
+      📍 ${escapeHtml(item.endereco || 'Sem endereço')}
+      ${mapa ? `<br><a href="${mapa}" target="_blank" rel="noopener noreferrer">Abrir localização no mapa</a>` : ''}
       ${saudeHtml}
     `;
     list.appendChild(card);
