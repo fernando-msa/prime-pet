@@ -607,6 +607,27 @@ body {
   to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
 }
 
+
+.header-inner { max-width: 1080px; margin: 0 auto; }
+.header-bg-shapes span:nth-child(1), .header-bg-shapes span:nth-child(2), .header-bg-shapes span:nth-child(3) { animation: floatShape 8s ease-in-out infinite; }
+.header-bg-shapes span:nth-child(2){ animation-delay: 1.2s; }
+.header-bg-shapes span:nth-child(3){ animation-delay: 2.2s; }
+@keyframes floatShape { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-12px);} }
+.portal-link:focus-visible, .btn-submit:focus-visible, .contact-footer-btn:focus-visible { outline: 3px solid var(--cyan-lt); outline-offset: 2px; }
+.main-wrap { max-width: 1020px; }
+@media (min-width: 1100px) {
+  .main-wrap { max-width: 1200px; padding-inline: 24px; }
+  .section-card { border: 1px solid rgba(26,26,46,.06); }
+}
+.contact-footer-wrap { display:flex; justify-content:center; margin-top: 14px; }
+.contact-footer-btn {
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+  background: linear-gradient(135deg, var(--cyan), #35d8de);
+  color:#fff; font-weight:800; padding: 12px 20px; border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(0,191,200,.3); transition: transform .2s ease, box-shadow .2s ease;
+}
+.contact-footer-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,191,200,.4); }
+
 @media print {
   body { background: white; }
   .progress-wrap, .btn-submit, .form-footer { display: none; }
@@ -642,16 +663,9 @@ body {
       v1.3.0 • Perfil cliente e validações<br>
       v1.4.0 • Sessão e notas de atualização<br>
       v1.5.0 • LGPD + endurecimento de acesso admin<br>
-      v1.6.0 • Login admin somente Google + monitoramento técnico
+      v1.6.0 • Login admin somente Google + monitoramento técnico<br>
+      v1.7.0 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
     </div>
-    <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
-    <div class="session-status" id="home-release" style="display:none;text-align:left">
-      <strong>Atualizações</strong><br>
-      • Correções e ajustes contínuos<br>
-      • Melhorias de login/sessão<br>
-      • Evoluções de segurança e validações
-    </div>
-    <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
     <p class="header-paws">🐾 🐾 🐾</p>
   </div>
 </header>
@@ -965,9 +979,14 @@ body {
   <div class="form-footer">
     <div class="footer-logo"><span>Prime</span> Pet 🐾</div>
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
-    📸 <a href="https://instagram.com/prime_petoficial" target="_blank">@prime_petoficial</a><br>
-    Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank">github.com/fernando-msa</a>
-    <br><span id="index-version-footer">Versão atual: v1.6.0</span>
+    📸 <a href="https://instagram.com/prime_petoficial" target="_blank" rel="noopener noreferrer">@prime_petoficial</a><br>
+    Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank" rel="noopener noreferrer">github.com/fernando-msa</a>
+    <br><span id="index-version-footer">Versão atual: v1.7.0</span>
+  </div>
+  <div class="contact-footer-wrap">
+    <a class="contact-footer-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">
+      <span>💬</span> Fale conosco no WhatsApp
+    </a>
   </div>
 
 </main>
@@ -976,7 +995,7 @@ body {
 <div id="toast"></div>
 
 <script>
-const APP_VERSION = 'v1.6.0';
+const APP_VERSION = 'v1.7.0';
 /* ── HELPERS ── */
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
@@ -1020,12 +1039,12 @@ function atualizarStatusSessaoHome() {
     : '🔒 Cliente não logado';
 }
 function garantirConsentimentoLgpd() {
-  if (localStorage.getItem('primepet_lgpd_ok') === '1') return true;
+  if (window.__primepetLgpdAceito) return true;
   const aceitou = window.confirm(
     'LGPD: seus dados são usados para cadastro, agendamento e contato da Prime Pet, ' +
     'armazenados com acesso restrito em infraestrutura segura (Firebase). Deseja continuar?'
   );
-  if (aceitou) localStorage.setItem('primepet_lgpd_ok', '1');
+  window.__primepetLgpdAceito = Boolean(aceitou);
   return aceitou;
 }
 function toggleNotasAtualizacao() {
@@ -1036,6 +1055,9 @@ function toggleNotasAtualizacao() {
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
 atualizarStatusSessaoHome();
+if (!garantirConsentimentoLgpd()) {
+  showToast('⚠️ Para continuar, aceite o aviso LGPD desta sessão.', 'var(--cyan)');
+}
 document.getElementById('index-version-footer').textContent = `Versão atual: ${APP_VERSION}`;
 
 /* ── DATA ── */
