@@ -627,6 +627,48 @@ body {
   box-shadow: 0 10px 24px rgba(0,191,200,.3); transition: transform .2s ease, box-shadow .2s ease;
 }
 .contact-footer-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,191,200,.4); }
+.privacy-link {
+  display: inline-flex;
+  margin-top: 8px;
+  color: var(--dark2);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.privacy-link:hover { text-decoration: underline; }
+
+.lgpd-corner {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: min(360px, calc(100vw - 24px));
+  background: rgba(26,26,46,.95);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 16px 36px rgba(0,0,0,.22);
+  border-radius: 14px;
+  color: #fff;
+  z-index: 9998;
+  padding: 12px 14px;
+  display: none;
+}
+.lgpd-corner.visible { display: block; animation: lgpdIn .24s ease; }
+.lgpd-corner p { font-size: 12px; line-height: 1.45; opacity: .92; }
+.lgpd-corner-actions { display: flex; gap: 8px; margin-top: 10px; }
+.lgpd-mini-btn {
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+.lgpd-mini-btn.accept { background: var(--orange); border-color: var(--orange); }
+@keyframes lgpdIn {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
 @media print {
   body { background: white; }
@@ -664,7 +706,7 @@ body {
       v1.4.0 • Sessão e notas de atualização<br>
       v1.5.0 • LGPD + endurecimento de acesso admin<br>
       v1.6.0 • Login admin somente Google + monitoramento técnico<br>
-      v1.7.0 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
+      v1.8.0 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
     </div>
     <p class="header-paws">🐾 🐾 🐾</p>
   </div>
@@ -981,15 +1023,11 @@ body {
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
     📸 <a href="https://instagram.com/prime_petoficial" target="_blank" rel="noopener noreferrer">@prime_petoficial</a><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank" rel="noopener noreferrer">github.com/fernando-msa</a>
-    <br><span id="index-version-footer">Versão atual: v1.7.0</span>
+    <br><span id="index-version-footer">Versão atual: v1.8.0</span>
+    <br><a class="privacy-link" href="./privacy.html">Política de Privacidade</a>
   </div>
   <div class="contact-footer-wrap">
     <a class="contact-footer-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">
-      <span>💬</span> Fale conosco no WhatsApp
-    </a>
-  </div>
-  <div class="contact-footer-wrap">
-    <a class="contact-footer-btn" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer">
       <span>💬</span> Fale conosco no WhatsApp
     </a>
   </div>
@@ -998,9 +1036,17 @@ body {
 
 <!-- TOAST -->
 <div id="toast"></div>
+<div class="lgpd-corner" id="lgpd-corner">
+  <p>🔒 Usamos seus dados para cadastro, agendamento e contato da Prime Pet. Você pode revisar detalhes na política.</p>
+  <div class="lgpd-corner-actions">
+    <button class="lgpd-mini-btn accept" type="button" onclick="aceitarLgpd()">Entendi</button>
+    <a class="lgpd-mini-btn" href="./privacy.html" style="text-decoration:none;display:inline-flex;align-items:center">Política</a>
+    <button class="lgpd-mini-btn" type="button" onclick="fecharLgpd()">Depois</button>
+  </div>
+</div>
 
 <script>
-const APP_VERSION = 'v1.7.0';
+const APP_VERSION = 'v1.8.0';
 /* ── HELPERS ── */
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
@@ -1044,13 +1090,7 @@ function atualizarStatusSessaoHome() {
     : '🔒 Cliente não logado';
 }
 function garantirConsentimentoLgpd() {
-  if (window.__primepetLgpdAceito) return true;
-  const aceitou = window.confirm(
-    'LGPD: seus dados são usados para cadastro, agendamento e contato da Prime Pet, ' +
-    'armazenados com acesso restrito em infraestrutura segura (Firebase). Deseja continuar?'
-  );
-  window.__primepetLgpdAceito = Boolean(aceitou);
-  return aceitou;
+  return Boolean(window.__primepetLgpdAceito);
 }
 function toggleNotasAtualizacao() {
   const box = document.getElementById('home-release');
@@ -1060,10 +1100,22 @@ function toggleNotasAtualizacao() {
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
 atualizarStatusSessaoHome();
-if (!garantirConsentimentoLgpd()) {
-  showToast('⚠️ Para continuar, aceite o aviso LGPD desta sessão.', 'var(--cyan)');
-}
+if (!garantirConsentimentoLgpd()) exibirLgpdCorner();
 document.getElementById('index-version-footer').textContent = `Versão atual: ${APP_VERSION}`;
+
+function exibirLgpdCorner() {
+  const box = document.getElementById('lgpd-corner');
+  if (!box || window.__primepetLgpdAceito) return;
+  box.classList.add('visible');
+}
+window.aceitarLgpd = function() {
+  window.__primepetLgpdAceito = true;
+  fecharLgpd();
+  showToast('✅ Consentimento LGPD registrado para esta sessão.', 'var(--green)');
+};
+window.fecharLgpd = function() {
+  document.getElementById('lgpd-corner')?.classList.remove('visible');
+};
 
 /* ── DATA ── */
 document.querySelector('input[type="date"]').value =
@@ -1310,7 +1362,8 @@ function enviarWhatsApp() {
 
   if (!jaLogado) {
     if (!garantirConsentimentoLgpd()) {
-      showToast('⚠️ Você precisa aceitar os termos LGPD para criar a conta.', 'var(--cyan)');
+      showToast('⚠️ Aceite o aviso LGPD no canto da tela para continuar.', 'var(--cyan)');
+      exibirLgpdCorner();
       return;
     }
     showToast('🔐 Faça login/cadastro no portal para concluir seu agendamento.', 'var(--cyan)');
