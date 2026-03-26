@@ -13,7 +13,7 @@
   --green:#3DBE8A; --red:#FF5A5A;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--gray);font-family:'Nunito',sans-serif;color:var(--dark)}
+body{background:linear-gradient(180deg,#f3f6ff 0%, #eef3f7 100%);font-family:'Nunito',sans-serif;color:var(--dark)}
 .header{background:var(--dark);position:relative;overflow:hidden;padding:0}
 .header-bg-shapes{position:absolute;inset:0;pointer-events:none}
 .header-bg-shapes span{position:absolute;border-radius:50%;opacity:.13}
@@ -30,8 +30,8 @@ body{background:var(--gray);font-family:'Nunito',sans-serif;color:var(--dark)}
 .session-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);font-size:12px;font-weight:700;color:#fff}
 .portal-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font-size:12px;font-weight:700}
 .portal-link:hover{background:rgba(255,255,255,.16)}
-.wrap{max-width:1060px;margin:0 auto;padding:24px 16px 46px}
-.card{background:#fff;border:1.5px solid var(--gray2);border-radius:12px;padding:16px;margin-bottom:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 46px}
+.card{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border:1px solid #dfe6f7;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 12px 32px rgba(24,38,66,.08)}
 .login-row{display:flex;gap:8px;flex-wrap:wrap}
 input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid var(--gray2);border-radius:8px;padding:11px 12px;font-size:14px}
 .btn{border:none;border-radius:8px;padding:11px 16px;background:var(--dark);color:#fff;cursor:pointer;font-size:13px}
@@ -39,13 +39,13 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .g-logo{width:16px;height:16px;display:inline-block}
 .btn-outline{background:#fff;border:1.5px solid var(--gray2);color:var(--dark2)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.tab{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px}
-.tab.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.tab{border:1.5px solid #d8dfef;background:#f8faff;color:#304261;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:12px;font-weight:700}
+.tab.active{background:linear-gradient(135deg,var(--dark),#33415f);color:#fff;border-color:transparent}
 .subfilters{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
 .subfilter-btn{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:999px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700}
 .subfilter-btn.active{background:var(--orange-bg);border-color:var(--orange);color:var(--dark)}
 .list{display:flex;flex-direction:column;gap:8px}
-.item{border:1px solid var(--gray2);border-radius:8px;padding:11px 12px;background:#fff;font-size:13px;line-height:1.55}
+.item{border:1px solid #dde4f4;border-radius:12px;padding:12px 13px;background:linear-gradient(180deg,#fff,#f9fbff);font-size:13px;line-height:1.55}
 .badge{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;color:#fff}
 .pending{background:#b08800}.confirmed{background:#2c7a3f}.cancelled{background:var(--red)}
 .muted{color:var(--dark2);opacity:.75;font-size:12px}
@@ -54,7 +54,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .btn-sm{border:1.5px solid var(--gray2);background:#fff;color:var(--dark2);border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer}
 .btn-sm:disabled{opacity:.45;cursor:not-allowed}
 .mini-stats{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
-.mini-chip{border:1px solid var(--gray2);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;background:#fff;color:var(--dark2)}
+.mini-chip{border:1px solid #d6deef;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:800;background:#fff;color:#25304b}
 .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .profile-grid .full{grid-column:1/-1}
 .profile-label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--dark2)}
@@ -66,13 +66,13 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .btn,.btn-sm,.portal-link,.subfilter-btn,.tab{transition:all .2s ease}
 .btn:hover,.btn-sm:hover,.subfilter-btn:hover,.tab:hover{transform:translateY(-1px)}
 .contact-footer{display:flex;justify-content:center;margin-top:16px}
-.contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:linear-gradient(135deg,var(--orange),var(--orange-lt));color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 24px rgba(255,130,0,.24)}
-.contact-btn:hover{transform:translateY(-2px)}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#ffffff;color:#3a4a67;padding:8px 12px;border-radius:999px;font-weight:700;border:1px solid #d5deef;font-size:12px}
+.contact-btn:hover{transform:translateY(-1px);background:#f6f9ff}
 
 #login-screen-client{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--dark);position:relative;overflow:hidden}
 #login-screen-client::before{content:'';position:absolute;top:-120px;left:-120px;width:400px;height:400px;border-radius:50%;background:rgba(255,130,0,0.08)}
 #login-screen-client::after{content:'';position:absolute;bottom:-140px;right:-80px;width:500px;height:500px;border-radius:50%;background:rgba(0,191,200,0.08)}
-.client-login-card{background:#fff;border-radius:20px;padding:46px 38px 38px;max-width:430px;width:100%;position:relative;z-index:1;box-shadow:0 32px 80px rgba(0,0,0,.35)}
+.client-login-card{background:rgba(255,255,255,.96);border:1px solid #e5ebf7;border-radius:24px;padding:46px 38px 26px;max-width:460px;width:100%;position:relative;z-index:1;box-shadow:0 32px 80px rgba(0,0,0,.35)}
 .client-login-card .login-paw{text-align:center;font-size:28px;letter-spacing:6px;opacity:.2;margin-bottom:20px}
 .client-login-card .login-logo{font-family:'Baloo 2',cursive;font-size:34px;color:var(--dark);text-align:center;line-height:1;margin-bottom:6px}
 .client-login-card .login-logo span{color:var(--orange)}
@@ -80,6 +80,16 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .client-login-actions{display:flex;flex-direction:column;gap:10px}
 .client-login-actions .btn{width:100%;justify-content:center;display:flex;align-items:center;gap:8px}
 #client-app{display:none}
+.login-foot-contact{margin-top:14px;text-align:center;font-size:12px;color:#52617d}
+.login-foot-contact a{color:#2d405e;font-weight:800;text-decoration:none}
+.login-foot-contact a:hover{text-decoration:underline}
+.portal-shell{position:relative}
+.lgpd-corner{position:fixed;right:18px;bottom:18px;width:min(360px,calc(100vw - 24px));background:rgba(26,26,46,.95);color:#fff;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.2);box-shadow:0 18px 36px rgba(0,0,0,.26);display:none;z-index:9999}
+.lgpd-corner.visible{display:block}
+.lgpd-corner p{font-size:12px;line-height:1.45}
+.lgpd-actions{margin-top:10px;display:flex;gap:8px}
+.lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
+.lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -100,12 +110,13 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
           Entrar com Google
         </button>
         <button class="btn btn-outline" type="button" onclick="entrarOuCadastrarComEmail()">Entrar/Cadastrar com E-mail</button>
-        <a class="btn btn-outline" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer" style="text-decoration:none;text-align:center">Fale conosco</a>
-        <a class="btn btn-outline" href="./index.html" style="text-decoration:none;text-align:center">Novo agendamento</a>
+      </div>
+      <div class="login-foot-contact">
+        Precisa de ajuda? <a href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Preciso%20de%20ajuda%20com%20o%20portal%20do%20cliente." target="_blank" rel="noopener noreferrer">Fale conosco</a> · <a href="./privacy.html">Privacidade</a>
       </div>
     </div>
   </div>
-  <div id="client-app">
+  <div id="client-app" class="portal-shell">
   <div class="header">
     <div class="header-bg-shapes"><span></span><span></span></div>
     <div class="header-inner">
@@ -134,7 +145,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       v1.4.0 • Sessão e notas de atualização<br>
       v1.5.0 • LGPD + endurecimento de acesso admin<br>
       v1.6.0 • Login admin somente Google + monitoramento técnico<br>
-      v1.7.0 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
+      v1.8.1 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
     </div>
   </div>
 
@@ -190,9 +201,17 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
     <div class="contact-footer">
       <a class="contact-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
     </div>
-    <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.7.0</span></div>
+    <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.8.1</span> · <a href="./privacy.html" style="text-decoration:none;font-weight:700">Política de Privacidade</a></div>
   </div>
 
+</div>
+<div class="lgpd-corner" id="lgpd-corner-client">
+  <p>🔒 Seus dados são usados para cadastro, agendamento e contato. Consulte os detalhes na Política de Privacidade.</p>
+  <div class="lgpd-actions">
+    <button class="accept" type="button" onclick="aceitarLgpdPortal()">Entendi</button>
+    <a href="./privacy.html">Política</a>
+    <button type="button" onclick="fecharLgpdPortal()">Depois</button>
+  </div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -214,7 +233,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-const APP_VERSION = 'v1.7.0';
+const APP_VERSION = 'v1.8.1';
 
 let cacheSolicitacoes = [];
 let solicFiltroAtual = 'all';
@@ -249,14 +268,7 @@ function atualizarHeaderSessao(user) {
 }
 
 function garantirConsentimentoLgpd() {
-  if (window.__primepetLgpdAceito) return true;
-  const aceitou = window.confirm(
-    'LGPD: tratamos seus dados apenas para cadastro, agendamento e contato da Prime Pet. ' +
-    'Armazenamos em infraestrutura segura (Firebase), com acesso restrito e uso mínimo necessário. ' +
-    'Ao continuar, você concorda com este tratamento.'
-  );
-  window.__primepetLgpdAceito = Boolean(aceitou);
-  return aceitou;
+  return Boolean(window.__primepetLgpdAceito);
 }
 
 function statusBadge(status){
@@ -405,6 +417,7 @@ window.entrarComGoogle = async function() {
   try {
     if (!garantirConsentimentoLgpd()) {
       setMensagemPortal('É necessário aceitar os termos LGPD para continuar.');
+      exibirLgpdPortal();
       return;
     }
     setMensagemPortal('Abrindo login Google...');
@@ -432,6 +445,7 @@ window.entrarComGoogle = async function() {
 window.entrarOuCadastrarComEmail = async function() {
   if (!garantirConsentimentoLgpd()) {
     setMensagemPortal('É necessário aceitar os termos LGPD para continuar.');
+    exibirLgpdPortal();
     return;
   }
   const email = window.prompt('Digite seu e-mail:');
@@ -586,9 +600,22 @@ onAuthStateChanged(auth, user => {
 
 carregarPreCadastro();
 if (!garantirConsentimentoLgpd()) {
-  setMensagemPortal('⚠️ Para usar o portal, aceite o aviso LGPD desta sessão.');
+  setMensagemPortal('⚠️ Para usar o portal, aceite o aviso LGPD no canto da tela.');
+  exibirLgpdPortal();
 }
 document.getElementById('client-version').textContent = APP_VERSION;
+function exibirLgpdPortal() {
+  if (window.__primepetLgpdAceito) return;
+  document.getElementById('lgpd-corner-client')?.classList.add('visible');
+}
+window.aceitarLgpdPortal = function() {
+  window.__primepetLgpdAceito = true;
+  fecharLgpdPortal();
+  setMensagemPortal('✅ Consentimento LGPD registrado para esta sessão.');
+};
+window.fecharLgpdPortal = function() {
+  document.getElementById('lgpd-corner-client')?.classList.remove('visible');
+};
 
 window.toggleNotasAtualizacao = function() {
   document.getElementById('notas-atualizacao')?.classList.toggle('hidden');
@@ -695,10 +722,7 @@ function renderSolicitacoes(){
     box.innerHTML = `
       <div class="item">
         Nenhuma solicitação nesse filtro.<br>
-        <div class="item-actions">
-          <a class="btn-sm" href="./index.html" style="text-decoration:none">Novo agendamento</a>
-          <a class="btn-sm" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer" style="text-decoration:none">Fale conosco</a>
-        </div>
+        <div class="muted" style="margin-top:6px">Use o botão Home no topo para novo pré-cadastro, se necessário.</div>
       </div>`;
     return;
   }
@@ -726,7 +750,6 @@ function renderSolicitacoes(){
       <div class="item-actions">
         <button class="btn-sm" onclick="editarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Editar dados</button>
         <button class="btn-sm" onclick="remarcarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>Remarcar</button>
-        <a class="btn-sm" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer" style="text-decoration:none">Fale conosco</a>
       </div>
       ${editavel ? '<span class=\"muted\">Você pode editar/remarcar enquanto estiver pendente.</span>' : '<span class=\"muted\">Solicitação já finalizada. Para alterações, use Fale conosco.</span>'}
     `;
