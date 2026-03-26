@@ -1,106 +1,97 @@
-# 🐾 Prime Pet — Plataforma de Agendamento
+<h1 align="center">
+  🐾 Prime Pet
+</h1>
 
-Aplicação web estática da **Prime Pet** com:
-- formulário público de contratação/agendamento (`index.html`);
-- portal do cliente com autenticação Google (`client.html`);
-- painel administrativo (`admin.html`).
+<p align="center">
+  Formulário de contrato de prestação de serviços para pet shop, com envio direto via WhatsApp.
+</p>
 
-Projeto hospedado no Vercel e integrado ao Firebase (Auth + Realtime Database).
+<p align="center">
+  <a href="https://prime-pet.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/deploy-vercel-black?style=flat-square&logo=vercel" alt="Deploy na Vercel">
+  </a>
+  <img src="https://img.shields.io/badge/html-100%25-orange?style=flat-square&logo=html5&logoColor=white" alt="HTML">
+  <img src="https://img.shields.io/badge/licença-MIT-green?style=flat-square" alt="Licença MIT">
+</p>
+
+---
+
+## 📋 Sobre o projeto
+
+O **Prime Pet** é uma página web que funciona como um contrato digital de prestação de serviços para donos de pet shop. O tutor preenche os dados do seu animal e, ao finalizar, todas as informações são formatadas automaticamente e enviadas ao responsável pelo WhatsApp — sem necessidade de backend ou banco de dados.
+
+🔗 **Demo ao vivo:** [prime-pet.vercel.app](https://prime-pet.vercel.app)
 
 ---
 
 ## ✨ Funcionalidades
 
-### 1) Formulário público (Home)
-- Coleta dados do tutor e do pet.
-- Agenda data/horário com regras de disponibilidade.
-- Bloqueia finais de semana e horários fora da janela configurada.
-- Salva pré-cadastro no `localStorage` para continuar fluxo no portal.
-
-### 2) Portal do cliente
-- Login com Google (`signInWithPopup`).
-- Visualização de solicitações vinculadas ao `ownerUid`.
-- Edição de dados e remarcação (quando status pendente).
-- Filtros rápidos de solicitações por status.
-
-### 3) Portal admin
-- Login administrativo via Firebase Auth.
-- Gestão de agendamentos (confirmar, cancelar, liberar).
-- Busca e filtros por status/data/hora.
-- Histórico de clientes e ações administrativas.
+- **Dados do tutor** — nome, telefone, endereço e data
+- **Dados do pet** — nome, raça, idade, peso e sexo
+- **Condições de saúde** — vacinação, doenças, medicações e alergias (com campos condicionais)
+- **Comportamento** — perfil do animal, histórico agressivo, tendência de fuga
+- **Serviços contratados** — banho e/ou visita domiciliar, dias, horário e forma de pagamento
+- **Autorizações** — atendimento veterinário emergencial e uso de imagem
+- **Política de cancelamento** — exibição das regras de vigência e aviso prévio
+- **Envio via WhatsApp** — gera uma mensagem formatada e abre direto no WhatsApp do responsável
 
 ---
 
-## 🧱 Stack
+## 🛠️ Tecnologias
 
-- **Frontend:** HTML, CSS e JavaScript (vanilla, sem framework)
-- **Auth:** Firebase Authentication (Google Sign-In)
-- **Banco:** Firebase Realtime Database
-- **Hospedagem:** Vercel
+| Tecnologia | Uso |
+|---|---|
+| HTML5 | Estrutura e marcação semântica |
+| CSS3 | Estilização com variáveis CSS e design responsivo |
+| JavaScript (Vanilla) | Lógica de campos condicionais, validação e formatação da mensagem |
+| Google Fonts | Tipografia (`Playfair Display` + `DM Sans`) |
+| WhatsApp API (`wa.me`) | Envio do contrato preenchido |
+| Vercel | Hospedagem e deploy contínuo |
+
+---
+
+## 🚀 Como usar localmente
+
+Não há dependências nem build necessário. Basta clonar e abrir o arquivo:
+
+```bash
+git clone https://github.com/fernando-msa/prime-pet.git
+cd prime-pet
+# Abra o index.html no navegador
+```
 
 ---
 
 ## 📁 Estrutura
 
-```txt
-.
-├── index.html                    # Formulário público
-├── client.html                   # Portal do cliente
-├── admin.html                    # Portal administrativo
-├── firebase.realtime.rules.json  # Regras sugeridas do Realtime Database
-├── favicon.svg                   # Ícone do projeto
-└── README.md
+```
+prime-pet/
+├── index.html   # Aplicação completa (HTML + CSS + JS em arquivo único)
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## 🚀 Rodando localmente
+## ⚙️ Personalização
 
-Como é um projeto estático, você pode abrir os arquivos diretamente no navegador.
+Para adaptar o formulário ao seu pet shop, edite as seguintes linhas no `index.html`:
 
-```bash
-git clone https://github.com/fernando-msa/prime-pet.git
-cd prime-pet
-```
-
-Depois, abra `index.html` (ou use uma extensão/live server no VSCode).
-
----
-
-## 🔐 Configuração Firebase (essencial)
-
-### Authentication
-1. Habilite **Google** em `Authentication > Sign-in method`.
-2. Adicione domínios em `Authentication > Settings > Authorized domains`:
-   - `localhost` (desenvolvimento)
-   - seu domínio de produção (ex.: `prime-pet.vercel.app`)
-
-### Realtime Database
-1. Publique as regras de `firebase.realtime.rules.json`.
-2. Confirme que os dados de cliente usam `ownerUid` para vincular registros ao usuário logado.
-
----
-
-## ✅ Fluxo recomendado
-
-1. Cliente preenche o formulário na home.
-2. Sistema cria `pre-cadastro` no navegador.
-3. Cliente é direcionado ao portal para autenticar com Google.
-4. Após login, cliente acompanha e gerencia suas solicitações.
-5. Admin gerencia agenda e confirma/cancela atendimentos.
-
----
-
-## 🧭 Observações importantes
-
-- Se aparecer erro de domínio no login Google:
-  - revise **Authorized domains** no Firebase Auth.
-- Se autenticar e não carregar dados:
-  - revise regras do Realtime Database e vínculo `ownerUid`.
-- O projeto é frontend estático; toda segurança de dados depende das regras do Firebase.
+| O que alterar | Onde encontrar no código |
+|---|---|
+| Número de WhatsApp | `const numero = '5579996623050'` |
+| Nome do estabelecimento | Tag `<title>` e `.header-title` |
+| Instagram | Link `@Prime_Pet` no rodapé |
+| Telefone de contato | Link `tel:` no rodapé |
 
 ---
 
 ## 📄 Licença
 
-MIT © [fernando-msa](https://github.com/fernando-msa)
+Distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+<p align="center">
+  Feito por <a href="https://github.com/fernando-msa">@fernando-msa</a>
+</p>
