@@ -663,7 +663,8 @@ body {
       v1.3.0 • Perfil cliente e validações<br>
       v1.4.0 • Sessão e notas de atualização<br>
       v1.5.0 • LGPD + endurecimento de acesso admin<br>
-      v1.6.0 • Login admin somente Google + monitoramento técnico
+      v1.6.0 • Login admin somente Google + monitoramento técnico<br>
+      v1.7.0 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
     </div>
     <p class="header-paws">🐾 🐾 🐾</p>
   </div>
@@ -980,7 +981,12 @@ body {
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
     📸 <a href="https://instagram.com/prime_petoficial" target="_blank" rel="noopener noreferrer">@prime_petoficial</a><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank" rel="noopener noreferrer">github.com/fernando-msa</a>
-    <br><span id="index-version-footer">Versão atual: v1.6.0</span>
+    <br><span id="index-version-footer">Versão atual: v1.7.0</span>
+  </div>
+  <div class="contact-footer-wrap">
+    <a class="contact-footer-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">
+      <span>💬</span> Fale conosco no WhatsApp
+    </a>
   </div>
   <div class="contact-footer-wrap">
     <a class="contact-footer-btn" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer">
@@ -994,7 +1000,7 @@ body {
 <div id="toast"></div>
 
 <script>
-const APP_VERSION = 'v1.6.0';
+const APP_VERSION = 'v1.7.0';
 /* ── HELPERS ── */
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
@@ -1038,12 +1044,12 @@ function atualizarStatusSessaoHome() {
     : '🔒 Cliente não logado';
 }
 function garantirConsentimentoLgpd() {
-  if (localStorage.getItem('primepet_lgpd_ok') === '1') return true;
+  if (window.__primepetLgpdAceito) return true;
   const aceitou = window.confirm(
     'LGPD: seus dados são usados para cadastro, agendamento e contato da Prime Pet, ' +
     'armazenados com acesso restrito em infraestrutura segura (Firebase). Deseja continuar?'
   );
-  if (aceitou) localStorage.setItem('primepet_lgpd_ok', '1');
+  window.__primepetLgpdAceito = Boolean(aceitou);
   return aceitou;
 }
 function toggleNotasAtualizacao() {
@@ -1054,6 +1060,9 @@ function toggleNotasAtualizacao() {
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
 atualizarStatusSessaoHome();
+if (!garantirConsentimentoLgpd()) {
+  showToast('⚠️ Para continuar, aceite o aviso LGPD desta sessão.', 'var(--cyan)');
+}
 document.getElementById('index-version-footer').textContent = `Versão atual: ${APP_VERSION}`;
 
 /* ── DATA ── */
