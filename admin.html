@@ -681,15 +681,15 @@ body {
     v1.4.0 • Sessão e notas de atualização<br>
     v1.5.0 • LGPD + endurecimento de acesso admin<br>
     v1.6.0 • Login admin somente Google + monitoramento técnico<br>
-    v1.7.0 • Novo visual do portal cliente + LGPD por acesso + contato com mensagem pronta
+    v1.8.0 • Novo visual do portal cliente + LGPD por acesso + contato com mensagem pronta
   </div>
 
   <div class="admin-wrap">
     <div class="health-grid">
       <div class="health-card"><div class="health-k">Saúde Auth</div><div class="health-v" id="health-auth">OK</div></div>
-      <div class="health-card"><div class="health-k">Saúde DB</div><div class="health-v" id="health-db">--</div></div>
+      <div class="health-card"><div class="health-k">Saúde DB</div><div class="health-v" id="health-db">Conectando...</div></div>
       <div class="health-card"><div class="health-k">Erros (24h)</div><div class="health-v" id="health-errors">0</div></div>
-      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.7.0</div></div>
+      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.8.0</div></div>
     </div>
     <div class="planner-head">
       <div>
@@ -787,7 +787,7 @@ body {
   <a href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
 </div>
 <div id="toast"></div>
-<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.7.0</div>
+<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.8.0</div>
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -809,7 +809,7 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
 const auth = getAuth(app);
-const APP_VERSION = 'v1.7.0';
+const APP_VERSION = 'v1.8.0';
 
 let agendamentos = {};
 let historicoClientes = [];
@@ -952,12 +952,18 @@ function iniciarAdmin() {
     agendamentos = snap.val() || {};
     document.getElementById('health-db').textContent = 'OK';
     renderLista();
+  }, err => {
+    console.error('Falha ao observar agendamentos:', err);
+    document.getElementById('health-db').textContent = 'Sem acesso';
+    showToast(`Falha de leitura no banco (${err?.code || 'desconhecido'}).`);
   });
   onValue(ref(db, 'historico_clientes'), snap => {
     const raw = snap.val() || {};
     historicoClientes = Object.entries(raw).map(([id, v]) => ({ id, ...v }));
     sincronizarPendenciasDoHistorico().catch(() => {});
     renderHistoricoClientes();
+  }, () => {
+    document.getElementById('health-db').textContent = 'Instável';
   });
   onValue(ref(db, 'historico_acoes'), snap => {
     const raw = snap.val() || {};
