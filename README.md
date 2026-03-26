@@ -1,97 +1,84 @@
-<h1 align="center">
-  🐾 Prime Pet
-</h1>
+# 🐾 Prime Pet
 
-<p align="center">
-  Formulário de contrato de prestação de serviços para pet shop, com envio direto via WhatsApp.
-</p>
+Aplicação web estática para formalizar contratos de prestação de serviços de pet shop e enviar os dados preenchidos diretamente para o WhatsApp.
 
-<p align="center">
-  <a href="https://prime-pet.vercel.app" target="_blank">
-    <img src="https://img.shields.io/badge/deploy-vercel-black?style=flat-square&logo=vercel" alt="Deploy na Vercel">
-  </a>
-  <img src="https://img.shields.io/badge/html-100%25-orange?style=flat-square&logo=html5&logoColor=white" alt="HTML">
-  <img src="https://img.shields.io/badge/licença-MIT-green?style=flat-square" alt="Licença MIT">
-</p>
+[![Deploy na Vercel](https://img.shields.io/badge/deploy-vercel-black?style=flat-square&logo=vercel)](https://prime-pet.vercel.app)
+![HTML](https://img.shields.io/badge/html-100%25-orange?style=flat-square&logo=html5&logoColor=white)
+![Licença MIT](https://img.shields.io/badge/licença-MIT-green?style=flat-square)
 
----
+## 📌 Visão geral
 
-## 📋 Sobre o projeto
+O **Prime Pet** foi desenvolvido para simplificar o cadastro de clientes e pets em serviços como banho, tosa e visita domiciliar.
 
-O **Prime Pet** é uma página web que funciona como um contrato digital de prestação de serviços para donos de pet shop. O tutor preenche os dados do seu animal e, ao finalizar, todas as informações são formatadas automaticamente e enviadas ao responsável pelo WhatsApp — sem necessidade de backend ou banco de dados.
+O fluxo é simples:
+1. O tutor preenche o formulário.
+2. O sistema valida os campos obrigatórios.
+3. O conteúdo é formatado automaticamente em texto.
+4. O WhatsApp é aberto com a mensagem pronta para envio.
 
-🔗 **Demo ao vivo:** [prime-pet.vercel.app](https://prime-pet.vercel.app)
-
----
+> Projeto sem backend e sem banco de dados: tudo acontece no navegador.
 
 ## ✨ Funcionalidades
 
-- **Dados do tutor** — nome, telefone, endereço e data
-- **Dados do pet** — nome, raça, idade, peso e sexo
-- **Condições de saúde** — vacinação, doenças, medicações e alergias (com campos condicionais)
-- **Comportamento** — perfil do animal, histórico agressivo, tendência de fuga
-- **Serviços contratados** — banho e/ou visita domiciliar, dias, horário e forma de pagamento
-- **Autorizações** — atendimento veterinário emergencial e uso de imagem
-- **Política de cancelamento** — exibição das regras de vigência e aviso prévio
-- **Envio via WhatsApp** — gera uma mensagem formatada e abre direto no WhatsApp do responsável
+- Cadastro completo do tutor (nome, telefone, endereço e data).
+- Cadastro do pet (nome, raça, idade, peso e sexo).
+- Perguntas condicionais para saúde (vacinas, doenças, medicações e alergias).
+- Informações comportamentais (agressividade e tendência de fuga).
+- Seleção de serviços e preferências de atendimento.
+- Autorizações importantes (emergência veterinária e uso de imagem).
+- Exibição da política de cancelamento no próprio formulário.
+- Geração e envio da mensagem via `wa.me`.
 
----
+## 🧱 Stack utilizada
 
-## 🛠️ Tecnologias
+- **HTML5**
+- **CSS3** (responsivo, com variáveis CSS)
+- **JavaScript puro (Vanilla JS)**
+- **Google Fonts**
+- **WhatsApp API (`wa.me`)**
 
-| Tecnologia | Uso |
-|---|---|
-| HTML5 | Estrutura e marcação semântica |
-| CSS3 | Estilização com variáveis CSS e design responsivo |
-| JavaScript (Vanilla) | Lógica de campos condicionais, validação e formatação da mensagem |
-| Google Fonts | Tipografia (`Playfair Display` + `DM Sans`) |
-| WhatsApp API (`wa.me`) | Envio do contrato preenchido |
-| Vercel | Hospedagem e deploy contínuo |
+## 🚀 Executando localmente
 
----
-
-## 🚀 Como usar localmente
-
-Não há dependências nem build necessário. Basta clonar e abrir o arquivo:
+Como é um projeto estático, não há instalação de dependências.
 
 ```bash
 git clone https://github.com/fernando-msa/prime-pet.git
 cd prime-pet
-# Abra o index.html no navegador
 ```
 
----
+Depois, abra o `index.html` no navegador.
 
-## 📁 Estrutura
+## 📁 Estrutura do projeto
 
-```
+```text
 prime-pet/
-├── index.html   # Aplicação completa (HTML + CSS + JS em arquivo único)
-├── README.md
-└── LICENSE
+├── index.html                  # Formulário principal
+├── admin.html                  # Página administrativa auxiliar
+├── client.html                 # Página de cliente
+├── privacy.html                # Política de privacidade
+├── firebase.realtime.rules.json
+├── favicon.svg
+├── LICENSE
+└── README.md
 ```
 
----
+## ⚙️ Personalização rápida
 
-## ⚙️ Personalização
+No `index.html`, você pode ajustar:
 
-Para adaptar o formulário ao seu pet shop, edite as seguintes linhas no `index.html`:
+- **Número de WhatsApp de destino** (`const numero = '...'`).
+- **Nome da marca** (título e textos de cabeçalho/rodapé).
+- **Links de contato** (Instagram e telefone).
+- **Textos de política e termos** conforme o seu negócio.
 
-| O que alterar | Onde encontrar no código |
-|---|---|
-| Número de WhatsApp | `const numero = '5579996623050'` |
-| Nome do estabelecimento | Tag `<title>` e `.header-title` |
-| Instagram | Link `@Prime_Pet` no rodapé |
-| Telefone de contato | Link `tel:` no rodapé |
+## 🌐 Deploy
 
----
+O projeto está publicado em:
+
+- https://prime-pet.vercel.app
+
+Para novo deploy, você pode usar Vercel com integração direta ao GitHub.
 
 ## 📄 Licença
 
-Distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-<p align="center">
-  Feito por <a href="https://github.com/fernando-msa">@fernando-msa</a>
-</p>
+Este projeto está sob a licença **MIT**. Veja [LICENSE](LICENSE) para mais informações.
