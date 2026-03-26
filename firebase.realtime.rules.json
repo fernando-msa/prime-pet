@@ -33,7 +33,7 @@
 
     "historico_clientes": {
       ".indexOn": ["ownerUid"],
-      ".read": false,
+      ".read": "auth != null && ((query.orderByChild === 'ownerUid' && query.equalTo === auth.uid) || auth.token.admin === true || auth.token.email === 'ribeirojunior270@gmail.com' || auth.token.email === 'arthurleite71@gmail.com')",
 
       "$id": {
         ".read": "auth != null && (auth.token.admin === true || data.child('ownerUid').val() === auth.uid)",
@@ -54,6 +54,13 @@
         "status": {
           ".validate": "!newData.exists() || (newData.isString() && (newData.val() === 'pending' || newData.val() === 'confirmed' || newData.val() === 'cancelled'))"
         }
+      }
+    },
+
+    "clientes_perfis": {
+      "$uid": {
+        ".read": "auth != null && (auth.token.admin === true || auth.token.email === 'ribeirojunior270@gmail.com' || auth.token.email === 'arthurleite71@gmail.com' || auth.uid === $uid)",
+        ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'ribeirojunior270@gmail.com' || auth.token.email === 'arthurleite71@gmail.com' || auth.uid === $uid)"
       }
     }
   }
