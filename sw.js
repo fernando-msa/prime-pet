@@ -1,4 +1,4 @@
-const CACHE_NAME = 'primepet-v1.9.0';
+const CACHE_NAME = 'primepet-v1.13.1';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -26,16 +26,35 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request)
+  const isHTMLRequest =
+    event.request.mode === 'navigate' ||
+    (event.request.headers.get('accept') || '').includes('text/html');
+
+  // HTML: network-first para evitar usuário preso em versão antiga.
+  if (isHTMLRequest) {
+    event.respondWith(
+      fetch(event.request)
         .then((networkResponse) => {
           const clone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           return networkResponse;
         })
-        .catch(() => caches.match('./index.html'));
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // Assets estáticos: stale-while-revalidate para performance sem travar atualização.
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const networkFetch = fetch(event.request)
+        .then((networkResponse) => {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return networkResponse;
+        })
+        .catch(() => cached);
+      return cached || networkFetch;
     })
   );
 });
