@@ -37,6 +37,7 @@ body {
   font-weight: 400;
   color: var(--espresso);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 body[data-theme="dark"]{
   --cream:#0f1422;
@@ -732,7 +733,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
     v1.9.0 • Modo escuro + base PWA (manifesto e cache offline)<br>
     v1.10.0 • Rascunho automático + navegação por etapas no formulário<br>
     v1.11.0 • Métricas locais de funil + exportação CSV no admin<br>
-    v1.12.0 • Hardening de sessão admin + smoke QA + ajustes de contraste
+    v1.12.0 • Hardening de sessão admin + smoke QA + ajustes de contraste<br>
+    v1.13.0 • Exportações avançadas + notificações por webhook + melhorias de operação
   </div>
 
   <div class="admin-wrap">
@@ -740,7 +742,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <div class="health-card"><div class="health-k">Saúde Auth</div><div class="health-v" id="health-auth">OK</div></div>
       <div class="health-card"><div class="health-k">Saúde DB</div><div class="health-v" id="health-db">Conectando...</div></div>
       <div class="health-card"><div class="health-k">Erros (24h)</div><div class="health-v" id="health-errors">0</div></div>
-      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.12.0</div></div>
+      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.13.0</div></div>
     </div>
     <div class="overview-card" style="margin-bottom:14px">
       <div class="overview-head">
@@ -757,16 +759,27 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
     </div>
     <div class="overview-card" style="margin-bottom:14px">
       <div class="overview-head">
-        <h3 class="overview-title">Funil local (7 dias)</h3>
-        <button class="btn-export" type="button" onclick="exportarMetricasLocais()">Exportar métricas (CSV)</button>
+        <h3 class="overview-title">Exportações para análise/contabilidade</h3>
       </div>
       <div class="health-grid">
-        <div class="health-card"><div class="health-k">Aberturas Home</div><div class="health-v" id="funnel-home-open">0</div></div>
-        <div class="health-card"><div class="health-k">Tentativas envio</div><div class="health-v" id="funnel-submit-attempt">0</div></div>
-        <div class="health-card"><div class="health-k">WhatsApp aberto</div><div class="health-v" id="funnel-whatsapp-opened">0</div></div>
-        <div class="health-card"><div class="health-k">Conversão WA</div><div class="health-v" id="funnel-conversion">0%</div></div>
+        <div class="health-card"><div class="health-k">Agenda (CSV detalhado)</div><div class="health-v"><button class="btn-export" type="button" onclick="exportarAgendaDetalhadaCSV()">Exportar CSV</button></div></div>
+        <div class="health-card"><div class="health-k">Agenda (JSON)</div><div class="health-v"><button class="btn-export" type="button" onclick="exportarAgendaJSON()">Exportar JSON</button></div></div>
+        <div class="health-card"><div class="health-k">Google Agenda</div><div class="health-v"><button class="btn-export" type="button" onclick="exportarMesGoogle()">Exportar mês</button></div></div>
+        <div class="health-card"><div class="health-k">Métricas locais</div><div class="health-v"><button class="btn-export" type="button" onclick="exportarMetricasLocais()">Exportar CSV</button></div></div>
       </div>
-      <p class="muted-note">Base local do navegador/admin atual (últimos 7 dias).</p>
+      <p class="muted-note">Exporte no formato que fizer mais sentido para BI, financeiro e auditoria.</p>
+    </div>
+    <div class="overview-card" style="margin-bottom:14px">
+      <div class="overview-head">
+        <h3 class="overview-title">Notificações do Arthur</h3>
+      </div>
+      <p class="muted-note">Configure um webhook (n8n/Make/Zapier) para avisar fora do painel quando surgir agendamento pendente.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+        <input id="notif-webhook-url" class="month-input" style="min-width:280px;flex:1" placeholder="https://seu-webhook/prime-pet">
+        <button class="btn-export" type="button" onclick="salvarWebhookNotificacao()">Salvar webhook</button>
+        <button class="btn-export" type="button" onclick="testarWebhookNotificacao()">Testar webhook</button>
+        <button class="btn-export" type="button" onclick="habilitarNotificacaoNavegador()">Ativar notificação do navegador</button>
+      </div>
     </div>
     <div class="planner-head">
       <div>
@@ -864,7 +877,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   <a href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
 </div>
 <div id="toast"></div>
-<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.12.0</div>
+<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.13.0</div>
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -886,9 +899,10 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
 const auth = getAuth(app);
-const APP_VERSION = 'v1.12.0';
+const APP_VERSION = 'v1.13.0';
 const THEME_KEY = 'primepet_theme';
 const METRICS_KEY = 'primepet_metrics_events';
+const ADMIN_WEBHOOK_KEY = 'primepet_admin_notification_webhook';
 const ADMIN_SESSION_KEY = 'primepet_admin_session_v1';
 const ADMIN_IDLE_LIMIT_MS = 15 * 60 * 1000;
 const ADMIN_MAX_SESSION_MS = 8 * 60 * 60 * 1000;
@@ -906,6 +920,7 @@ let mesVisao = new Date().toISOString().slice(0, 7);
 let historyExpanded = false;
 let historyFilter = 'today';
 let adminEmailAtual = '';
+let pendingCache = new Set();
 function applyTheme(theme) {
   const mode = theme === 'dark' ? 'dark' : 'light';
   document.body.setAttribute('data-theme', mode);
@@ -1018,6 +1033,7 @@ if ('serviceWorker' in navigator) {
 document.getElementById('health-version').textContent = APP_VERSION;
 document.getElementById('admin-version-footer').textContent = `Prime Pet • Versão atual: ${APP_VERSION}`;
 renderFunnelLocal();
+carregarWebhookNotificacao();
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, user => {
@@ -1121,6 +1137,7 @@ function iniciarAdmin() {
   onValue(ref(db, 'agendamentos'), snap => {
     agendamentos = snap.val() || {};
     document.getElementById('health-db').textContent = 'OK';
+    processarNotificacoesPendentes();
     renderLista();
   }, err => {
     console.error('Falha ao observar agendamentos:', err);
@@ -1444,6 +1461,152 @@ window.exportarMetricasLocais = function() {
   URL.revokeObjectURL(a.href);
   showToast('CSV de métricas locais exportado.');
 };
+
+window.exportarAgendaDetalhadaCSV = function() {
+  const itens = construirItensAgendaMes();
+  if (!itens.length) {
+    showToast('Sem agendamentos neste mês para exportar.');
+    return;
+  }
+  const linhas = ['data,hora,status,turno,dia_semana'];
+  itens.forEach((item) => {
+    const turno = item.hour < '12:00' ? 'manha' : item.hour < '18:00' ? 'tarde' : 'noite';
+    const diaSemana = new Date(`${item.date}T00:00:00`).toLocaleDateString('pt-BR', { weekday: 'long' });
+    linhas.push([item.date, item.hour, item.status, turno, diaSemana].map(csvEscape).join(','));
+  });
+  baixarArquivo(`prime-pet-agenda-detalhada-${mesVisao}.csv`, linhas.join('\n'), 'text/csv;charset=utf-8;');
+  showToast('CSV detalhado exportado com sucesso.');
+};
+
+window.exportarAgendaJSON = function() {
+  const itens = construirItensAgendaMes();
+  if (!itens.length) {
+    showToast('Sem agendamentos neste mês para exportar.');
+    return;
+  }
+  const payload = {
+    versao: APP_VERSION,
+    mesReferencia: mesVisao,
+    exportadoEm: new Date().toISOString(),
+    total: itens.length,
+    itens
+  };
+  baixarArquivo(`prime-pet-agenda-${mesVisao}.json`, JSON.stringify(payload, null, 2), 'application/json;charset=utf-8;');
+  showToast('JSON exportado com sucesso.');
+};
+
+function construirItensAgendaMes() {
+  const itens = [];
+  Object.entries(agendamentos).forEach(([date, slots]) => {
+    if (!date.startsWith(mesVisao)) return;
+    Object.entries(slots).forEach(([hourKey, status]) => {
+      const hour = `${hourKey.slice(0,2)}:${hourKey.slice(2)}`;
+      itens.push({ date, hour, status });
+    });
+  });
+  return itens.sort((a, b) => (a.date + a.hour).localeCompare(b.date + b.hour));
+}
+
+function baixarArquivo(nome, conteudo, mime) {
+  const blob = new Blob([conteudo], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nome;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function carregarWebhookNotificacao() {
+  const input = document.getElementById('notif-webhook-url');
+  if (!input) return;
+  input.value = localStorage.getItem(ADMIN_WEBHOOK_KEY) || '';
+}
+
+window.salvarWebhookNotificacao = function() {
+  const input = document.getElementById('notif-webhook-url');
+  if (!input) return;
+  const valor = String(input.value || '').trim();
+  if (!valor) {
+    localStorage.removeItem(ADMIN_WEBHOOK_KEY);
+    showToast('Webhook removido.');
+    return;
+  }
+  localStorage.setItem(ADMIN_WEBHOOK_KEY, valor);
+  showToast('Webhook salvo com sucesso.');
+};
+
+window.testarWebhookNotificacao = async function() {
+  const url = localStorage.getItem(ADMIN_WEBHOOK_KEY);
+  if (!url) {
+    showToast('Salve um webhook antes de testar.');
+    return;
+  }
+  await enviarWebhookNotificacao({
+    tipo: 'teste',
+    mensagem: 'Teste manual do admin Prime Pet',
+    admin: adminEmailAtual || 'admin',
+    at: Date.now()
+  });
+};
+
+window.habilitarNotificacaoNavegador = async function() {
+  if (!('Notification' in window)) {
+    showToast('Navegador não suporta notificações.');
+    return;
+  }
+  const result = await Notification.requestPermission();
+  showToast(result === 'granted' ? 'Notificações do navegador ativadas.' : 'Permissão de notificação negada.');
+};
+
+async function enviarWebhookNotificacao(payload) {
+  const url = localStorage.getItem(ADMIN_WEBHOOK_KEY);
+  if (!url) return;
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  } catch (e) {
+    showToast(`Falha ao notificar webhook (${e.message || 'erro'}).`);
+  }
+}
+
+function processarNotificacoesPendentes() {
+  const pendentes = new Set();
+  Object.entries(agendamentos).forEach(([date, slots]) => {
+    Object.entries(slots).forEach(([hourKey, status]) => {
+      if (status !== 'pending') return;
+      pendentes.add(`${date}|${hourKey}`);
+    });
+  });
+  const novos = [...pendentes].filter((id) => !pendingCache.has(id));
+  pendingCache = pendentes;
+  if (!novos.length) return;
+  novos.forEach((id) => {
+    const [date, hourKey] = id.split('|');
+    const hour = `${hourKey.slice(0,2)}:${hourKey.slice(2)}`;
+    const msg = `Novo agendamento pendente: ${formatDateBR(date)} às ${hour}`;
+    showToast(`🔔 ${msg}`);
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Prime Pet Admin', { body: msg });
+    }
+    document.title = `(${novos.length}) Prime Pet – Painel Admin`;
+    enviarWebhookNotificacao({
+      tipo: 'novo_agendamento_pendente',
+      mensagem: msg,
+      data: date,
+      hora: hour,
+      status: 'pending',
+      adminDestino: 'arthurleite71@gmail.com',
+      at: Date.now()
+    });
+  });
+}
 
 // ── Render ────────────────────────────────────────
 function renderLista() {
