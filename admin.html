@@ -755,6 +755,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
       <p class="muted-note">Base local do navegador/admin atual (últimos 7 dias).</p>
     </div>
+    <div class="overview-card" style="margin-bottom:14px">
+      <div class="overview-head">
+        <h3 class="overview-title">Funil local (7 dias)</h3>
+        <button class="btn-export" type="button" onclick="exportarMetricasLocais()">Exportar métricas (CSV)</button>
+      </div>
+      <div class="health-grid">
+        <div class="health-card"><div class="health-k">Aberturas Home</div><div class="health-v" id="funnel-home-open">0</div></div>
+        <div class="health-card"><div class="health-k">Tentativas envio</div><div class="health-v" id="funnel-submit-attempt">0</div></div>
+        <div class="health-card"><div class="health-k">WhatsApp aberto</div><div class="health-v" id="funnel-whatsapp-opened">0</div></div>
+        <div class="health-card"><div class="health-k">Conversão WA</div><div class="health-v" id="funnel-conversion">0%</div></div>
+      </div>
+      <p class="muted-note">Base local do navegador/admin atual (últimos 7 dias).</p>
+    </div>
     <div class="planner-head">
       <div>
         <h2 class="planner-title">Visão administrativa</h2>
