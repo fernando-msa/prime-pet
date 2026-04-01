@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Portal do Cliente</title>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#FF8200">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -14,6 +16,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:linear-gradient(180deg,#f3f6ff 0%, #eef3f7 100%);font-family:'Nunito',sans-serif;color:var(--dark)}
+body[data-theme="dark"]{--dark:#eef2ff;--dark2:#c7d2f2;--gray2:#33405f;background:linear-gradient(180deg,#0f1424 0%, #131a2d 100%)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(0,191,200,.45);outline-offset:2px}
 .header{background:var(--dark);position:relative;overflow:hidden;padding:0}
 .header-bg-shapes{position:absolute;inset:0;pointer-events:none}
 .header-bg-shapes span{position:absolute;border-radius:50%;opacity:.13}
@@ -91,6 +95,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 </style>
 </head>
 <body>
@@ -129,6 +134,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
         <a class="portal-link" href="./index.html">🏠 Home</a>
         <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
         <button class="portal-link" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
+        <button class="portal-link" type="button" onclick="toggleTheme()" id="client-theme-toggle">🌙 Tema escuro</button>
       </div>
       <div class="header-session" id="header-session">
         <span class="session-chip">🔒 Não logado</span>
@@ -175,19 +181,19 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
           <span class="muted">Esses dados podem ser reutilizados em novos agendamentos.</span>
           <div class="profile-grid" style="margin-top:10px">
             <label class="profile-label">Nome completo
-              <input type="text" id="perfil-nome" placeholder="Seu nome">
+              <input type="text" id="perfil-nome" placeholder="Seu nome" autocomplete="name">
             </label>
             <label class="profile-label">Telefone
-              <input type="text" id="perfil-telefone" placeholder="(00) 00000-0000">
+              <input type="text" id="perfil-telefone" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel">
             </label>
             <label class="profile-label full">Endereço
-              <input type="text" id="perfil-endereco" placeholder="Rua, número, bairro, cidade">
+              <input type="text" id="perfil-endereco" placeholder="Rua, número, bairro, cidade" autocomplete="street-address">
             </label>
             <label class="profile-label">Nome preferido do pet
-              <input type="text" id="perfil-pet" placeholder="Ex.: Thor">
+              <input type="text" id="perfil-pet" placeholder="Ex.: Thor" autocomplete="nickname">
             </label>
             <label class="profile-label">Raça do pet
-              <input type="text" id="perfil-raca" placeholder="Ex.: SRD, Poodle">
+              <input type="text" id="perfil-raca" placeholder="Ex.: SRD, Poodle" autocomplete="off">
             </label>
           </div>
           <div class="item-actions">
@@ -197,7 +203,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       </div>
     </div>
 
-    <div class="card" id="portal-msg">Entre com Google para visualizar seu histórico.</div>
+    <div class="card" id="portal-msg" role="status" aria-live="polite">Entre com Google para visualizar seu histórico.</div>
     <div class="contact-footer">
       <a class="contact-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
     </div>
@@ -213,6 +219,26 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
     <button type="button" onclick="fecharLgpdPortal()">Depois</button>
   </div>
 </div>
+<script>
+const THEME_KEY = 'primepet_theme';
+function applyTheme(theme){
+  const mode = theme === 'dark' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', mode);
+  const btn = document.getElementById('client-theme-toggle');
+  if (btn) btn.textContent = mode === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro';
+}
+function toggleTheme(){
+  const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_KEY) || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'));
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, get, set, remove, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -234,6 +260,19 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 const APP_VERSION = 'v1.8.1';
+const METRICS_KEY = 'primepet_metrics_events';
+
+function trackEvent(event, meta = {}) {
+  let list = [];
+  try {
+    const raw = localStorage.getItem(METRICS_KEY);
+    list = raw ? JSON.parse(raw) : [];
+  } catch (_) {
+    list = [];
+  }
+  list.push({ event, meta, at: Date.now(), page: 'client' });
+  localStorage.setItem(METRICS_KEY, JSON.stringify(list.slice(-2000)));
+}
 
 let cacheSolicitacoes = [];
 let solicFiltroAtual = 'all';
@@ -414,6 +453,7 @@ function carregarPreCadastro() {
 }
 
 window.entrarComGoogle = async function() {
+  trackEvent('client_login_google_attempt');
   try {
     if (!garantirConsentimentoLgpd()) {
       setMensagemPortal('É necessário aceitar os termos LGPD para continuar.');
@@ -422,6 +462,7 @@ window.entrarComGoogle = async function() {
     }
     setMensagemPortal('Abrindo login Google...');
     await signInWithPopup(auth, provider);
+    trackEvent('client_login_google_success');
     setMensagemPortal('Login com Google realizado com sucesso.');
   } catch (e) {
     const code = e?.code || '';
@@ -443,6 +484,7 @@ window.entrarComGoogle = async function() {
 };
 
 window.entrarOuCadastrarComEmail = async function() {
+  trackEvent('client_login_email_attempt');
   if (!garantirConsentimentoLgpd()) {
     setMensagemPortal('É necessário aceitar os termos LGPD para continuar.');
     exibirLgpdPortal();
@@ -577,6 +619,7 @@ window.salvarPerfilCompleto = async function() {
 onAuthStateChanged(auth, user => {
   atualizarHeaderSessao(user || null);
   if (user) {
+    trackEvent('client_auth_active');
     document.getElementById('login-screen-client').style.display = 'none';
     document.getElementById('client-app').style.display = 'block';
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
@@ -590,6 +633,7 @@ onAuthStateChanged(auth, user => {
     });
     return;
   }
+  trackEvent('client_auth_inactive');
   document.getElementById('login-screen-client').style.display = 'flex';
   document.getElementById('client-app').style.display = 'none';
   localStorage.removeItem('primepet_client_session');
@@ -598,6 +642,7 @@ onAuthStateChanged(auth, user => {
   setMensagemPortal('Entre com Google para visualizar seu histórico.');
 });
 
+trackEvent('client_page_open');
 carregarPreCadastro();
 if (!garantirConsentimentoLgpd()) {
   setMensagemPortal('⚠️ Para usar o portal, aceite o aviso LGPD no canto da tela.');
