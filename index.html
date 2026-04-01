@@ -43,7 +43,7 @@ body {
 }
 body[data-theme="dark"] {
   --gray: #070d1d;
-  --white: #121c33;
+  --white: #f5f8ff;
   --dark: #0c1324;
   --dark2: #1b2b4b;
   --gray2: #2a3b63;
@@ -52,6 +52,26 @@ body[data-theme="dark"] {
   --cyan-bg: #0f262d;
   color: #e8efff;
 }
+body[data-theme="dark"] .section-card,
+body[data-theme="dark"] .resp-card,
+body[data-theme="dark"] .notice {
+  background: #121c33;
+  color: #e8efff;
+  border-color: #2a3b63;
+}
+body[data-theme="dark"] .card-header { border-bottom-color: #2a3b63; }
+body[data-theme="dark"] .card-title,
+body[data-theme="dark"] .field label,
+body[data-theme="dark"] .auth-label,
+body[data-theme="dark"] .resp-card li { color: #e8efff; }
+body[data-theme="dark"] .portal-link {
+  color: #e8efff;
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.25);
+}
+body[data-theme="dark"] .portal-link:hover { background: rgba(255,255,255,.14); }
+body[data-theme="dark"] .header-contract-label,
+body[data-theme="dark"] .session-status { color: rgba(255,255,255,.9); }
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -758,7 +778,11 @@ textarea:focus-visible {
       v1.4.0 • Sessão e notas de atualização<br>
       v1.5.0 • LGPD + endurecimento de acesso admin<br>
       v1.6.0 • Login admin somente Google + monitoramento técnico<br>
-      v1.8.1 • Novo visual de login + LGPD por acesso + contato com mensagem pronta
+      v1.8.1 • Novo visual de login + LGPD por acesso + contato com mensagem pronta<br>
+      v1.9.0 • Modo escuro + base PWA (manifesto e cache offline)<br>
+      v1.10.0 • Rascunho automático + navegação por etapas no formulário<br>
+      v1.11.0 • Métricas locais de funil + exportação CSV no admin<br>
+      v1.12.0 • Hardening de sessão admin + smoke QA + ajustes de contraste
     </div>
     <p class="header-paws">🐾 🐾 🐾</p>
   </div>
@@ -1078,7 +1102,7 @@ textarea:focus-visible {
     📞 <a href="tel:79996623050">(79) 99662-3050</a> &nbsp;·&nbsp;
     📸 <a href="https://instagram.com/prime_petoficial" target="_blank" rel="noopener noreferrer">@prime_petoficial</a><br>
     Desenvolvido por <a href="https://github.com/fernando-msa" target="_blank" rel="noopener noreferrer">github.com/fernando-msa</a>
-    <br><span id="index-version-footer">Versão atual: v1.8.1</span>
+    <br><span id="index-version-footer">Versão atual: v1.12.0</span>
     <br><a class="privacy-link" href="./privacy.html">Política de Privacidade</a>
   </div>
   <div class="contact-footer-wrap">
@@ -1101,7 +1125,7 @@ textarea:focus-visible {
 </div>
 
 <script>
-const APP_VERSION = 'v1.8.1';
+const APP_VERSION = 'v1.12.0';
 const DRAFT_KEY = 'primepet_form_draft_v2';
 const THEME_KEY = 'primepet_theme';
 const METRICS_KEY = 'primepet_metrics_events';

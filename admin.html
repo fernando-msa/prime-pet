@@ -728,7 +728,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
     v1.4.0 • Sessão e notas de atualização<br>
     v1.5.0 • LGPD + endurecimento de acesso admin<br>
     v1.6.0 • Login admin somente Google + monitoramento técnico<br>
-    v1.8.1 • Novo visual do portal cliente + LGPD por acesso + contato com mensagem pronta
+    v1.8.1 • Novo visual do portal cliente + LGPD por acesso + contato com mensagem pronta<br>
+    v1.9.0 • Modo escuro + base PWA (manifesto e cache offline)<br>
+    v1.10.0 • Rascunho automático + navegação por etapas no formulário<br>
+    v1.11.0 • Métricas locais de funil + exportação CSV no admin<br>
+    v1.12.0 • Hardening de sessão admin + smoke QA + ajustes de contraste
   </div>
 
   <div class="admin-wrap">
@@ -736,7 +740,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <div class="health-card"><div class="health-k">Saúde Auth</div><div class="health-v" id="health-auth">OK</div></div>
       <div class="health-card"><div class="health-k">Saúde DB</div><div class="health-v" id="health-db">Conectando...</div></div>
       <div class="health-card"><div class="health-k">Erros (24h)</div><div class="health-v" id="health-errors">0</div></div>
-      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.8.1</div></div>
+      <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.12.0</div></div>
+    </div>
+    <div class="overview-card" style="margin-bottom:14px">
+      <div class="overview-head">
+        <h3 class="overview-title">Funil local (7 dias)</h3>
+        <button class="btn-export" type="button" onclick="exportarMetricasLocais()">Exportar métricas (CSV)</button>
+      </div>
+      <div class="health-grid">
+        <div class="health-card"><div class="health-k">Aberturas Home</div><div class="health-v" id="funnel-home-open">0</div></div>
+        <div class="health-card"><div class="health-k">Tentativas envio</div><div class="health-v" id="funnel-submit-attempt">0</div></div>
+        <div class="health-card"><div class="health-k">WhatsApp aberto</div><div class="health-v" id="funnel-whatsapp-opened">0</div></div>
+        <div class="health-card"><div class="health-k">Conversão WA</div><div class="health-v" id="funnel-conversion">0%</div></div>
+      </div>
+      <p class="muted-note">Base local do navegador/admin atual (últimos 7 dias).</p>
     </div>
     <div class="overview-card" style="margin-bottom:14px">
       <div class="overview-head">
@@ -847,7 +864,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   <a href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
 </div>
 <div id="toast"></div>
-<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.8.1</div>
+<div class="version-footer" id="admin-version-footer">Prime Pet • Versão atual: v1.12.0</div>
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -869,7 +886,7 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
 const auth = getAuth(app);
-const APP_VERSION = 'v1.8.1';
+const APP_VERSION = 'v1.12.0';
 const THEME_KEY = 'primepet_theme';
 const METRICS_KEY = 'primepet_metrics_events';
 const ADMIN_SESSION_KEY = 'primepet_admin_session_v1';
