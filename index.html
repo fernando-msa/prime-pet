@@ -1178,6 +1178,13 @@ window.toggleSidebar = function() {
   side.classList.toggle('expanded');
   btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
 };
+window.toggleSidebar = function() {
+  const side = document.getElementById('sidebar-nav');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!side || !btn) return;
+  side.classList.toggle('expanded');
+  btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
+};
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
 }
