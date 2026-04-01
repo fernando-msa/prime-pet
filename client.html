@@ -18,12 +18,12 @@
 body{background:linear-gradient(180deg,#f3f6ff 0%, #eef3f7 100%);font-family:'Nunito',sans-serif;color:var(--dark);overflow-x:hidden;max-width:100%}
 body[data-theme="dark"]{--dark:#eef2ff;--dark2:#c7d2f2;--gray2:#33405f;background:linear-gradient(180deg,#0f1424 0%, #131a2d 100%)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(0,191,200,.45);outline-offset:2px}
-.header{background:var(--dark);position:relative;overflow:hidden;padding:0 0 0 74px;min-height:120px}
+.header{background:var(--dark);position:relative;overflow:hidden;padding:0;min-height:120px}
 .header-bg-shapes{position:absolute;inset:0;pointer-events:none}
 .header-bg-shapes span{position:absolute;border-radius:50%;opacity:.13}
 .header-bg-shapes span:nth-child(1){width:280px;height:280px;background:var(--orange);top:-90px;left:-70px}
 .header-bg-shapes span:nth-child(2){width:220px;height:220px;background:var(--cyan);bottom:-80px;right:-50px}
-.header-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;padding:30px 20px 24px;gap:8px;color:#fff;text-align:left;max-width:1100px;margin:0 auto}
+.header-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;padding:30px 20px 24px 104px;gap:8px;color:#fff;text-align:left;max-width:1100px;margin:0 auto}
 .logo-badge{display:flex;align-items:center;gap:10px}
 .logo-paw{width:44px;height:44px;background:linear-gradient(135deg,var(--orange),var(--orange-lt));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}
 .logo-text{font-family:'Baloo 2',cursive;font-size:32px;line-height:1}
@@ -39,7 +39,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .portal-link.news{background:linear-gradient(135deg,#fff1c9,#ffe08a);color:#4a3a00}
 .portal-link.profile{background:rgba(255,255,255,.14)}
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
-.sidebar-nav{position:fixed;left:12px;top:18px;bottom:18px;width:58px;background:rgba(16,24,42,.88);border:1px solid rgba(160,178,220,.3);backdrop-filter:blur(10px);border-radius:20px;z-index:40;display:flex;flex-direction:column;align-items:center;padding:10px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav{position:fixed;left:14px;top:18px;width:58px;background:rgba(16,24,42,.92);border:1px solid rgba(160,178,220,.3);backdrop-filter:blur(10px);border-radius:20px;z-index:40;display:flex;flex-direction:column;align-items:center;padding:10px 8px;gap:12px;transition:width .28s ease;box-shadow:0 16px 34px rgba(9,15,29,.3)}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:10px}
 .sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
 .sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
@@ -91,7 +91,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .status-pulse.pending{background:#d3a303;animation:pulseStatus 1.6s ease-in-out infinite}
 .status-pulse.confirmed{background:#2c7a3f;animation:breatheStatus 1.8s ease-in-out infinite}
 .status-pulse.cancelled{background:#ff5a5a;animation:shakeStatus 2.2s linear infinite}
-.assistant-card{border:1px solid #d8e4ff;background:linear-gradient(180deg,#ffffff,#f6f9ff);border-radius:14px;padding:12px;margin-bottom:12px}
+.assistant-card{border:1px solid #d8e4ff;background:linear-gradient(180deg,#ffffff,#f6f9ff);border-radius:14px;padding:12px;margin-bottom:12px;position:fixed;right:20px;bottom:86px;width:min(390px,calc(100vw - 24px));max-height:68vh;overflow:auto;z-index:89;box-shadow:0 20px 42px rgba(18,29,52,.24)}
 .assistant-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .assistant-chip{border:1px solid #d4e0f8;background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
 .assistant-reply{margin-top:10px;background:#f1f6ff;border-left:3px solid #83b3ff;padding:9px 10px;border-radius:8px;font-size:12px;line-height:1.5;color:#24385e}
@@ -132,7 +132,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
-@media (max-width:900px){.header{padding-left:0}.sidebar-nav{left:10px;top:auto;bottom:14px;flex-direction:row;width:auto;height:auto;padding:8px}.sidebar-nav.expanded{width:calc(100vw - 20px);max-width:520px}.sidebar-links{flex-direction:row;overflow:auto}}
+@media (max-width:900px){.header-inner{padding-left:20px}.sidebar-nav{left:10px;top:auto;bottom:14px;flex-direction:row;width:auto;height:auto;padding:8px}.sidebar-nav.expanded{width:calc(100vw - 20px);max-width:520px}.sidebar-links{flex-direction:row;overflow:auto}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 @keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
 @keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
@@ -140,6 +140,19 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 </style>
 </head>
 <body>
+  <script>
+  (function gateMaintenance(){
+    if (window.location.pathname.endsWith('/maintenance.html')) return;
+    fetch('https://prime-pet-default-rtdb.firebaseio.com/public_config/maintenance.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(conf => {
+        if (!conf?.enabled) return;
+        const msg = conf.message ? `?msg=${encodeURIComponent(conf.message)}` : '';
+        window.location.replace(`./maintenance.html${msg}`);
+      })
+      .catch(() => {});
+  })();
+  </script>
   <div id="login-screen-client">
     <div class="client-login-card">
       <div class="login-paw">🐾 🐾 🐾</div>

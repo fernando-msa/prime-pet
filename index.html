@@ -100,6 +100,13 @@ textarea:focus-visible {
   overflow: hidden;
   padding: 0;
 }
+.sidebar-nav{position:fixed;left:14px;top:18px;width:58px;background:rgba(16,24,42,.92);border:1px solid rgba(160,178,220,.3);backdrop-filter:blur(10px);border-radius:20px;z-index:120;display:flex;flex-direction:column;align-items:center;padding:10px 8px;gap:12px;transition:width .28s ease;box-shadow:0 16px 34px rgba(9,15,29,.3)}
+.sidebar-nav.expanded{width:220px;align-items:stretch;padding:10px}
+.sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
+.sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
+.side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+.side-link .label{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
+.sidebar-nav.expanded .side-link .label{opacity:1;max-width:140px}
 .header-bg-shapes {
   position: absolute; inset: 0; pointer-events: none;
 }
@@ -127,7 +134,7 @@ textarea:focus-visible {
 .header-inner {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
-  padding: 48px 24px 40px;
+  padding: 48px 24px 40px 108px;
   gap: 8px;
 }
 
@@ -745,10 +752,38 @@ textarea:focus-visible {
     transition: none !important;
   }
 }
+@media (max-width:900px){
+  .header-inner{padding-left:24px}
+  .sidebar-nav{left:10px;top:auto;bottom:14px;flex-direction:row;width:auto;height:auto;padding:8px}
+  .sidebar-nav.expanded{width:calc(100vw - 20px);max-width:520px}
+  .sidebar-links{flex-direction:row;overflow:auto}
+}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+<script>
+(function gateMaintenance(){
+  if (window.location.pathname.endsWith('/maintenance.html')) return;
+  fetch('https://prime-pet-default-rtdb.firebaseio.com/public_config/maintenance.json')
+    .then(r => r.ok ? r.json() : null)
+    .then(conf => {
+      if (!conf?.enabled) return;
+      const msg = conf.message ? `?msg=${encodeURIComponent(conf.message)}` : '';
+      window.location.replace(`./maintenance.html${msg}`);
+    })
+    .catch(() => {});
+})();
+</script>
+<aside class="sidebar-nav expanded" id="sidebar-nav">
+  <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" id="sidebar-toggle">⇤</button>
+  <nav class="sidebar-links">
+    <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
+    <a class="side-link" href="./client.html"><span>👤</span><span class="label">Cliente</span></a>
+    <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
+    <button class="side-link" type="button" onclick="toggleNotasAtualizacao()"><span>🔔</span><span class="label">Novidades</span></button>
+  </nav>
+</aside>
 
 <!-- ── HEADER ── -->
 <header class="header">
@@ -1158,6 +1193,13 @@ window.toggleTheme = function() {
   const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   localStorage.setItem(THEME_KEY, next);
   applyTheme(next);
+};
+window.toggleSidebar = function() {
+  const side = document.getElementById('sidebar-nav');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!side || !btn) return;
+  side.classList.toggle('expanded');
+  btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
 };
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
