@@ -48,6 +48,12 @@ cd prime-pet
 
 Depois, abra o `index.html` no navegador.
 
+### Verificação rápida (Smoke QA)
+
+```bash
+./scripts/qa_smoke.sh
+```
+
 ## 📁 Estrutura do projeto
 
 ```text
@@ -56,6 +62,8 @@ prime-pet/
 ├── admin.html                  # Página administrativa auxiliar
 ├── client.html                 # Página de cliente
 ├── privacy.html                # Política de privacidade
+├── manifest.webmanifest        # Manifesto PWA
+├── sw.js                       # Service Worker (cache offline)
 ├── firebase.realtime.rules.json
 ├── favicon.svg
 ├── LICENSE
@@ -70,6 +78,12 @@ No `index.html`, você pode ajustar:
 - **Nome da marca** (título e textos de cabeçalho/rodapé).
 - **Links de contato** (Instagram e telefone).
 - **Textos de política e termos** conforme o seu negócio.
+
+## 🧭 Auditoria e roadmap de evolução
+
+Para uma visão objetiva de melhorias de recursos e layout alinhadas ao mercado, consulte:
+
+- [Auditoria do repositório (Abril/2026)](./AUDITORIA_MELHORIAS_2026.md)
 
 ## 🌐 Deploy
 

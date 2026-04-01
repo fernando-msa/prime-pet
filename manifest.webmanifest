@@ -1,0 +1,17 @@
+{
+  "name": "Prime Pet",
+  "short_name": "PrimePet",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111525",
+  "theme_color": "#FF8200",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
