@@ -100,8 +100,8 @@ textarea:focus-visible {
   overflow: hidden;
   padding: 0;
 }
-.sidebar-nav{position:fixed;left:14px;top:18px;width:58px;background:rgba(16,24,42,.92);border:1px solid rgba(160,178,220,.3);backdrop-filter:blur(10px);border-radius:20px;z-index:120;display:flex;flex-direction:column;align-items:center;padding:10px 8px;gap:12px;transition:width .28s ease;box-shadow:0 16px 34px rgba(9,15,29,.3)}
-.sidebar-nav.expanded{width:220px;align-items:stretch;padding:10px}
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:#111a31;border-right:1px solid rgba(160,178,220,.24);z-index:120;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
 .sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
 .sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
 .side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
@@ -797,12 +797,6 @@ textarea:focus-visible {
     </div>
     <p class="header-tagline">Passeios &amp; Banhos</p>
     <div class="header-contract-label">📋 Contrato de Prestação de Serviços</div>
-    <div class="header-portals">
-      <a class="portal-link" href="./client.html">👤 Portal do Cliente</a>
-      <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
-      <button class="portal-link" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
-      <button class="portal-link" type="button" onclick="toggleTheme()" id="theme-toggle-btn">🌙 Tema escuro</button>
-    </div>
     <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
     <div class="session-status" id="home-release" style="display:none;text-align:left">
       <strong>Atualizações</strong><br>
@@ -1163,7 +1157,6 @@ textarea:focus-visible {
 <script>
 const APP_VERSION = 'v1.13.0';
 const DRAFT_KEY = 'primepet_form_draft_v2';
-const THEME_KEY = 'primepet_theme';
 const METRICS_KEY = 'primepet_metrics_events';
 /* ── HELPERS ── */
 function trackEvent(event, meta = {}) {
@@ -1177,22 +1170,13 @@ function trackEvent(event, meta = {}) {
   list.push({ event, meta, at: Date.now(), page: 'index' });
   localStorage.setItem(METRICS_KEY, JSON.stringify(list.slice(-2000)));
 }
-function applyTheme(theme) {
-  const mode = theme === 'dark' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', mode);
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) btn.textContent = mode === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro';
-}
-function initTheme() {
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved) return applyTheme(saved);
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(prefersDark ? 'dark' : 'light');
-}
-window.toggleTheme = function() {
-  const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
+document.body.setAttribute('data-theme', 'light');
+window.toggleSidebar = function() {
+  const side = document.getElementById('sidebar-nav');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!side || !btn) return;
+  side.classList.toggle('expanded');
+  btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
 };
 window.toggleSidebar = function() {
   const side = document.getElementById('sidebar-nav');
@@ -1258,7 +1242,6 @@ function toggleNotasAtualizacao() {
 }
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
-initTheme();
 trackEvent('page_open');
 atualizarStatusSessaoHome();
 if (!garantirConsentimentoLgpd()) exibirLgpdCorner();
