@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Contrato de Serviços</title>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#FF8200">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -38,6 +40,37 @@ body {
   color: var(--dark);
   min-height: 100vh;
   overflow-x: hidden;
+}
+body[data-theme="dark"] {
+  --gray: #070d1d;
+  --white: #121c33;
+  --dark: #0c1324;
+  --dark2: #1b2b4b;
+  --gray2: #2a3b63;
+  --gray3: #b2c0e0;
+  --orange-bg: #2c1f0b;
+  --cyan-bg: #0f262d;
+  color: #e8efff;
+}
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 10px;
+  z-index: 1000;
+  background: var(--dark);
+  color: var(--white);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.skip-link:focus { left: 12px; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(0,191,200,.45);
+  outline-offset: 2px;
 }
 
 /* ── HEADER ── */
@@ -561,6 +594,16 @@ body {
 
 /* ── SUBMIT ── */
 .submit-wrap { text-align: center; margin-top: 12px; padding: 0 4px; }
+.secondary-actions { display:flex; justify-content:center; margin-top:10px; margin-bottom:14px; }
+.btn-ghost {
+  border: 1.5px solid var(--gray2);
+  background: #fff;
+  color: var(--dark2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
 .btn-submit {
   background: linear-gradient(135deg, var(--orange), var(--orange-lt));
   color: white; border: none; border-radius: var(--radius);
@@ -675,9 +718,17 @@ body {
   .progress-wrap, .btn-submit, .form-footer { display: none; }
   .section-card { animation: none; box-shadow: none; border: 1px solid #ddd; }
 }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
 
 <!-- ── HEADER ── -->
 <header class="header">
@@ -695,6 +746,7 @@ body {
       <a class="portal-link" href="./client.html">👤 Portal do Cliente</a>
       <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
       <button class="portal-link" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
+      <button class="portal-link" type="button" onclick="toggleTheme()" id="theme-toggle-btn">🌙 Tema escuro</button>
     </div>
     <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
     <div class="session-status" id="home-release" style="display:none;text-align:left">
@@ -727,7 +779,7 @@ body {
 </div>
 
 <!-- ── MAIN ── -->
-<main class="main-wrap">
+<main class="main-wrap" id="main-content">
 
   <!-- 1. TUTOR -->
   <div class="section-card" data-section="1">
@@ -1017,6 +1069,9 @@ body {
       ✅ Enviar e continuar no portal
     </button>
   </div>
+  <div class="secondary-actions">
+    <button class="btn-ghost" type="button" onclick="limparRascunho()">🧹 Limpar rascunho salvo</button>
+  </div>
 
   <div class="form-footer">
     <div class="footer-logo"><span>Prime</span> Pet 🐾</div>
@@ -1035,7 +1090,7 @@ body {
 </main>
 
 <!-- TOAST -->
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <div class="lgpd-corner" id="lgpd-corner">
   <p>🔒 Usamos seus dados para cadastro, agendamento e contato da Prime Pet. Você pode revisar detalhes na política.</p>
   <div class="lgpd-corner-actions">
@@ -1047,7 +1102,38 @@ body {
 
 <script>
 const APP_VERSION = 'v1.8.1';
+const DRAFT_KEY = 'primepet_form_draft_v2';
+const THEME_KEY = 'primepet_theme';
+const METRICS_KEY = 'primepet_metrics_events';
 /* ── HELPERS ── */
+function trackEvent(event, meta = {}) {
+  let list = [];
+  try {
+    const raw = localStorage.getItem(METRICS_KEY);
+    list = raw ? JSON.parse(raw) : [];
+  } catch (_) {
+    list = [];
+  }
+  list.push({ event, meta, at: Date.now(), page: 'index' });
+  localStorage.setItem(METRICS_KEY, JSON.stringify(list.slice(-2000)));
+}
+function applyTheme(theme) {
+  const mode = theme === 'dark' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', mode);
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = mode === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro';
+}
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved) return applyTheme(saved);
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(prefersDark ? 'dark' : 'light');
+}
+window.toggleTheme = function() {
+  const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+};
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
 }
@@ -1055,6 +1141,7 @@ function setToggle(btn, val, group) {
   btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn')
     .forEach(b => b.classList.remove('active-yes','active-no'));
   btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+  salvarRascunho();
 }
 function val(id) {
   const el = document.getElementById(id);
@@ -1080,6 +1167,11 @@ function showToast(msg, color) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.style.display = 'none', 3800);
 }
+function goToSection(section) {
+  const card = document.querySelector(`.section-card[data-section="${section}"]`);
+  if (!card) return;
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 function atualizarStatusSessaoHome() {
   const badge = document.getElementById('home-session-status');
@@ -1099,9 +1191,42 @@ function toggleNotasAtualizacao() {
 }
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
+initTheme();
+trackEvent('page_open');
 atualizarStatusSessaoHome();
 if (!garantirConsentimentoLgpd()) exibirLgpdCorner();
 document.getElementById('index-version-footer').textContent = `Versão atual: ${APP_VERSION}`;
+
+function setupFormA11yEnhancements() {
+  const map = {
+    tutor_nome: 'name',
+    tutor_telefone: 'tel',
+    tutor_endereco: 'street-address',
+    pet_nome: 'nickname'
+  };
+  Object.entries(map).forEach(([id, autocomplete]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('autocomplete', autocomplete);
+  });
+  const phone = document.getElementById('tutor_telefone');
+  if (phone) {
+    phone.setAttribute('inputmode', 'tel');
+    phone.addEventListener('input', () => {
+      const nums = phone.value.replace(/\D/g, '').slice(0, 11);
+      if (nums.length <= 10) {
+        phone.value = nums.replace(/^(\d{0,2})(\d{0,4})(\d{0,4}).*/, (_, ddd, p1, p2) => {
+          const dddFmt = ddd ? `(${ddd}${ddd.length === 2 ? ') ' : ''}` : '';
+          const p2Fmt = p2 ? `-${p2}` : '';
+          return `${dddFmt}${p1}${p2Fmt}`.trim();
+        });
+      } else {
+        phone.value = nums.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+      }
+    });
+  }
+}
+setupFormA11yEnhancements();
 
 function exibirLgpdCorner() {
   const box = document.getElementById('lgpd-corner');
@@ -1123,6 +1248,22 @@ document.querySelector('input[type="date"]').value =
 
 /* ── PROGRESS OBSERVER ── */
 const cards = document.querySelectorAll('.section-card');
+function setupProgressNavigation() {
+  for (let i = 1; i <= 8; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (!dot) continue;
+    dot.setAttribute('role', 'button');
+    dot.setAttribute('tabindex', '0');
+    dot.setAttribute('aria-label', `Ir para seção ${i}`);
+    dot.addEventListener('click', () => goToSection(i));
+    dot.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        goToSection(i);
+      }
+    });
+  }
+}
 const io = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1133,11 +1274,13 @@ const io = new IntersectionObserver(entries => {
         if (i < n)       { dot.className = 'step-dot done'; if (line) line.className = 'step-line done'; }
         else if (i === n){ dot.className = 'step-dot active'; if (line) line.className = 'step-line done'; }
         else             { dot.className = 'step-dot'; if (line) line.className = 'step-line'; }
+        dot?.setAttribute('aria-current', i === n ? 'step' : 'false');
       }
     }
   });
 }, { threshold: 0.4 });
 cards.forEach(c => io.observe(c));
+setupProgressNavigation();
 
 /* ── CALENDAR ── */
 const AVAILABLE_HOURS = [9,10,11,14,15];
@@ -1214,6 +1357,7 @@ function selectDay(y, m, d) {
 
   renderCal();
   renderTimeSlots();
+  salvarRascunho();
 }
 
 function renderTimeSlots() {
@@ -1249,38 +1393,154 @@ function selectHour(h) {
   document.getElementById('summaryText').textContent =
     `${dow}, ${dStr} · ${fmt(h)} – ${fmt(end)}`;
   document.getElementById('selectedSummary').classList.add('visible');
+  salvarRascunho();
 }
 
 initCal();
 
+function coletarEstadoFormulario() {
+  return {
+    fields: {
+      tutor_nome: val('tutor_nome'),
+      tutor_telefone: val('tutor_telefone'),
+      data_hoje: val('data_hoje'),
+      tutor_endereco: val('tutor_endereco'),
+      pet_nome: val('pet_nome'),
+      pet_raca: val('pet_raca'),
+      pet_idade: val('pet_idade'),
+      pet_peso: val('pet_peso'),
+      doenca_desc: val('doenca_desc'),
+      med_desc: val('med_desc'),
+      alergia_desc: val('alergia_desc'),
+      obs_comp: val('obs_comp')
+    },
+    radios: ['sexo','vacina','doenca','med','alergia','agress','fuga'].reduce((acc, name) => {
+      acc[name] = radio(name);
+      return acc;
+    }, {}),
+    checks: {
+      comp: checkboxes('comp'),
+      serv: checkboxes('serv')
+    },
+    toggles: {
+      emer: toggleVal('emer'),
+      img: toggleVal('img')
+    },
+    selectedDate: selectedDate ? selectedDate.toISOString() : null,
+    selectedHour
+  };
+}
+
+function salvarRascunho() {
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(coletarEstadoFormulario()));
+}
+
+function restaurarRascunho() {
+  const raw = localStorage.getItem(DRAFT_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    Object.entries(data.fields || {}).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value || '';
+    });
+    Object.entries(data.radios || {}).forEach(([name, value]) => {
+      if (!value) return;
+      const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+      el?.click();
+    });
+    (data.checks?.comp || []).forEach((value) => {
+      const el = document.querySelector(`input[name="comp"][value="${value}"]`);
+      if (el) el.checked = true;
+    });
+    (data.checks?.serv || []).forEach((value) => {
+      const el = document.querySelector(`input[name="serv"][value="${value}"]`);
+      if (el) el.checked = true;
+    });
+    if (data.toggles?.emer?.includes('Sim')) {
+      document.querySelector(`.toggle-btn[onclick*="'emer'"][onclick*="'yes'"]`)?.click();
+    } else if (data.toggles?.emer?.includes('Não')) {
+      document.querySelector(`.toggle-btn[onclick*="'emer'"][onclick*="'no'"]`)?.click();
+    }
+    if (data.toggles?.img?.includes('Sim')) {
+      document.querySelector(`.toggle-btn[onclick*="'img'"][onclick*="'yes'"]`)?.click();
+    } else if (data.toggles?.img?.includes('Não')) {
+      document.querySelector(`.toggle-btn[onclick*="'img'"][onclick*="'no'"]`)?.click();
+    }
+    if (data.selectedDate) {
+      const d = new Date(data.selectedDate);
+      if (!Number.isNaN(d.getTime())) {
+        selectedDate = d;
+        calYear = d.getFullYear();
+        calMonth = d.getMonth();
+        renderCal();
+        renderTimeSlots();
+      }
+    }
+    if (Number.isInteger(data.selectedHour) && selectedDate) {
+      selectHour(data.selectedHour);
+    }
+    trackEvent('draft_restored');
+    showToast('💾 Rascunho restaurado automaticamente.', 'var(--green)');
+  } catch (_) {
+    localStorage.removeItem(DRAFT_KEY);
+  }
+}
+
+function configurarAutoRascunho() {
+  const watched = document.querySelectorAll('input, textarea');
+  watched.forEach((el) => el.addEventListener('input', salvarRascunho));
+  watched.forEach((el) => el.addEventListener('change', salvarRascunho));
+}
+
+window.limparRascunho = function() {
+  localStorage.removeItem(DRAFT_KEY);
+  showToast('🧹 Rascunho removido deste dispositivo.', 'var(--cyan)');
+};
+
+restaurarRascunho();
+configurarAutoRascunho();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
 /* ── WHATSAPP ── */
 function enviarWhatsApp() {
+  trackEvent('form_submit_attempt');
   const tutorNome = val('tutor_nome');
   const petNome   = val('pet_nome');
 
   if (!tutorNome || !petNome) {
+    trackEvent('form_validation_error', { tipo: 'nome_tutor_pet' });
     showToast('⚠️ Preencha o nome do tutor e o nome do pet!');
     return;
   }
 
   const servicos = checkboxes('serv');
   if (!servicos.length) {
+    trackEvent('form_validation_error', { tipo: 'servico' });
     showToast('⚠️ Selecione pelo menos um serviço!');
     return;
   }
 
   if (!selectedDate || selectedHour === null) {
+    trackEvent('form_validation_error', { tipo: 'agendamento' });
     showToast('📅 Escolha uma data e horário no calendário!', 'var(--cyan)');
     return;
   }
 
   const telDigits = (val('tutor_telefone') || '').replace(/\D/g, '');
   if (![10,11].includes(telDigits.length)) {
+    trackEvent('form_validation_error', { tipo: 'telefone' });
     showToast('📱 Informe um telefone válido com DDD para continuar no portal.', 'var(--cyan)');
     return;
   }
 
   if (!val('tutor_endereco')) {
+    trackEvent('form_validation_error', { tipo: 'endereco' });
     showToast('📍 Informe o endereço para concluir o pré-cadastro.', 'var(--cyan)');
     return;
   }
@@ -1349,12 +1609,16 @@ function enviarWhatsApp() {
   };
 
   localStorage.setItem('primepet_pre_cadastro', JSON.stringify(preCadastro));
+  localStorage.removeItem(DRAFT_KEY);
 
   const mensagemWhats = encodeURIComponent(linhas.join('\n'));
   const whatsappUrl = `https://wa.me/5579996623050?text=${mensagemWhats}`;
   const win = window.open(whatsappUrl, '_blank');
   if (!win) {
+    trackEvent('whatsapp_popup_blocked');
     showToast('⚠️ Não consegui abrir o WhatsApp automaticamente. Verifique bloqueio de popup.', 'var(--cyan)');
+  } else {
+    trackEvent('whatsapp_opened');
   }
 
   const sessaoCliente = JSON.parse(localStorage.getItem('primepet_client_session') || 'null');
@@ -1362,10 +1626,12 @@ function enviarWhatsApp() {
 
   if (!jaLogado) {
     if (!garantirConsentimentoLgpd()) {
+      trackEvent('lgpd_required_before_portal');
       showToast('⚠️ Aceite o aviso LGPD no canto da tela para continuar.', 'var(--cyan)');
       exibirLgpdCorner();
       return;
     }
+    trackEvent('redirect_portal_login');
     showToast('🔐 Faça login/cadastro no portal para concluir seu agendamento.', 'var(--cyan)');
     setTimeout(() => { window.location.href = './client.html?cadastro=1'; }, 600);
     return;
