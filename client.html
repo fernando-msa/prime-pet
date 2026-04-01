@@ -18,28 +18,35 @@
 body{background:linear-gradient(180deg,#f3f6ff 0%, #eef3f7 100%);font-family:'Nunito',sans-serif;color:var(--dark);overflow-x:hidden;max-width:100%}
 body[data-theme="dark"]{--dark:#eef2ff;--dark2:#c7d2f2;--gray2:#33405f;background:linear-gradient(180deg,#0f1424 0%, #131a2d 100%)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(0,191,200,.45);outline-offset:2px}
-.header{background:var(--dark);position:relative;overflow:hidden;padding:0}
+.header{background:var(--dark);position:relative;overflow:hidden;padding:0;min-height:120px}
 .header-bg-shapes{position:absolute;inset:0;pointer-events:none}
 .header-bg-shapes span{position:absolute;border-radius:50%;opacity:.13}
 .header-bg-shapes span:nth-child(1){width:280px;height:280px;background:var(--orange);top:-90px;left:-70px}
 .header-bg-shapes span:nth-child(2){width:220px;height:220px;background:var(--cyan);bottom:-80px;right:-50px}
-.header-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:34px 18px 28px;gap:8px;color:#fff;text-align:center}
+.header-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;padding:30px 20px 24px 104px;gap:8px;color:#fff;text-align:left;max-width:1100px;margin:0 auto}
 .logo-badge{display:flex;align-items:center;gap:10px}
 .logo-paw{width:44px;height:44px;background:linear-gradient(135deg,var(--orange),var(--orange-lt));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}
 .logo-text{font-family:'Baloo 2',cursive;font-size:32px;line-height:1}
 .logo-text span{color:var(--orange)}
 .header p{opacity:.78;font-size:12px;margin-top:2px;letter-spacing:1px;text-transform:uppercase}
-.header-portals{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.header-session{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.header-portals{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}
+.header-session{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start;align-items:center}
 .session-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);font-size:12px;font-weight:700;color:#fff}
 .portal-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font-size:12px;font-weight:700}
 .portal-link:hover{background:rgba(255,255,255,.16)}
 .portal-link.home{background:linear-gradient(135deg,#ffffff,#eef5ff);color:#1a2d4d}
 .portal-link.admin{background:linear-gradient(135deg,#ffe6cc,#ffd19a);color:#5a2d00}
 .portal-link.news{background:linear-gradient(135deg,#fff1c9,#ffe08a);color:#4a3a00}
-.portal-link.theme{background:linear-gradient(135deg,#d4f7ff,#b9f0fc);color:#004654}
 .portal-link.profile{background:rgba(255,255,255,.14)}
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:#111a31;border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
+.sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
+.sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
+.side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+.side-link:hover{background:rgba(255,255,255,.16)}
+.side-link .label{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
+.sidebar-nav.expanded .side-link .label{opacity:1;max-width:140px}
 .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 46px}
 .card{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border:1px solid #dfe6f7;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 12px 32px rgba(24,38,66,.08)}
 .login-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -56,6 +63,9 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .subfilter-btn.active{background:var(--orange-bg);border-color:var(--orange);color:var(--dark)}
 .list{display:flex;flex-direction:column;gap:8px}
 .item{border:1px solid #dde4f4;border-radius:12px;padding:12px 13px;background:linear-gradient(180deg,#fff,#f9fbff);font-size:13px;line-height:1.55}
+.item.pending-state{border-left:5px solid #d3a303}
+.item.confirmed-state{border-left:5px solid #2c7a3f}
+.item.cancelled-state{border-left:5px solid #ff5a5a}
 .item-header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .order-id{font-size:12px;font-weight:900;color:#1f3358;background:#eaf1ff;border:1px solid #bfd3ff;padding:3px 8px;border-radius:999px}
 .badge{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;color:#fff}
@@ -77,7 +87,11 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .journey{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .journey-step{font-size:11px;border-radius:999px;padding:4px 8px;border:1px solid #dbe5fb;background:#f7f9ff;color:#526383;font-weight:800}
 .journey-step.active{background:linear-gradient(135deg,var(--orange),#ff9d2f);border-color:transparent;color:#fff;box-shadow:0 8px 18px rgba(255,130,0,.3)}
-.assistant-card{border:1px solid #d8e4ff;background:linear-gradient(180deg,#ffffff,#f6f9ff);border-radius:14px;padding:12px;margin-bottom:12px}
+.status-pulse{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.status-pulse.pending{background:#d3a303;animation:pulseStatus 1.6s ease-in-out infinite}
+.status-pulse.confirmed{background:#2c7a3f;animation:breatheStatus 1.8s ease-in-out infinite}
+.status-pulse.cancelled{background:#ff5a5a;animation:shakeStatus 2.2s linear infinite}
+.assistant-card{border:1px solid #d8e4ff;background:linear-gradient(180deg,#ffffff,#f6f9ff);border-radius:14px;padding:12px;margin-bottom:12px;position:fixed;right:20px;bottom:86px;width:min(390px,calc(100vw - 24px));max-height:68vh;overflow:auto;z-index:89;box-shadow:0 20px 42px rgba(18,29,52,.24)}
 .assistant-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .assistant-chip{border:1px solid #d4e0f8;background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
 .assistant-reply{margin-top:10px;background:#f1f6ff;border-left:3px solid #83b3ff;padding:9px 10px;border-radius:8px;font-size:12px;line-height:1.5;color:#24385e}
@@ -89,6 +103,11 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .contact-footer{display:flex;justify-content:center;margin-top:16px}
 .contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#ffffff;color:#3a4a67;padding:8px 12px;border-radius:999px;font-weight:700;border:1px solid #d5deef;font-size:12px}
 .contact-btn:hover{transform:translateY(-1px);background:#f6f9ff}
+.floating-assistant{position:fixed;right:20px;bottom:22px;z-index:90}
+.assistant-fab{border:none;border-radius:999px;background:linear-gradient(135deg,#ff9d2f,#ff8200);color:#1f2231;box-shadow:0 14px 30px rgba(255,130,0,.38);padding:12px 14px;font-size:13px;font-weight:900;display:flex;align-items:center;gap:8px;cursor:pointer}
+.assistant-fab .fab-label{display:none}
+.assistant-fab.expanded .fab-label{display:inline}
+body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
 
 #login-screen-client{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--dark);position:relative;overflow:hidden}
 #login-screen-client::before{content:'';position:absolute;top:-120px;left:-120px;width:400px;height:400px;border-radius:50%;background:rgba(255,130,0,0.08)}
@@ -112,10 +131,27 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
+@media (max-width:900px){.header-inner{padding-left:20px}.sidebar-nav{left:0;right:0;top:auto;bottom:0;flex-direction:row;width:100%;height:auto;padding:8px;border-right:none;border-top:1px solid rgba(160,178,220,.24)}.sidebar-nav.expanded{width:100%;max-width:none}.sidebar-links{flex-direction:row;overflow:auto}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+@keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
+@keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
+@keyframes shakeStatus{0%,90%,100%{transform:translateX(0)}92%{transform:translateX(-1px)}96%{transform:translateX(1px)}}
 </style>
 </head>
 <body>
+  <script>
+  (function gateMaintenance(){
+    if (window.location.pathname.endsWith('/maintenance.html')) return;
+    fetch('https://prime-pet-default-rtdb.firebaseio.com/public_config/maintenance.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(conf => {
+        if (!conf?.enabled) return;
+        const msg = conf.message ? `?msg=${encodeURIComponent(conf.message)}` : '';
+        window.location.replace(`./maintenance.html${msg}`);
+      })
+      .catch(() => {});
+  })();
+  </script>
   <div id="login-screen-client">
     <div class="client-login-card">
       <div class="login-paw">🐾 🐾 🐾</div>
@@ -139,6 +175,15 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
     </div>
   </div>
   <div id="client-app" class="portal-shell">
+  <aside class="sidebar-nav expanded" id="sidebar-nav">
+    <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" id="sidebar-toggle">⇤</button>
+    <nav class="sidebar-links">
+      <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
+      <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
+      <button class="side-link" type="button" onclick="toggleNotasAtualizacao()"><span>🔔</span><span class="label">Novidades</span></button>
+      <button class="side-link" type="button" onclick="editarPerfilCliente()"><span>👤</span><span class="label">Editar perfil</span></button>
+    </nav>
+  </aside>
   <div class="header">
     <div class="header-bg-shapes"><span></span><span></span></div>
     <div class="header-inner">
@@ -148,10 +193,8 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       </div>
       <p>Portal do Cliente • Acompanhe suas solicitações e pets</p>
       <div class="header-portals">
-        <a class="portal-link home" href="./index.html">🏠 Home</a>
-        <a class="portal-link admin" href="./admin.html">🛠️ Admin</a>
-        <button class="portal-link news" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
-        <button class="portal-link theme" type="button" onclick="toggleTheme()" id="client-theme-toggle">🌙 Tema escuro</button>
+        <span class="portal-link home">📦 Fluxo focado em pedidos</span>
+        <button class="portal-link news" type="button" onclick="trocarAba('solicitacoes', document.querySelector('.tab'))">Ver pedidos</button>
       </div>
       <div class="header-session" id="header-session">
         <span class="session-chip">🔒 Não logado</span>
@@ -174,6 +217,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
       v1.11.0 • Métricas locais de funil + exportação CSV no admin<br>
       v1.12.0 • Hardening de sessão admin + smoke QA + ajustes de contraste<br>
       v1.13.0 • Novo layout do portal cliente + assistente rápido + controle por número de pedido
+      v1.14.0 • Sidebar fluida + foco em pedidos + assistente flutuante
     </div>
   </div>
 
@@ -234,6 +278,10 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
             <label class="profile-label">Raça do pet
               <input type="text" id="perfil-raca" placeholder="Ex.: SRD, Poodle" autocomplete="off">
             </label>
+            <label class="profile-label full" style="flex-direction:row;align-items:center;gap:10px">
+              <input type="checkbox" id="perfil-acessibilidade-contraste" style="width:18px;height:18px;min-width:auto">
+              Ativar alto contraste (acessibilidade)
+            </label>
           </div>
           <div class="item-actions">
             <button class="btn-sm" onclick="salvarPerfilCompleto()">💾 Salvar perfil</button>
@@ -246,9 +294,12 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
     <div class="contact-footer">
       <a class="contact-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
     </div>
-    <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.13.0</span> (alinhada ao admin) · <a href="./privacy.html" style="text-decoration:none;font-weight:700">Política de Privacidade</a></div>
+    <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.14.0</span> (alinhada ao admin) · <a href="./privacy.html" style="text-decoration:none;font-weight:700">Política de Privacidade</a></div>
   </div>
 
+</div>
+<div class="floating-assistant">
+  <button class="assistant-fab" type="button" id="assistant-fab" onclick="toggleAssistantCard()">🐶 Prime</button>
 </div>
 <div class="lgpd-corner" id="lgpd-corner-client">
   <p>🔒 Seus dados são usados para cadastro, agendamento e contato. Consulte os detalhes na Política de Privacidade.</p>
@@ -259,19 +310,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
   </div>
 </div>
 <script>
-const THEME_KEY = 'primepet_theme';
-function applyTheme(theme){
-  const mode = theme === 'dark' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', mode);
-  const btn = document.getElementById('client-theme-toggle');
-  if (btn) btn.textContent = mode === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro';
-}
-function toggleTheme(){
-  const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
-}
-applyTheme(localStorage.getItem(THEME_KEY) || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'));
+document.body.setAttribute('data-theme', 'light');
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -298,8 +337,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-const APP_VERSION = 'v1.13.0';
+const APP_VERSION = 'v1.14.0';
 const METRICS_KEY = 'primepet_metrics_events';
+const CONTRAST_KEY = 'primepet_accessibility_contrast';
 
 function trackEvent(event, meta = {}) {
   let list = [];
@@ -321,6 +361,11 @@ const provider = new GoogleAuthProvider();
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
 }
+function applyContrastPref(enabled) {
+  document.body.setAttribute('data-contrast', enabled ? 'high' : 'normal');
+  const cb = document.getElementById('perfil-acessibilidade-contraste');
+  if (cb) cb.checked = Boolean(enabled);
+}
 
 function atualizarHeaderSessao(user) {
   const box = document.getElementById('header-session');
@@ -336,6 +381,24 @@ function atualizarHeaderSessao(user) {
     <button class="portal-link logout" type="button" onclick="sairPortal()">🚪 Sair</button>
   `;
 }
+
+window.toggleSidebar = function() {
+  const side = document.getElementById('sidebar-nav');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!side || !btn) return;
+  side.classList.toggle('expanded');
+  btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
+};
+
+window.toggleAssistantCard = function() {
+  const card = document.getElementById('assistant-card');
+  const fab = document.getElementById('assistant-fab');
+  if (!card || !fab) return;
+  const abrir = card.classList.contains('hidden');
+  card.classList.toggle('hidden', !abrir);
+  fab.classList.toggle('expanded', abrir);
+  fab.innerHTML = abrir ? '🐶 Prime <span class="fab-label">Fechar assistente</span>' : '🐶 Prime';
+};
 
 function garantirConsentimentoLgpd() {
   return Boolean(window.__primepetLgpdAceito);
@@ -378,6 +441,8 @@ async function carregarPerfil(user) {
   document.getElementById('perfil-endereco').value = p.endereco || '';
   document.getElementById('perfil-pet').value = p.petNome || '';
   document.getElementById('perfil-raca').value = p.petRaca || '';
+  const contrastEnabled = p.acessibilidadeContraste === true || localStorage.getItem(CONTRAST_KEY) === '1';
+  applyContrastPref(contrastEnabled);
 }
 
 function normalizarTelefoneBr(valor) {
@@ -599,6 +664,11 @@ window.sairPortal = async function() {
   cacheSolicitacoes = [];
   document.getElementById('portal-card').classList.add('hidden');
   document.getElementById('assistant-card').classList.add('hidden');
+  const fab = document.getElementById('assistant-fab');
+  if (fab) {
+    fab.classList.remove('expanded');
+    fab.textContent = '🐶 Prime';
+  }
   localStorage.removeItem('primepet_client_session');
   setMensagemPortal('Você saiu do portal do cliente.');
   atualizarHeaderSessao(null);
@@ -640,6 +710,7 @@ window.salvarPerfilCompleto = async function() {
     endereco: document.getElementById('perfil-endereco').value.trim(),
     petNome: document.getElementById('perfil-pet').value.trim(),
     petRaca: document.getElementById('perfil-raca').value.trim(),
+    acessibilidadeContraste: Boolean(document.getElementById('perfil-acessibilidade-contraste')?.checked),
     email: user.email || '',
     atualizadoEm: Date.now()
   };
@@ -649,6 +720,8 @@ window.salvarPerfilCompleto = async function() {
     return;
   }
   document.getElementById('perfil-telefone').value = perfil.telefone;
+  localStorage.setItem(CONTRAST_KEY, perfil.acessibilidadeContraste ? '1' : '0');
+  applyContrastPref(perfil.acessibilidadeContraste);
   await set(ref(db, `clientes_perfis/${user.uid}`), perfil);
   if (perfil.nome) {
     try { await updateProfile(user, { displayName: perfil.nome }); } catch (_) {}
@@ -663,7 +736,7 @@ onAuthStateChanged(auth, user => {
     trackEvent('client_auth_active');
     document.getElementById('login-screen-client').style.display = 'none';
     document.getElementById('client-app').style.display = 'block';
-    document.getElementById('assistant-card').classList.remove('hidden');
+    document.getElementById('assistant-card').classList.add('hidden');
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
     setMensagemPortal(`Logado como ${user.email || 'usuário Google'}. Carregando seus dados...`);
     importarPreCadastroSeExistir(user)
@@ -679,6 +752,11 @@ onAuthStateChanged(auth, user => {
   document.getElementById('login-screen-client').style.display = 'flex';
   document.getElementById('client-app').style.display = 'none';
   document.getElementById('assistant-card').classList.add('hidden');
+  const fab = document.getElementById('assistant-fab');
+  if (fab) {
+    fab.classList.remove('expanded');
+    fab.textContent = '🐶 Prime';
+  }
   localStorage.removeItem('primepet_client_session');
   document.getElementById('portal-card').classList.add('hidden');
   cacheSolicitacoes = [];
@@ -692,6 +770,12 @@ if (!garantirConsentimentoLgpd()) {
   exibirLgpdPortal();
 }
 document.getElementById('client-version').textContent = APP_VERSION;
+applyContrastPref(localStorage.getItem(CONTRAST_KEY) === '1');
+document.getElementById('perfil-acessibilidade-contraste')?.addEventListener('change', (e) => {
+  const enabled = Boolean(e.target.checked);
+  localStorage.setItem(CONTRAST_KEY, enabled ? '1' : '0');
+  applyContrastPref(enabled);
+});
 function exibirLgpdPortal() {
   if (window.__primepetLgpdAceito) return;
   document.getElementById('lgpd-corner-client')?.classList.add('visible');
@@ -819,7 +903,7 @@ function renderSolicitacoes(){
     const data = s.dataAgendada ? s.dataAgendada.split('-').reverse().join('/') : 'Sem data';
     const editavel = podeEditar(s.statusAtual);
     const item = document.createElement('div');
-    item.className = 'item';
+    item.className = `item ${(s.statusAtual || 'pending')}-state`;
     const petNome = escapeHtml(s.petNome || 'Pet');
     const hora = escapeHtml(s.horaAgendada || '--:--');
     const endereco = escapeHtml(s.endereco || 'Sem endereço');
@@ -828,9 +912,10 @@ function renderSolicitacoes(){
     const etapaPendente = `journey-step ${s.statusAtual === 'pending' ? 'active' : ''}`;
     const etapaFinal = `journey-step ${s.statusAtual === 'pending' ? '' : 'active'}`;
     const etapaFinalLabel = s.statusAtual === 'cancelled' ? 'Cancelado' : 'Confirmado';
+    const statusDot = `<span class="status-pulse ${(s.statusAtual || 'pending')}"></span>`;
     item.innerHTML = `
       <div class="item-header">
-        <strong>${petNome}</strong> ${statusBadge(s.statusAtual)}
+        <strong>${statusDot}${petNome}</strong> ${statusBadge(s.statusAtual)}
         <span class="order-id">${pedido}</span>
       </div>
       📅 ${data} às ${hora}<br>

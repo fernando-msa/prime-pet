@@ -249,10 +249,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 /* ══ PAINEL ══ */
 #admin-panel { display: none; }
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:#111a31;border-right:1px solid rgba(160,178,220,.24);z-index:120;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
+.sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
+.sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
+.side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+.side-link .label{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
+.sidebar-nav.expanded .side-link .label{opacity:1;max-width:140px}
 
 .admin-header {
   background: var(--espresso);
-  padding: 18px 28px;
+  padding: 18px 28px 18px 106px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -326,6 +333,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 @keyframes floatBg{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 .contact-admin{display:flex;justify-content:center;padding:0 20px 28px}
 .contact-admin a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--orange),var(--orange-lt));padding:12px 18px;border-radius:999px;font-weight:800;box-shadow:0 10px 28px rgba(255,130,0,.25)}
+@media (max-width:900px){.admin-header{padding-left:28px}.sidebar-nav{left:0;right:0;top:auto;bottom:0;flex-direction:row;width:100%;height:auto;padding:8px;border-right:none;border-top:1px solid rgba(160,178,220,.24)}.sidebar-nav.expanded{width:100%;max-width:none}.sidebar-links{flex-direction:row;overflow:auto}}
 
 .planner-head {
   display: flex;
@@ -709,14 +717,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 <!-- ══ PAINEL ══ -->
 <div id="admin-panel">
+  <aside class="sidebar-nav expanded" id="sidebar-nav">
+    <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" id="sidebar-toggle">⇤</button>
+    <nav class="sidebar-links">
+      <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
+      <a class="side-link" href="./client.html"><span>👤</span><span class="label">Cliente</span></a>
+      <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
+      <button class="side-link" type="button" onclick="toggleReleaseNotes()"><span>🔔</span><span class="label">Novidades</span></button>
+    </nav>
+  </aside>
   <div class="admin-header">
     <div class="admin-logo">🐾 <span>Prime</span> Pet · Agenda</div>
     <div class="admin-actions">
       <button class="btn-release" onclick="toggleReleaseNotes()" title="Atualizações">🔔</button>
-      <button class="btn-release" onclick="toggleTheme()" title="Alternar tema" id="admin-theme-toggle">🌙</button>
       <span class="session-pill" id="status-sessoes">🔒 Sem sessão</span>
-      <a class="btn-home" href="./index.html" onclick="sairParaHome(event)">Voltar ao site</a>
-      <a class="btn-home" href="./client.html">Portal do cliente</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
   </div>
@@ -738,6 +752,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   </div>
 
   <div class="admin-wrap">
+    <div class="overview-card" style="margin-bottom:14px">
+      <div class="overview-head">
+        <h3 class="overview-title">Modo de manutenção</h3>
+      </div>
+      <p class="muted-note">Quando ativo, Home e Portal do Cliente exibem a página amigável de manutenção.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <input id="maintenance-message" class="month-input" style="min-width:280px;flex:1" placeholder="Mensagem para o cliente (opcional)">
+        <button class="btn-export" type="button" onclick="alternarModoManutencao()" id="maintenance-toggle-btn">Ativar manutenção</button>
+      </div>
+      <p class="muted-note" id="maintenance-status" style="margin-top:8px">Status: verificando...</p>
+    </div>
     <div class="health-grid">
       <div class="health-card"><div class="health-k">Saúde Auth</div><div class="health-v" id="health-auth">OK</div></div>
       <div class="health-card"><div class="health-k">Saúde DB</div><div class="health-v" id="health-db">Conectando...</div></div>
@@ -900,7 +925,6 @@ const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
 const auth = getAuth(app);
 const APP_VERSION = 'v1.13.0';
-const THEME_KEY = 'primepet_theme';
 const METRICS_KEY = 'primepet_metrics_events';
 const ADMIN_WEBHOOK_KEY = 'primepet_admin_notification_webhook';
 const ADMIN_SESSION_KEY = 'primepet_admin_session_v1';
@@ -921,16 +945,14 @@ let historyExpanded = false;
 let historyFilter = 'today';
 let adminEmailAtual = '';
 let pendingCache = new Set();
-function applyTheme(theme) {
-  const mode = theme === 'dark' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', mode);
-  const btn = document.getElementById('admin-theme-toggle');
-  if (btn) btn.textContent = mode === 'dark' ? '☀️' : '🌙';
-}
-window.toggleTheme = function() {
-  const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
+const MAINTENANCE_PATH = 'public_config/maintenance';
+document.body.setAttribute('data-theme', 'light');
+window.toggleSidebar = function() {
+  const side = document.getElementById('sidebar-nav');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!side || !btn) return;
+  side.classList.toggle('expanded');
+  btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
 };
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
@@ -968,6 +990,41 @@ function renderFunnelLocal() {
   document.getElementById('funnel-whatsapp-opened').textContent = String(waOpened);
   document.getElementById('funnel-conversion').textContent = `${conv}%`;
 }
+
+async function carregarModoManutencao() {
+  try {
+    const snap = await get(ref(db, MAINTENANCE_PATH));
+    const conf = snap.val() || {};
+    window.__maintenanceEnabled = Boolean(conf.enabled);
+    document.getElementById('maintenance-message').value = conf.message || '';
+    document.getElementById('maintenance-status').textContent =
+      conf.enabled ? `Status: ATIVO desde ${new Date(conf.updatedAt || Date.now()).toLocaleString('pt-BR')}` : 'Status: inativo';
+    const btn = document.getElementById('maintenance-toggle-btn');
+    if (btn) btn.textContent = conf.enabled ? 'Desativar manutenção' : 'Ativar manutenção';
+  } catch (_) {
+    document.getElementById('maintenance-status').textContent = 'Status: indisponível (erro ao carregar).';
+  }
+}
+
+window.salvarModoManutencao = async function(ativo) {
+  const user = auth.currentUser;
+  if (!user) {
+    showToast('Faça login admin antes de alterar manutenção.');
+    return;
+  }
+  const message = document.getElementById('maintenance-message').value.trim();
+  await set(ref(db, MAINTENANCE_PATH), {
+    enabled: Boolean(ativo),
+    message: message || '',
+    updatedAt: Date.now(),
+    updatedBy: user.email || 'admin'
+  });
+  await carregarModoManutencao();
+  showToast(ativo ? 'Modo manutenção ativado.' : 'Modo manutenção desativado.');
+};
+window.alternarModoManutencao = function() {
+  return window.salvarModoManutencao(!window.__maintenanceEnabled);
+};
 function resetAdminIdleTimer() {
   clearTimeout(adminIdleTimer);
   adminIdleTimer = setTimeout(async () => {
@@ -1023,7 +1080,6 @@ function atualizarStatusSessoes() {
 }
 window.addEventListener('storage', atualizarStatusSessoes);
 window.addEventListener('focus', atualizarStatusSessoes);
-applyTheme(localStorage.getItem(THEME_KEY) || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'));
 atualizarStatusSessoes();
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -1056,6 +1112,7 @@ onAuthStateChanged(auth, user => {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-panel').style.display  = 'block';
     atualizarStatusSessoes();
+    carregarModoManutencao();
     iniciarAdmin();
   } else {
     limparSessaoAdmin();
