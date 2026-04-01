@@ -185,12 +185,15 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
         <button class="assistant-chip" onclick="responderAssistente('status')">Como acompanho meu pedido?</button>
         <button class="assistant-chip" onclick="responderAssistente('remarcar')">Como remarcar?</button>
         <button class="assistant-chip" onclick="responderAssistente('cancelado')">Pedido cancelado?</button>
+        <button class="assistant-chip" onclick="responderAssistente('pagamento')">Pagamento / recibo</button>
+        <button class="assistant-chip" onclick="responderAssistente('suporte')">Falar com suporte</button>
       </div>
       <div class="assistant-actions">
         <input type="text" id="assistant-input" placeholder="Descreva seu problema..." style="flex:1;min-width:220px">
         <button class="btn-sm" onclick="responderAssistenteLivre()">Enviar dúvida</button>
       </div>
       <div class="assistant-reply" id="assistant-reply">Selecione uma opção acima para receber orientação.</div>
+      <div class="muted" id="assistant-meta" style="margin-top:6px">Base: respostas rápidas locais.</div>
     </div>
     <div class="card hidden" id="portal-card">
       <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
@@ -312,6 +315,7 @@ function trackEvent(event, meta = {}) {
 
 let cacheSolicitacoes = [];
 let solicFiltroAtual = 'all';
+let assistantFaqCache = [];
 const params = new URLSearchParams(window.location.search);
 const provider = new GoogleAuthProvider();
 function escapeHtml(value) {
@@ -349,6 +353,21 @@ function podeEditar(status){ return (status || 'pending') === 'pending'; }
 
 function setMensagemPortal(msg) {
   document.getElementById('portal-msg').textContent = msg;
+}
+function normalizeTxt(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function obterResumoPedidos() {
+  const total = cacheSolicitacoes.length;
+  const pend = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'pending').length;
+  const conf = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'confirmed').length;
+  const canc = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'cancelled').length;
+  return { total, pend, conf, canc };
 }
 
 async function carregarPerfil(user) {
@@ -557,6 +576,7 @@ async function carregarPortalCliente(user) {
       return { ...item, statusAtual };
     })
     .sort((a,b) => (b.criadoEm||0) - (a.criadoEm||0));
+  carregarFaqAssistente().catch(() => {});
 
   if (!cacheSolicitacoes.length) {
     setMensagemPortal(`Login concluído como ${user.email || 'usuário Google'}, mas não encontramos solicitações vinculadas.`);
@@ -830,27 +850,96 @@ function renderSolicitacoes(){
   });
 }
 
-window.responderAssistente = function(tipo) {
+async function carregarFaqAssistente() {
+  const snap = await get(ref(db, 'assistente_faq'));
+  const raw = snap.val() || {};
+  assistantFaqCache = Object.values(raw).filter(item => item?.pergunta && item?.resposta);
+}
+
+function atualizarRespostaAssistente(texto, origem = 'Base local') {
   const reply = document.getElementById('assistant-reply');
+  const meta = document.getElementById('assistant-meta');
+  reply.textContent = texto;
+  meta.textContent = `Base: ${origem} • ${new Date().toLocaleTimeString('pt-BR')}`;
+}
+
+async function registrarDuvidaAssistente(pergunta, resposta, origem) {
+  if (!auth.currentUser) return;
+  await set(push(ref(db, 'assistente_duvidas')), {
+    pergunta: String(pergunta || '').slice(0, 280),
+    resposta: String(resposta || '').slice(0, 400),
+    origem,
+    ownerUid: auth.currentUser.uid,
+    ownerEmail: auth.currentUser.email || '',
+    at: Date.now()
+  });
+}
+
+function responderPorIntent(tipo) {
+  const resumo = obterResumoPedidos();
   const mensagens = {
-    status: 'Cada pedido possui número (ex.: PP-0001) e barra de etapa. Acompanhe por filtros: pendente, confirmado ou cancelado.',
-    remarcar: 'Se seu pedido estiver pendente, clique em "📅 Remarcar". Depois disso o status volta para análise da equipe.',
-    cancelado: 'Pedido cancelado indica indisponibilidade de agenda. Você pode abrir novo pedido pela Home ou chamar no WhatsApp.'
+    status: `Você tem ${resumo.total} pedido(s): ${resumo.pend} pendente(s), ${resumo.conf} confirmado(s), ${resumo.canc} cancelado(s). Abra a aba "📦 Pedidos" para acompanhar por número e etapa.`,
+    remarcar: 'Se o pedido estiver pendente, use "📅 Remarcar". Se já foi confirmado/cancelado, fale com suporte para ajuste manual.',
+    cancelado: 'Pedido cancelado normalmente indica indisponibilidade de agenda. Você pode abrir novo pedido pela Home ou chamar nosso suporte.',
+    pagamento: 'Para recibo/financeiro, fale com o suporte no WhatsApp e informe o número do pedido (PP-xxxx) para agilizar.',
+    suporte: 'Suporte rápido: https://wa.me/5579996623050 (envie seu número de pedido PP-xxxx e o problema).'
   };
-  reply.textContent = mensagens[tipo] || 'Não entendi sua pergunta.';
+  return mensagens[tipo] || mensagens.status;
+}
+
+function procurarFaq(textoNormalizado) {
+  if (!assistantFaqCache.length) return null;
+  let melhor = null;
+  let melhorScore = 0;
+  assistantFaqCache.forEach((item) => {
+    const pergunta = normalizeTxt(item.pergunta);
+    const palavras = [...new Set(pergunta.split(/\s+/).filter(w => w.length > 2))];
+    const score = palavras.filter(p => textoNormalizado.includes(p)).length;
+    if (score > melhorScore) {
+      melhorScore = score;
+      melhor = item;
+    }
+  });
+  return melhorScore >= 2 ? melhor : null;
+}
+
+window.responderAssistente = async function(tipo) {
+  const resposta = responderPorIntent(tipo);
+  atualizarRespostaAssistente(resposta, 'Intenção rápida');
+  await registrarDuvidaAssistente(tipo, resposta, 'intent').catch(() => {});
 };
 
-window.responderAssistenteLivre = function() {
+window.responderAssistenteLivre = async function() {
   const campo = document.getElementById('assistant-input');
-  const texto = String(campo.value || '').toLowerCase().trim();
+  const texto = String(campo.value || '').trim();
   if (!texto) return;
-  if (texto.includes('reembolso') || texto.includes('financeiro')) {
-    responderAssistente('cancelado');
-  } else if (texto.includes('remar')) {
-    responderAssistente('remarcar');
+  const textoNorm = normalizeTxt(texto);
+  let resposta = '';
+  let origem = 'Intenção rápida';
+
+  if (/pag|recibo|fatura|financeir/.test(textoNorm)) {
+    resposta = responderPorIntent('pagamento');
+  } else if (/cancel|estorn|reembols/.test(textoNorm)) {
+    resposta = responderPorIntent('cancelado');
+  } else if (/remar|alterar data|trocar horario/.test(textoNorm)) {
+    resposta = responderPorIntent('remarcar');
+  } else if (/suporte|humano|atendente|whatsapp/.test(textoNorm)) {
+    resposta = responderPorIntent('suporte');
+  } else if (/status|pedido|andamento|confirmad|penden/.test(textoNorm)) {
+    resposta = responderPorIntent('status');
   } else {
-    responderAssistente('status');
+    const faq = procurarFaq(textoNorm);
+    if (faq) {
+      resposta = faq.resposta;
+      origem = `Firebase FAQ${faq.categoria ? ` (${faq.categoria})` : ''}`;
+    } else {
+      resposta = 'Ainda não encontrei resposta exata. Posso te direcionar ao suporte no WhatsApp: https://wa.me/5579996623050';
+      origem = 'Fallback + suporte';
+    }
   }
+
+  atualizarRespostaAssistente(resposta, origem);
+  await registrarDuvidaAssistente(texto, resposta, origem).catch(() => {});
   campo.value = '';
 };
 
