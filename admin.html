@@ -721,7 +721,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </svg>
       Entrar com Google
     </button>
-    <p class="admin-access-note">🔒 Acesso restrito a contas com custom claim <strong>admin=true</strong>.</p>
+    <p class="admin-access-note">🔒 Acesso admin por <strong>custom claim admin=true</strong> ou por documento <strong>admin_users/{uid}</strong> no Firestore.</p>
 
     <div class="login-error"   id="login-error" role="alert" aria-live="assertive"></div>
     <div class="login-success" id="login-success" role="status" aria-live="polite"></div>
@@ -937,6 +937,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "./scripts/firestore-rtdb-compat.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getIdTokenResult
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -952,6 +953,7 @@ const firebaseConfig = {
 
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
+const fsdb = getFirestore(app);
 const auth = getAuth(app);
 const APP_VERSION = 'v1.14.0';
 const METRICS_KEY = 'primepet_metrics_events';
@@ -1119,8 +1121,19 @@ document.getElementById('mes-referencia').value = mesVisao;
 
 async function isAdminAutorizado(user) {
   if (!user) return false;
-  const token = await getIdTokenResult(user, true);
-  if (token?.claims?.admin === true) return true;
+  try {
+    const token = await getIdTokenResult(user, true);
+    if (token?.claims?.admin === true) return true;
+  } catch (_) {}
+
+  try {
+    const adminByUid = await getDoc(doc(fsdb, 'admin_users', user.uid));
+    if (adminByUid.exists()) {
+      const data = adminByUid.data() || {};
+      if (data.enabled !== false) return true;
+    }
+  } catch (_) {}
+
   return ADMINS_FALLBACK_EMAILS.has(String(user.email || '').toLowerCase().trim());
 }
 
@@ -1158,7 +1171,7 @@ onAuthStateChanged(auth, async user => {
     const autorizado = await isAdminAutorizado(user);
     if (!autorizado) {
       signOut(auth).catch(() => {});
-      mostrarErroLogin('Acesso negado. A conta precisa da custom claim admin=true.');
+      mostrarErroLogin('Acesso negado. Configure custom claim admin=true ou crie admin_users/{uid} com enabled=true no Firestore.');
       return;
     }
     registrarSessaoAdmin();
@@ -1212,7 +1225,7 @@ window.fazerLoginGoogle = async function() {
     const cred = await signInWithPopup(auth, provider);
     if (!(await isAdminAutorizado(cred.user))) {
       await signOut(auth);
-      mostrarErroLogin('Conta Google sem claim admin=true.');
+      mostrarErroLogin('Conta Google sem permissão admin. Use claim admin=true ou admin_users/{uid}.');
     }
   } catch (e) {
     mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);

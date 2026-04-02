@@ -117,10 +117,22 @@ Também é possível customizar:
 
 ### Modelo mínimo sugerido no Firestore
 
+- `admin_users/{uid}`: controle de acesso admin por usuário (`enabled: true`) sem depender apenas de custom claim
 - `appointments/{id}`: `ownerUid`, `ownerName`, `petName`, `date`, `hour`, `status`, `createdAt`
 - `profiles/{uid}`: preferências do cliente
 - `vaccine_alerts/{id}`: fila de lembretes
 - `notification_outbox/{id}`: integração com WhatsApp/e-mail via worker externo
+
+### Acesso ao `admin.html` após migração
+
+Você pode liberar acesso de duas formas:
+
+1. **Custom claim** no Auth: `admin=true`; ou
+2. Criar documento `admin_users/{uid}` no Firestore com:
+
+```json
+{ "enabled": true, "email": "seu-email@dominio.com" }
+```
 
 ### Deploy (Firestore + Functions)
 
