@@ -721,7 +721,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </svg>
       Entrar com Google
     </button>
-    <p class="admin-access-note">🔒 Acesso restrito aos e-mails de admin autorizados.</p>
+    <p class="admin-access-note">🔒 Acesso restrito a contas com custom claim <strong>admin=true</strong>.</p>
 
     <div class="login-error"   id="login-error" role="alert" aria-live="assertive"></div>
     <div class="login-success" id="login-success" role="status" aria-live="polite"></div>
@@ -737,6 +737,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
       <a class="side-link" href="./client.html"><span>👤</span><span class="label">Cliente</span></a>
       <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
+      <a class="side-link" href="./dashboard.html"><span>📊</span><span class="label">Dashboard</span></a>
       <button class="side-link" type="button" onclick="toggleReleaseNotes()"><span>🔔</span><span class="label">Novidades</span></button>
       <button class="side-link" type="button" onclick="fazerLogout()"><span>🚪</span><span class="label">Deslogar</span></button>
       <div class="side-session" id="status-sessoes">🔒 Sem sessão</div>
@@ -937,7 +938,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getIdTokenResult
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -1113,15 +1114,15 @@ function sessaoAdminExpirada() {
     return false;
   }
 }
-const ADMINS_AUTORIZADOS = new Set([
-  'ribeirojunior270@gmail.com',
-  'arthurleite71@gmail.com'
-]);
+const ADMINS_FALLBACK_EMAILS = new Set([]);
 
 document.getElementById('mes-referencia').value = mesVisao;
 
-function isAdminAutorizado(email) {
-  return ADMINS_AUTORIZADOS.has(String(email || '').toLowerCase().trim());
+async function isAdminAutorizado(user) {
+  if (!user) return false;
+  const token = await getIdTokenResult(user, true);
+  if (token?.claims?.admin === true) return true;
+  return ADMINS_FALLBACK_EMAILS.has(String(user.email || '').toLowerCase().trim());
 }
 
 function atualizarStatusSessoes() {
@@ -1147,7 +1148,7 @@ renderFunnelLocal();
 carregarWebhookNotificacao();
 
 // ── Auth observer ─────────────────────────────────
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
   if (user) {
     if (sessaoAdminExpirada()) {
       signOut(auth).catch(() => {});
@@ -1155,9 +1156,10 @@ onAuthStateChanged(auth, user => {
       mostrarErroLogin('Sessão expirada por segurança. Faça login novamente.');
       return;
     }
-    if (!isAdminAutorizado(user.email)) {
+    const autorizado = await isAdminAutorizado(user);
+    if (!autorizado) {
       signOut(auth).catch(() => {});
-      mostrarErroLogin('Acesso negado. Esta conta não tem permissão para o portal admin.');
+      mostrarErroLogin('Acesso negado. A conta precisa da custom claim admin=true.');
       return;
     }
     registrarSessaoAdmin();
@@ -1209,9 +1211,9 @@ window.fazerLoginGoogle = async function() {
   err.style.display = 'none';
   try {
     const cred = await signInWithPopup(auth, provider);
-    if (!isAdminAutorizado(cred.user?.email)) {
+    if (!(await isAdminAutorizado(cred.user))) {
       await signOut(auth);
-      mostrarErroLogin('Conta Google sem permissão de admin.');
+      mostrarErroLogin('Conta Google sem claim admin=true.');
     }
   } catch (e) {
     mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);
