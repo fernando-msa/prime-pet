@@ -11,6 +11,7 @@ O **Prime Pet** é uma aplicação web com:
 - **Formulário público (`index.html`)** para pré-cadastro e solicitação de agendamento;
 - **Portal do cliente (`client.html`)** com login, histórico, perfil, status de pedidos e assistente de dúvidas;
 - **Painel admin (`admin.html`)** com controle de agenda, confirmações/cancelamentos, histórico e exportações.
+- **Dashboard de métricas (`dashboard.html`)** com KPIs operacionais em Firestore.
 
 O fluxo é simples:
 1. O tutor preenche o pré-cadastro no formulário.
@@ -44,7 +45,9 @@ O fluxo é simples:
 - **CSS3** (responsivo, com variáveis CSS)
 - **JavaScript puro (Vanilla JS)**
 - **Firebase Authentication** (Google/e-mail)
-- **Firebase Realtime Database**
+- **Cloud Firestore** (nova camada recomendada)
+- **Camada de compatibilidade RTDB API → Firestore** (`scripts/firestore-rtdb-compat.js`)
+- **Firebase Cloud Functions** (automações agendadas)
 - **Google Fonts**
 - **WhatsApp API (`wa.me`)**
 - **PWA** (manifest + service worker)
@@ -73,10 +76,16 @@ prime-pet/
 ├── index.html                  # Formulário público + pré-cadastro
 ├── client.html                 # Portal do cliente (login, pedidos, perfil, assistente)
 ├── admin.html                  # Painel admin (agenda, histórico, exportações, webhook)
+├── dashboard.html              # Dashboard de métricas (Firestore)
 ├── privacy.html                # Política de privacidade e LGPD
 ├── manifest.webmanifest        # Manifesto PWA
 ├── sw.js                       # Service Worker (cache offline)
-├── firebase.realtime.rules.json
+├── firestore.rules
+├── firestore.indexes.json
+├── scripts/firestore-rtdb-compat.js
+├── functions/
+│   ├── index.js                # Cloud Functions (alerta de vacina + dispatcher)
+│   └── package.json
 ├── favicon.svg
 ├── LICENSE
 └── README.md
@@ -87,8 +96,7 @@ prime-pet/
 O projeto usa Firebase diretamente no front-end. Confira:
 
 - credenciais no bloco `firebaseConfig` de `index.html`, `client.html` e `admin.html`;
-- regras do Realtime Database em `firebase.realtime.rules.json`;
-- e-mails autorizados de admin em `admin.html` (`ADMINS_AUTORIZADOS`).
+- permissão administrativa por **custom claim** `admin=true` no Firebase Auth.
 
 Também é possível customizar:
 
@@ -96,6 +104,42 @@ Também é possível customizar:
 - textos de cabeçalho e rodapé;
 - política de privacidade;
 - FAQ do assistente via nó `assistente_faq` no Realtime Database.
+
+## 🔐 Migração concluída: aplicação em Firestore
+
+- `firestore.rules` com regras por usuário autenticado (ownerUid) e perfil admin por custom claim;
+- `firestore.indexes.json` com índices para consultas do dashboard e agenda;
+- `scripts/firestore-rtdb-compat.js` para manter o código de `client.html` e `admin.html` sem dependência do Realtime Database;
+- `dashboard.html` para leitura de métricas usando coleção `appointments`;
+- `functions/index.js` com:
+  - `enqueueVaccineAlert` (callable) para agendar alerta de vacina;
+  - `dispatchVaccineAlerts` (schedule) para enviar alertas pendentes para `notification_outbox`.
+
+### Modelo mínimo sugerido no Firestore
+
+- `admin_users/{uid}`: controle de acesso admin por usuário (`enabled: true`) sem depender apenas de custom claim
+- `appointments/{id}`: `ownerUid`, `ownerName`, `petName`, `date`, `hour`, `status`, `createdAt`
+- `profiles/{uid}`: preferências do cliente
+- `vaccine_alerts/{id}`: fila de lembretes
+- `notification_outbox/{id}`: integração com WhatsApp/e-mail via worker externo
+
+### Acesso ao `admin.html` após migração
+
+Você pode liberar acesso de duas formas:
+
+1. **Custom claim** no Auth: `admin=true`; ou
+2. Criar documento `admin_users/{uid}` no Firestore com:
+
+```json
+{ "enabled": true, "email": "seu-email@dominio.com" }
+```
+
+### Deploy (Firestore + Functions)
+
+```bash
+firebase deploy --only firestore:rules,firestore:indexes
+firebase deploy --only functions
+```
 
 ## 🧭 Auditoria e roadmap de evolução
 

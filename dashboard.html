@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prime Pet • Dashboard de Métricas</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <style>
+    :root{--bg:#f6f8ff;--card:#fff;--text:#172033;--muted:#69748d;--primary:#ff8200;--ok:#13a36b;--warn:#ad8100;--danger:#d94d4d}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--text)}
+    .wrap{max-width:1080px;margin:0 auto;padding:24px}
+    h1{margin:0 0 6px;font-size:28px}.sub{color:var(--muted);margin:0 0 20px}
+    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:16px}
+    .card{background:var(--card);border-radius:12px;padding:14px 16px;box-shadow:0 8px 24px rgba(23,32,51,.08)}
+    .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+    .value{font-size:30px;font-weight:800;margin-top:4px}
+    .pending{color:var(--warn)}.confirmed{color:var(--ok)}.cancelled{color:var(--danger)}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    button{border:0;background:var(--primary);color:#fff;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(23,32,51,.08)}
+    th,td{padding:10px 12px;border-bottom:1px solid #eceff9;text-align:left;font-size:14px}
+    th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    #status{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>📊 Dashboard com métricas</h1>
+    <p class="sub">Base Firestore + Auth por usuário (visão de admins).</p>
+
+    <div class="toolbar">
+      <button id="btn-login">Entrar com Google</button>
+      <button id="btn-refresh">Atualizar</button>
+      <span id="status">Faça login para carregar métricas.</span>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="label">Total de agendamentos</div><div class="value" id="m-total">0</div></div>
+      <div class="card"><div class="label">Pendentes</div><div class="value pending" id="m-pending">0</div></div>
+      <div class="card"><div class="label">Confirmados</div><div class="value confirmed" id="m-confirmed">0</div></div>
+      <div class="card"><div class="label">Cancelados</div><div class="value cancelled" id="m-cancelled">0</div></div>
+      <div class="card"><div class="label">Taxa de confirmação</div><div class="value" id="m-rate">0%</div></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Data</th><th>Hora</th><th>Tutor</th><th>Pet</th><th>Status</th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBvnGzJ1rVrg-kOmxWaYFB0Fzn1_HGNH8",
+      authDomain: "prime-pet.firebaseapp.com",
+      projectId: "prime-pet",
+      storageBucket: "prime-pet.firebasestorage.app",
+      messagingSenderId: "716091719601",
+      appId: "1:716091719601:web:89e7ff08dc887ad4254790"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const el = id => document.getElementById(id);
+    const statusEl = el('status');
+
+    async function loginWithGoogle() {
+      statusEl.textContent = 'Abrindo login Google...';
+      const cred = await signInWithPopup(auth, new GoogleAuthProvider());
+      return cred.user;
+    }
+
+    function paint(rows) {
+      const counts = { pending: 0, confirmed: 0, cancelled: 0 };
+      rows.forEach(r => { if (counts[r.status] !== undefined) counts[r.status]++; });
+
+      const total = rows.length;
+      const rate = total ? Math.round((counts.confirmed / total) * 100) : 0;
+      el('m-total').textContent = total;
+      el('m-pending').textContent = counts.pending;
+      el('m-confirmed').textContent = counts.confirmed;
+      el('m-cancelled').textContent = counts.cancelled;
+      el('m-rate').textContent = `${rate}%`;
+
+      const tbody = el('rows');
+      tbody.innerHTML = rows.map(r => `<tr>
+        <td>${r.date || '-'}</td>
+        <td>${r.hour || '-'}</td>
+        <td>${r.ownerName || '-'}</td>
+        <td>${r.petName || '-'}</td>
+        <td>${r.status || '-'}</td>
+      </tr>`).join('');
+    }
+
+    async function loadMetrics() {
+      if (!auth.currentUser) {
+        statusEl.textContent = 'Faça login com Google para carregar métricas.';
+        return;
+      }
+      statusEl.textContent = 'Carregando dados...';
+      try {
+        const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'), limit(100));
+        const snap = await getDocs(q);
+        const rows = snap.docs.map(d => d.data());
+        paint(rows);
+        statusEl.textContent = `Atualizado em ${new Date().toLocaleString('pt-BR')}`;
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = `Erro: ${err.message}`;
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadMetrics();
+      } else {
+        statusEl.textContent = 'Faça login com Google para carregar métricas.';
+      }
+    });
+    el('btn-login').addEventListener('click', async () => {
+      try {
+        await loginWithGoogle();
+      } catch (err) {
+        statusEl.textContent = `Erro: ${err.message}`;
+      }
+    });
+    el('btn-refresh').addEventListener('click', loadMetrics);
+  </script>
+</body>
+</html>

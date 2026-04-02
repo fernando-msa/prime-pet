@@ -721,7 +721,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </svg>
       Entrar com Google
     </button>
-    <p class="admin-access-note">🔒 Acesso restrito aos e-mails de admin autorizados.</p>
+    <p class="admin-access-note">🔒 Acesso admin por <strong>custom claim admin=true</strong> ou por documento <strong>admin_users/{uid}</strong> no Firestore.</p>
 
     <div class="login-error"   id="login-error" role="alert" aria-live="assertive"></div>
     <div class="login-success" id="login-success" role="status" aria-live="polite"></div>
@@ -737,6 +737,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
       <a class="side-link" href="./client.html"><span>👤</span><span class="label">Cliente</span></a>
       <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
+      <a class="side-link" href="./dashboard.html"><span>📊</span><span class="label">Dashboard</span></a>
       <button class="side-link" type="button" onclick="toggleReleaseNotes()"><span>🔔</span><span class="label">Novidades</span></button>
       <button class="side-link" type="button" onclick="fazerLogout()"><span>🚪</span><span class="label">Deslogar</span></button>
       <div class="side-session" id="status-sessoes">🔒 Sem sessão</div>
@@ -935,15 +936,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "./scripts/firestore-rtdb-compat.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getIdTokenResult
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyCBvnGzJ1rVrg-kOmxWaYFB0Fzn1_HGNH8",
   authDomain:        "prime-pet.firebaseapp.com",
-  databaseURL:       "https://prime-pet-default-rtdb.firebaseio.com",
   projectId:         "prime-pet",
   storageBucket:     "prime-pet.firebasestorage.app",
   messagingSenderId: "716091719601",
@@ -952,6 +953,7 @@ const firebaseConfig = {
 
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
+const fsdb = getFirestore(app);
 const auth = getAuth(app);
 const APP_VERSION = 'v1.14.0';
 const METRICS_KEY = 'primepet_metrics_events';
@@ -1113,15 +1115,26 @@ function sessaoAdminExpirada() {
     return false;
   }
 }
-const ADMINS_AUTORIZADOS = new Set([
-  'ribeirojunior270@gmail.com',
-  'arthurleite71@gmail.com'
-]);
+const ADMINS_FALLBACK_EMAILS = new Set([]);
 
 document.getElementById('mes-referencia').value = mesVisao;
 
-function isAdminAutorizado(email) {
-  return ADMINS_AUTORIZADOS.has(String(email || '').toLowerCase().trim());
+async function isAdminAutorizado(user) {
+  if (!user) return false;
+  try {
+    const token = await getIdTokenResult(user, true);
+    if (token?.claims?.admin === true) return true;
+  } catch (_) {}
+
+  try {
+    const adminByUid = await getDoc(doc(fsdb, 'admin_users', user.uid));
+    if (adminByUid.exists()) {
+      const data = adminByUid.data() || {};
+      if (data.enabled !== false) return true;
+    }
+  } catch (_) {}
+
+  return ADMINS_FALLBACK_EMAILS.has(String(user.email || '').toLowerCase().trim());
 }
 
 function atualizarStatusSessoes() {
@@ -1147,7 +1160,7 @@ renderFunnelLocal();
 carregarWebhookNotificacao();
 
 // ── Auth observer ─────────────────────────────────
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
   if (user) {
     if (sessaoAdminExpirada()) {
       signOut(auth).catch(() => {});
@@ -1155,9 +1168,10 @@ onAuthStateChanged(auth, user => {
       mostrarErroLogin('Sessão expirada por segurança. Faça login novamente.');
       return;
     }
-    if (!isAdminAutorizado(user.email)) {
+    const autorizado = await isAdminAutorizado(user);
+    if (!autorizado) {
       signOut(auth).catch(() => {});
-      mostrarErroLogin('Acesso negado. Esta conta não tem permissão para o portal admin.');
+      mostrarErroLogin('Acesso negado. Configure custom claim admin=true ou crie admin_users/{uid} com enabled=true no Firestore.');
       return;
     }
     registrarSessaoAdmin();
@@ -1209,9 +1223,9 @@ window.fazerLoginGoogle = async function() {
   err.style.display = 'none';
   try {
     const cred = await signInWithPopup(auth, provider);
-    if (!isAdminAutorizado(cred.user?.email)) {
+    if (!(await isAdminAutorizado(cred.user))) {
       await signOut(auth);
-      mostrarErroLogin('Conta Google sem permissão de admin.');
+      mostrarErroLogin('Conta Google sem permissão admin. Use claim admin=true ou admin_users/{uid}.');
     }
   } catch (e) {
     mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);
