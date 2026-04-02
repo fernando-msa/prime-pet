@@ -41,10 +41,19 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
 .sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
-.sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
+.sidebar-brand{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:linear-gradient(135deg,rgba(255,130,0,.26),rgba(0,191,200,.2));border:1px solid rgba(255,255,255,.16);color:#fff;font-weight:900;font-family:'Baloo 2',cursive;letter-spacing:.3px}
+.sidebar-brand .brand-mark{font-size:18px;line-height:1}
+.sidebar-brand .brand-text{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
+.sidebar-nav.expanded .sidebar-brand .brand-text{opacity:1;max-width:130px}
+.sidebar-toggle{border:1px solid rgba(255,255,255,.2);background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.08));color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px;transition:transform .2s ease,background .2s ease}
+.sidebar-toggle:hover{transform:translateY(-1px);background:linear-gradient(135deg,rgba(255,255,255,.32),rgba(255,255,255,.14))}
 .sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
-.side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
-.side-link:hover{background:rgba(255,255,255,.16)}
+.side-link{position:relative;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04));color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden;transition:transform .2s ease, border-color .2s ease, background .2s ease}
+.side-link::after{content:'';position:absolute;inset:auto -35% 0 auto;width:38%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(60px);transition:transform .35s ease}
+.side-link:hover{transform:translateX(2px);border-color:rgba(255,255,255,.24);background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.08))}
+.side-link:hover::after{transform:translateX(-16px)}
+.side-link.active{border-color:rgba(255,130,0,.65);background:linear-gradient(135deg,rgba(255,130,0,.32),rgba(255,130,0,.14));box-shadow:0 8px 20px rgba(255,130,0,.2)}
+.side-link>span:first-child{width:24px;height:24px;border-radius:8px;background:rgba(12,20,36,.42);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .side-link .label{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
 .sidebar-nav.expanded .side-link .label{opacity:1;max-width:140px}
 .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 46px}
@@ -103,7 +112,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .contact-footer{display:flex;justify-content:center;margin-top:16px}
 .contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#ffffff;color:#3a4a67;padding:8px 12px;border-radius:999px;font-weight:700;border:1px solid #d5deef;font-size:12px}
 .contact-btn:hover{transform:translateY(-1px);background:#f6f9ff}
-.floating-assistant{position:fixed;right:20px;bottom:22px;z-index:90}
+.floating-assistant{position:fixed;right:20px;bottom:22px;z-index:90;display:none}
 .assistant-fab{border:none;border-radius:999px;background:linear-gradient(135deg,#ffb15c,#ff8a1a);color:#1f2231;box-shadow:0 12px 24px rgba(255,130,0,.28);padding:12px 14px;font-size:13px;font-weight:900;display:flex;align-items:center;gap:8px;cursor:pointer}
 .assistant-fab .fab-label{display:none}
 .assistant-fab.expanded .fab-label{display:inline}
@@ -131,7 +140,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
-@media (max-width:900px){body{padding-left:56px;padding-bottom:0}.header-inner{padding-left:20px}.sidebar-nav{left:0;top:0;bottom:0;right:auto;flex-direction:column;width:56px;height:auto;padding:10px 6px;border-right:1px solid rgba(160,178,220,.24);border-top:none}.sidebar-nav.expanded{width:180px;max-width:70vw}.sidebar-links{flex-direction:column;overflow:auto}.floating-assistant{right:14px;bottom:16px}}
+@media (max-width:900px){body{padding-left:56px;padding-bottom:0}.header{display:none}.header-inner{padding-left:20px}.sidebar-nav{left:0;top:0;bottom:0;right:auto;flex-direction:column;width:56px;height:auto;padding:10px 6px;border-right:1px solid rgba(160,178,220,.24);border-top:none}.sidebar-nav.expanded{width:180px;max-width:70vw}.sidebar-links{flex-direction:column;overflow:auto}.floating-assistant{right:14px;bottom:16px}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 @keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
 @keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
@@ -176,12 +185,14 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
   </div>
   <div id="client-app" class="portal-shell">
   <aside class="sidebar-nav expanded" id="sidebar-nav">
+    <div class="sidebar-brand"><span class="brand-mark">🐾</span><span class="brand-text">Prime Pet</span></div>
     <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" id="sidebar-toggle">⇤</button>
     <nav class="sidebar-links">
       <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
       <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
       <button class="side-link" type="button" onclick="toggleNotasAtualizacao()"><span>🔔</span><span class="label">Novidades</span></button>
       <button class="side-link" type="button" onclick="editarPerfilCliente()"><span>👤</span><span class="label">Editar perfil</span></button>
+      <button class="side-link" type="button" onclick="sairPortal()"><span>🚪</span><span class="label">Deslogar</span></button>
     </nav>
   </aside>
   <div class="header">
@@ -367,6 +378,11 @@ function applyContrastPref(enabled) {
   const cb = document.getElementById('perfil-acessibilidade-contraste');
   if (cb) cb.checked = Boolean(enabled);
 }
+function atualizarVisibilidadeAssistente(show) {
+  const wrap = document.querySelector('.floating-assistant');
+  if (!wrap) return;
+  wrap.style.display = show ? 'block' : 'none';
+}
 function assistantRateOk(limit = 10, windowMs = 5 * 60 * 1000) {
   const now = Date.now();
   let list = [];
@@ -395,6 +411,13 @@ function atualizarHeaderSessao(user) {
     <button class="portal-link profile" type="button" onclick="editarPerfilCliente()">✏️ Editar perfil</button>
     <button class="portal-link logout" type="button" onclick="sairPortal()">🚪 Sair</button>
   `;
+}
+function destacarLinkAtivoSidebar() {
+  const atual = window.location.pathname.split('/').pop() || 'client.html';
+  document.querySelectorAll('#sidebar-nav .side-link[href]').forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    link.classList.toggle('active', href.endsWith(atual));
+  });
 }
 
 window.toggleSidebar = function() {
@@ -688,6 +711,7 @@ window.sairPortal = async function() {
     fab.classList.remove('expanded');
     fab.textContent = '🐶 Prime';
   }
+  atualizarVisibilidadeAssistente(false);
   localStorage.removeItem('primepet_client_session');
   setMensagemPortal('Você saiu do portal do cliente.');
   atualizarHeaderSessao(null);
@@ -756,6 +780,7 @@ onAuthStateChanged(auth, user => {
     document.getElementById('login-screen-client').style.display = 'none';
     document.getElementById('client-app').style.display = 'block';
     document.getElementById('assistant-card').classList.add('hidden');
+    atualizarVisibilidadeAssistente(true);
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
     setMensagemPortal(`Logado como ${user.email || 'usuário Google'}. Carregando seus dados...`);
     importarPreCadastroSeExistir(user)
@@ -771,6 +796,7 @@ onAuthStateChanged(auth, user => {
   document.getElementById('login-screen-client').style.display = 'flex';
   document.getElementById('client-app').style.display = 'none';
   document.getElementById('assistant-card').classList.add('hidden');
+  atualizarVisibilidadeAssistente(false);
   const fab = document.getElementById('assistant-fab');
   if (fab) {
     fab.classList.remove('expanded');
@@ -783,6 +809,7 @@ onAuthStateChanged(auth, user => {
 });
 
 trackEvent('client_page_open');
+destacarLinkAtivoSidebar();
 carregarPreCadastro();
 if (!garantirConsentimentoLgpd()) {
   setMensagemPortal('ℹ️ Você pode revisar o aviso LGPD no canto da tela a qualquer momento.');
