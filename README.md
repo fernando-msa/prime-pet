@@ -46,7 +46,7 @@ O fluxo é simples:
 - **JavaScript puro (Vanilla JS)**
 - **Firebase Authentication** (Google/e-mail)
 - **Cloud Firestore** (nova camada recomendada)
-- **Firebase Realtime Database** (legado, em migração)
+- **Camada de compatibilidade RTDB API → Firestore** (`scripts/firestore-rtdb-compat.js`)
 - **Firebase Cloud Functions** (automações agendadas)
 - **Google Fonts**
 - **WhatsApp API (`wa.me`)**
@@ -80,9 +80,9 @@ prime-pet/
 ├── privacy.html                # Política de privacidade e LGPD
 ├── manifest.webmanifest        # Manifesto PWA
 ├── sw.js                       # Service Worker (cache offline)
-├── firebase.realtime.rules.json
 ├── firestore.rules
 ├── firestore.indexes.json
+├── scripts/firestore-rtdb-compat.js
 ├── functions/
 │   ├── index.js                # Cloud Functions (alerta de vacina + dispatcher)
 │   └── package.json
@@ -96,7 +96,6 @@ prime-pet/
 O projeto usa Firebase diretamente no front-end. Confira:
 
 - credenciais no bloco `firebaseConfig` de `index.html`, `client.html` e `admin.html`;
-- regras do Realtime Database em `firebase.realtime.rules.json`;
 - permissão administrativa por **custom claim** `admin=true` no Firebase Auth.
 
 Também é possível customizar:
@@ -106,12 +105,11 @@ Também é possível customizar:
 - política de privacidade;
 - FAQ do assistente via nó `assistente_faq` no Realtime Database.
 
-## 🔐 Migração recomendada: Realtime Database → Firestore
-
-Este repositório já inclui os artefatos-base para migração segura:
+## 🔐 Migração concluída: aplicação em Firestore
 
 - `firestore.rules` com regras por usuário autenticado (ownerUid) e perfil admin por custom claim;
 - `firestore.indexes.json` com índices para consultas do dashboard e agenda;
+- `scripts/firestore-rtdb-compat.js` para manter o código de `client.html` e `admin.html` sem dependência do Realtime Database;
 - `dashboard.html` para leitura de métricas usando coleção `appointments`;
 - `functions/index.js` com:
   - `enqueueVaccineAlert` (callable) para agendar alerta de vacina;

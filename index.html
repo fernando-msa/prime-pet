@@ -778,17 +778,28 @@ textarea:focus-visible {
 </head>
 <body>
 <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
-<script>
-(function gateMaintenance(){
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+(async function gateMaintenance(){
   if (window.location.pathname.endsWith('/maintenance.html')) return;
-  fetch('https://prime-pet-default-rtdb.firebaseio.com/public_config/maintenance.json')
-    .then(r => r.ok ? r.json() : null)
-    .then(conf => {
-      if (!conf?.enabled) return;
-      const msg = conf.message ? `?msg=${encodeURIComponent(conf.message)}` : '';
-      window.location.replace(`./maintenance.html${msg}`);
-    })
-    .catch(() => {});
+  try {
+    const config = {
+      apiKey: "AIzaSyCBvnGzJ1rVrg-kOmxWaYFB0Fzn1_HGNH8",
+      authDomain: "prime-pet.firebaseapp.com",
+      projectId: "prime-pet",
+      storageBucket: "prime-pet.firebasestorage.app",
+      messagingSenderId: "716091719601",
+      appId: "1:716091719601:web:89e7ff08dc887ad4254790"
+    };
+    const app = getApps().length ? getApp() : initializeApp(config);
+    const snap = await getDoc(doc(getFirestore(app), 'public_config', 'maintenance'));
+    const conf = snap.exists() ? snap.data() : null;
+    if (!conf?.enabled) return;
+    const msg = conf.message ? `?msg=${encodeURIComponent(conf.message)}` : '';
+    window.location.replace(`./maintenance.html${msg}`);
+  } catch (_) {}
 })();
 </script>
 <aside class="sidebar-nav expanded" id="sidebar-nav">
