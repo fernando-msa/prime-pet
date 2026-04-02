@@ -91,7 +91,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .status-pulse.pending{background:#d3a303;animation:pulseStatus 1.6s ease-in-out infinite}
 .status-pulse.confirmed{background:#2c7a3f;animation:breatheStatus 1.8s ease-in-out infinite}
 .status-pulse.cancelled{background:#ff5a5a;animation:shakeStatus 2.2s linear infinite}
-.assistant-card{border:1px solid #d8e4ff;background:linear-gradient(180deg,#ffffff,#f6f9ff);border-radius:14px;padding:12px;margin-bottom:12px;position:fixed;right:20px;bottom:86px;width:min(390px,calc(100vw - 24px));max-height:68vh;overflow:auto;z-index:89;box-shadow:0 20px 42px rgba(18,29,52,.24)}
+.assistant-card{border:1px solid #d8e4ff;background:linear-gradient(180deg,#ffffff,#f8fbff);border-radius:18px;padding:14px;margin-bottom:12px;position:fixed;right:16px;bottom:84px;width:min(370px,calc(100vw - 24px));max-height:70vh;overflow:auto;z-index:89;box-shadow:0 16px 34px rgba(18,29,52,.18)}
 .assistant-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .assistant-chip{border:1px solid #d4e0f8;background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
 .assistant-reply{margin-top:10px;background:#f1f6ff;border-left:3px solid #83b3ff;padding:9px 10px;border-radius:8px;font-size:12px;line-height:1.5;color:#24385e}
@@ -104,7 +104,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#ffffff;color:#3a4a67;padding:8px 12px;border-radius:999px;font-weight:700;border:1px solid #d5deef;font-size:12px}
 .contact-btn:hover{transform:translateY(-1px);background:#f6f9ff}
 .floating-assistant{position:fixed;right:20px;bottom:22px;z-index:90}
-.assistant-fab{border:none;border-radius:999px;background:linear-gradient(135deg,#ff9d2f,#ff8200);color:#1f2231;box-shadow:0 14px 30px rgba(255,130,0,.38);padding:12px 14px;font-size:13px;font-weight:900;display:flex;align-items:center;gap:8px;cursor:pointer}
+.assistant-fab{border:none;border-radius:999px;background:linear-gradient(135deg,#ffb15c,#ff8a1a);color:#1f2231;box-shadow:0 12px 24px rgba(255,130,0,.28);padding:12px 14px;font-size:13px;font-weight:900;display:flex;align-items:center;gap:8px;cursor:pointer}
 .assistant-fab .fab-label{display:none}
 .assistant-fab.expanded .fab-label{display:inline}
 body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
@@ -131,7 +131,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
-@media (max-width:900px){body{padding-left:0;padding-bottom:62px}.header-inner{padding-left:20px}.sidebar-nav{left:0;right:0;top:auto;bottom:0;flex-direction:row;width:100%;height:auto;padding:8px;border-right:none;border-top:1px solid rgba(160,178,220,.24)}.sidebar-nav.expanded{width:100%;max-width:none}.sidebar-links{flex-direction:row;overflow:auto}}
+@media (max-width:900px){body{padding-left:56px;padding-bottom:0}.header-inner{padding-left:20px}.sidebar-nav{left:0;top:0;bottom:0;right:auto;flex-direction:column;width:56px;height:auto;padding:10px 6px;border-right:1px solid rgba(160,178,220,.24);border-top:none}.sidebar-nav.expanded{width:180px;max-width:70vw}.sidebar-links{flex-direction:column;overflow:auto}.floating-assistant{right:14px;bottom:16px}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 @keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
 @keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
@@ -416,7 +416,7 @@ window.toggleAssistantCard = function() {
   const abrir = card.classList.contains('hidden');
   card.classList.toggle('hidden', !abrir);
   fab.classList.toggle('expanded', abrir);
-  fab.innerHTML = abrir ? '🐶 Prime <span class="fab-label">Fechar assistente</span>' : '🐶 Prime';
+  fab.innerHTML = abrir ? '🐕 Prime <span class="fab-label">Fechar</span>' : '🐶 Prime';
 };
 
 function garantirConsentimentoLgpd() {
@@ -1007,6 +1007,41 @@ function procurarFaq(textoNormalizado) {
   return melhorScore >= 2 ? melhor : null;
 }
 
+function abrirAbaAssistente(nomeAba) {
+  const mapa = {
+    pedidos: document.querySelector('.tab[onclick*="solicitacoes"]'),
+    pets: document.querySelector('.tab[onclick*="pets"]'),
+    perfil: document.querySelector('.tab[onclick*="perfil"]')
+  };
+  const btn = mapa[nomeAba];
+  if (btn) {
+    const alvo = nomeAba === 'pedidos' ? 'solicitacoes' : nomeAba;
+    window.trocarAba(alvo, btn);
+    return true;
+  }
+  return false;
+}
+
+function executarAcaoAssistente(textoNorm) {
+  if (/abrir.*perfil|ir.*perfil|editar.*perfil/.test(textoNorm)) {
+    abrirAbaAssistente('perfil');
+    return 'Abri a aba de perfil para você atualizar seus dados.';
+  }
+  if (/abrir.*pedido|ir.*pedido|status.*pedido|acompanhar/.test(textoNorm)) {
+    abrirAbaAssistente('pedidos');
+    return 'Levei você para a aba de pedidos para acompanhar o status.';
+  }
+  if (/abrir.*pet|ir.*pet/.test(textoNorm)) {
+    abrirAbaAssistente('pets');
+    return 'Levei você para a aba de pets.';
+  }
+  if (/whatsapp|falar.*suporte|atendente/.test(textoNorm)) {
+    window.open('https://wa.me/5579996623050?text=Ol%C3%A1%21%20Preciso%20de%20suporte%20no%20portal%20Prime%20Pet.', '_blank', 'noopener');
+    return 'Abri o WhatsApp de suporte para você.';
+  }
+  return '';
+}
+
 window.responderAssistente = async function(tipo) {
   if (!assistantRateOk()) {
     atualizarRespostaAssistente('Você atingiu o limite temporário do assistente. Aguarde alguns minutos e tente novamente.', 'Controle de uso');
@@ -1026,6 +1061,13 @@ window.responderAssistenteLivre = async function() {
   const texto = String(campo.value || '').trim();
   if (!texto) return;
   const textoNorm = normalizeTxt(texto);
+  const acaoResposta = executarAcaoAssistente(textoNorm);
+  if (acaoResposta) {
+    atualizarRespostaAssistente(acaoResposta, 'Ação automatizada');
+    await registrarDuvidaAssistente(texto, acaoResposta, 'action').catch(() => {});
+    campo.value = '';
+    return;
+  }
   let resposta = '';
   let origem = 'Intenção rápida';
 
