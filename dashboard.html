@@ -29,8 +29,9 @@
     <p class="sub">Base Firestore + Auth por usuário (visão de admins).</p>
 
     <div class="toolbar">
+      <button id="btn-login">Entrar com Google</button>
       <button id="btn-refresh">Atualizar</button>
-      <span id="status">Conectando...</span>
+      <span id="status">Faça login para carregar métricas.</span>
     </div>
 
     <div class="grid">
@@ -55,12 +56,12 @@
     import { getFirestore, collection, getDocs, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     const firebaseConfig = {
-      apiKey: "<SECRET>",
+      apiKey: "AIzaSyCBvnGzJ1rVrg-kOmxWaYFB0Fzn1_HGNH8",
       authDomain: "prime-pet.firebaseapp.com",
       projectId: "prime-pet",
       storageBucket: "prime-pet.firebasestorage.app",
-      messagingSenderId: "395383845814",
-      appId: "1:395383845814:web:eabfa9f61a42bc8e4f83a0"
+      messagingSenderId: "716091719601",
+      appId: "1:716091719601:web:89e7ff08dc887ad4254790"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -70,10 +71,10 @@
     const el = id => document.getElementById(id);
     const statusEl = el('status');
 
-    async function ensureLogin() {
-      if (auth.currentUser) return auth.currentUser;
-      statusEl.textContent = 'Faça login com Google para ver métricas.';
-      return signInWithPopup(auth, new GoogleAuthProvider()).then(r => r.user);
+    async function loginWithGoogle() {
+      statusEl.textContent = 'Abrindo login Google...';
+      const cred = await signInWithPopup(auth, new GoogleAuthProvider());
+      return cred.user;
     }
 
     function paint(rows) {
@@ -99,9 +100,12 @@
     }
 
     async function loadMetrics() {
+      if (!auth.currentUser) {
+        statusEl.textContent = 'Faça login com Google para carregar métricas.';
+        return;
+      }
       statusEl.textContent = 'Carregando dados...';
       try {
-        await ensureLogin();
         const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'), limit(100));
         const snap = await getDocs(q);
         const rows = snap.docs.map(d => d.data());
@@ -113,7 +117,20 @@
       }
     }
 
-    onAuthStateChanged(auth, () => loadMetrics());
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadMetrics();
+      } else {
+        statusEl.textContent = 'Faça login com Google para carregar métricas.';
+      }
+    });
+    el('btn-login').addEventListener('click', async () => {
+      try {
+        await loginWithGoogle();
+      } catch (err) {
+        statusEl.textContent = `Erro: ${err.message}`;
+      }
+    });
     el('btn-refresh').addEventListener('click', loadMetrics);
   </script>
 </body>
