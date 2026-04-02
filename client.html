@@ -41,7 +41,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
 .sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
-.sidebar-brand{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.10);color:#fff;font-weight:900;font-family:'Baloo 2',cursive;letter-spacing:.3px}
+.sidebar-brand{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:linear-gradient(135deg,rgba(255,130,0,.26),rgba(0,191,200,.2));border:1px solid rgba(255,255,255,.16);color:#fff;font-weight:900;font-family:'Baloo 2',cursive;letter-spacing:.3px}
 .sidebar-brand .brand-mark{font-size:18px;line-height:1}
 .sidebar-brand .brand-text{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
 .sidebar-nav.expanded .sidebar-brand .brand-text{opacity:1;max-width:130px}
@@ -107,7 +107,7 @@ input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid v
 .contact-footer{display:flex;justify-content:center;margin-top:16px}
 .contact-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#ffffff;color:#3a4a67;padding:8px 12px;border-radius:999px;font-weight:700;border:1px solid #d5deef;font-size:12px}
 .contact-btn:hover{transform:translateY(-1px);background:#f6f9ff}
-.floating-assistant{position:fixed;right:20px;bottom:22px;z-index:90}
+.floating-assistant{position:fixed;right:20px;bottom:22px;z-index:90;display:none}
 .assistant-fab{border:none;border-radius:999px;background:linear-gradient(135deg,#ffb15c,#ff8a1a);color:#1f2231;box-shadow:0 12px 24px rgba(255,130,0,.28);padding:12px 14px;font-size:13px;font-weight:900;display:flex;align-items:center;gap:8px;cursor:pointer}
 .assistant-fab .fab-label{display:none}
 .assistant-fab.expanded .fab-label{display:inline}
@@ -372,6 +372,11 @@ function applyContrastPref(enabled) {
   document.body.setAttribute('data-contrast', enabled ? 'high' : 'normal');
   const cb = document.getElementById('perfil-acessibilidade-contraste');
   if (cb) cb.checked = Boolean(enabled);
+}
+function atualizarVisibilidadeAssistente(show) {
+  const wrap = document.querySelector('.floating-assistant');
+  if (!wrap) return;
+  wrap.style.display = show ? 'block' : 'none';
 }
 function assistantRateOk(limit = 10, windowMs = 5 * 60 * 1000) {
   const now = Date.now();
@@ -694,6 +699,7 @@ window.sairPortal = async function() {
     fab.classList.remove('expanded');
     fab.textContent = '🐶 Prime';
   }
+  atualizarVisibilidadeAssistente(false);
   localStorage.removeItem('primepet_client_session');
   setMensagemPortal('Você saiu do portal do cliente.');
   atualizarHeaderSessao(null);
@@ -762,6 +768,7 @@ onAuthStateChanged(auth, user => {
     document.getElementById('login-screen-client').style.display = 'none';
     document.getElementById('client-app').style.display = 'block';
     document.getElementById('assistant-card').classList.add('hidden');
+    atualizarVisibilidadeAssistente(true);
     localStorage.setItem('primepet_client_session', JSON.stringify({ uid: user.uid, at: Date.now() }));
     setMensagemPortal(`Logado como ${user.email || 'usuário Google'}. Carregando seus dados...`);
     importarPreCadastroSeExistir(user)
@@ -777,6 +784,7 @@ onAuthStateChanged(auth, user => {
   document.getElementById('login-screen-client').style.display = 'flex';
   document.getElementById('client-app').style.display = 'none';
   document.getElementById('assistant-card').classList.add('hidden');
+  atualizarVisibilidadeAssistente(false);
   const fab = document.getElementById('assistant-fab');
   if (fab) {
     fab.classList.remove('expanded');
