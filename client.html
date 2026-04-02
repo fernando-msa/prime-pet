@@ -41,6 +41,10 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
 .sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
+.sidebar-brand{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.10);color:#fff;font-weight:900;font-family:'Baloo 2',cursive;letter-spacing:.3px}
+.sidebar-brand .brand-mark{font-size:18px;line-height:1}
+.sidebar-brand .brand-text{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
+.sidebar-nav.expanded .sidebar-brand .brand-text{opacity:1;max-width:130px}
 .sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
 .sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
 .side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
@@ -131,7 +135,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
-@media (max-width:900px){body{padding-left:56px;padding-bottom:0}.header-inner{padding-left:20px}.sidebar-nav{left:0;top:0;bottom:0;right:auto;flex-direction:column;width:56px;height:auto;padding:10px 6px;border-right:1px solid rgba(160,178,220,.24);border-top:none}.sidebar-nav.expanded{width:180px;max-width:70vw}.sidebar-links{flex-direction:column;overflow:auto}.floating-assistant{right:14px;bottom:16px}}
+@media (max-width:900px){body{padding-left:56px;padding-bottom:0}.header{display:none}.header-inner{padding-left:20px}.sidebar-nav{left:0;top:0;bottom:0;right:auto;flex-direction:column;width:56px;height:auto;padding:10px 6px;border-right:1px solid rgba(160,178,220,.24);border-top:none}.sidebar-nav.expanded{width:180px;max-width:70vw}.sidebar-links{flex-direction:column;overflow:auto}.floating-assistant{right:14px;bottom:16px}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 @keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
 @keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
@@ -176,12 +180,14 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
   </div>
   <div id="client-app" class="portal-shell">
   <aside class="sidebar-nav expanded" id="sidebar-nav">
+    <div class="sidebar-brand"><span class="brand-mark">🐾</span><span class="brand-text">Prime Pet</span></div>
     <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" id="sidebar-toggle">⇤</button>
     <nav class="sidebar-links">
       <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
       <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
       <button class="side-link" type="button" onclick="toggleNotasAtualizacao()"><span>🔔</span><span class="label">Novidades</span></button>
       <button class="side-link" type="button" onclick="editarPerfilCliente()"><span>👤</span><span class="label">Editar perfil</span></button>
+      <button class="side-link" type="button" onclick="sairPortal()"><span>🚪</span><span class="label">Deslogar</span></button>
     </nav>
   </aside>
   <div class="header">
