@@ -15,7 +15,7 @@
   --green:#3DBE8A; --red:#FF5A5A;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:linear-gradient(180deg,#f3f6ff 0%, #eef3f7 100%);font-family:'Nunito',sans-serif;color:var(--dark);overflow-x:hidden;max-width:100%}
+body{background:linear-gradient(180deg,#f3f6ff 0%, #eef3f7 100%);font-family:'Nunito',sans-serif;color:var(--dark);overflow-x:hidden;max-width:100%;padding-left:62px}
 body[data-theme="dark"]{--dark:#eef2ff;--dark2:#c7d2f2;--gray2:#33405f;background:linear-gradient(180deg,#0f1424 0%, #131a2d 100%)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(0,191,200,.45);outline-offset:2px}
 .header{background:var(--dark);position:relative;overflow:hidden;padding:0;min-height:120px}
@@ -39,7 +39,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .portal-link.news{background:linear-gradient(135deg,#fff1c9,#ffe08a);color:#4a3a00}
 .portal-link.profile{background:rgba(255,255,255,.14)}
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
-.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:#111a31;border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
 .sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
 .sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
@@ -131,7 +131,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
 .lgpd-actions button,.lgpd-actions a{border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.08);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
 .lgpd-actions .accept{background:var(--orange);border-color:var(--orange)}
 @media (max-width:640px){.profile-grid{grid-template-columns:1fr}}
-@media (max-width:900px){.header-inner{padding-left:20px}.sidebar-nav{left:0;right:0;top:auto;bottom:0;flex-direction:row;width:100%;height:auto;padding:8px;border-right:none;border-top:1px solid rgba(160,178,220,.24)}.sidebar-nav.expanded{width:100%;max-width:none}.sidebar-links{flex-direction:row;overflow:auto}}
+@media (max-width:900px){body{padding-left:0;padding-bottom:62px}.header-inner{padding-left:20px}.sidebar-nav{left:0;right:0;top:auto;bottom:0;flex-direction:row;width:100%;height:auto;padding:8px;border-right:none;border-top:1px solid rgba(160,178,220,.24)}.sidebar-nav.expanded{width:100%;max-width:none}.sidebar-links{flex-direction:row;overflow:auto}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 @keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
 @keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
@@ -238,6 +238,9 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
       </div>
       <div class="assistant-reply" id="assistant-reply">Selecione uma opção acima para receber orientação.</div>
       <div class="muted" id="assistant-meta" style="margin-top:6px">Base: respostas rápidas locais.</div>
+      <div style="margin-top:10px">
+        <a class="contact-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Preciso%20de%20ajuda%20com%20meu%20pedido%20no%20portal." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
+      </div>
     </div>
     <div class="card hidden" id="portal-card">
       <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
@@ -291,9 +294,6 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
     </div>
 
     <div class="card" id="portal-msg" role="status" aria-live="polite">Entre com Google para visualizar seu histórico.</div>
-    <div class="contact-footer">
-      <a class="contact-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
-    </div>
     <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.14.0</span> (alinhada ao admin) · <a href="./privacy.html" style="text-decoration:none;font-weight:700">Política de Privacidade</a></div>
   </div>
 
@@ -340,6 +340,7 @@ const auth = getAuth(app);
 const APP_VERSION = 'v1.14.0';
 const METRICS_KEY = 'primepet_metrics_events';
 const CONTRAST_KEY = 'primepet_accessibility_contrast';
+const ASSISTANT_RATE_KEY = 'primepet_assistant_rate_window';
 
 function trackEvent(event, meta = {}) {
   let list = [];
@@ -366,6 +367,20 @@ function applyContrastPref(enabled) {
   const cb = document.getElementById('perfil-acessibilidade-contraste');
   if (cb) cb.checked = Boolean(enabled);
 }
+function assistantRateOk(limit = 10, windowMs = 5 * 60 * 1000) {
+  const now = Date.now();
+  let list = [];
+  try {
+    list = JSON.parse(localStorage.getItem(ASSISTANT_RATE_KEY) || '[]');
+  } catch (_) {
+    list = [];
+  }
+  list = list.filter((ts) => now - Number(ts || 0) < windowMs);
+  if (list.length >= limit) return false;
+  list.push(now);
+  localStorage.setItem(ASSISTANT_RATE_KEY, JSON.stringify(list));
+  return true;
+}
 
 function atualizarHeaderSessao(user) {
   const box = document.getElementById('header-session');
@@ -391,6 +406,10 @@ window.toggleSidebar = function() {
 };
 
 window.toggleAssistantCard = function() {
+  if (!auth.currentUser) {
+    window.open('https://wa.me/5579996623050?text=Ol%C3%A1%21%20Preciso%20de%20ajuda%20com%20o%20portal%20do%20cliente.', '_blank', 'noopener');
+    return;
+  }
   const card = document.getElementById('assistant-card');
   const fab = document.getElementById('assistant-fab');
   if (!card || !fab) return;
@@ -989,12 +1008,20 @@ function procurarFaq(textoNormalizado) {
 }
 
 window.responderAssistente = async function(tipo) {
+  if (!assistantRateOk()) {
+    atualizarRespostaAssistente('Você atingiu o limite temporário do assistente. Aguarde alguns minutos e tente novamente.', 'Controle de uso');
+    return;
+  }
   const resposta = responderPorIntent(tipo);
   atualizarRespostaAssistente(resposta, 'Intenção rápida');
   await registrarDuvidaAssistente(tipo, resposta, 'intent').catch(() => {});
 };
 
 window.responderAssistenteLivre = async function() {
+  if (!assistantRateOk()) {
+    atualizarRespostaAssistente('Você atingiu o limite temporário do assistente. Aguarde alguns minutos e tente novamente.', 'Controle de uso');
+    return;
+  }
   const campo = document.getElementById('assistant-input');
   const texto = String(campo.value || '').trim();
   if (!texto) return;
