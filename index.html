@@ -40,6 +40,7 @@ body {
   color: var(--dark);
   min-height: 100vh;
   overflow-x: hidden;
+  padding-left: 62px;
 }
 body[data-theme="dark"] {
   --gray: #070d1d;
@@ -100,6 +101,14 @@ textarea:focus-visible {
   overflow: hidden;
   padding: 0;
 }
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:120;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
+.sidebar-toggle{border:none;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;padding:8px;cursor:pointer;font-size:15px}
+.sidebar-links{display:flex;flex-direction:column;gap:8px;width:100%}
+.side-link{display:flex;align-items:center;gap:10px;border:none;background:rgba(255,255,255,.08);color:#e9efff;text-decoration:none;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+.side-session{margin-top:auto;border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px;font-size:11px;color:#dce6ff;background:rgba(255,255,255,.08)}
+.side-link .label{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
+.sidebar-nav.expanded .side-link .label{opacity:1;max-width:140px}
 .header-bg-shapes {
   position: absolute; inset: 0; pointer-events: none;
 }
@@ -127,7 +136,7 @@ textarea:focus-visible {
 .header-inner {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
-  padding: 48px 24px 40px;
+  padding: 48px 24px 40px 108px;
   gap: 8px;
 }
 
@@ -228,8 +237,8 @@ textarea:focus-visible {
   position: sticky; top: 0; z-index: 100;
 }
 .progress-steps {
-  max-width: 760px; margin: 0 auto;
-  display: flex; align-items: center;
+  max-width: 1160px; width:100%; margin: 0 auto;
+  display: flex; align-items: center; justify-content:space-between;
   padding: 12px 0;
   gap: 0;
   overflow-x: auto;
@@ -745,10 +754,40 @@ textarea:focus-visible {
     transition: none !important;
   }
 }
+@media (max-width:900px){
+  body{padding-left:0;padding-bottom:62px}
+  .header-inner{padding-left:24px}
+  .sidebar-nav{left:0;right:0;top:auto;bottom:0;flex-direction:row;width:100%;height:auto;padding:8px;border-right:none;border-top:1px solid rgba(160,178,220,.24)}
+  .sidebar-nav.expanded{width:100%;max-width:none}
+  .sidebar-links{flex-direction:row;overflow:auto}
+}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+<script>
+(function gateMaintenance(){
+  if (window.location.pathname.endsWith('/maintenance.html')) return;
+  fetch('https://prime-pet-default-rtdb.firebaseio.com/public_config/maintenance.json')
+    .then(r => r.ok ? r.json() : null)
+    .then(conf => {
+      if (!conf?.enabled) return;
+      const msg = conf.message ? `?msg=${encodeURIComponent(conf.message)}` : '';
+      window.location.replace(`./maintenance.html${msg}`);
+    })
+    .catch(() => {});
+})();
+</script>
+<aside class="sidebar-nav expanded" id="sidebar-nav">
+  <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" id="sidebar-toggle">⇤</button>
+  <nav class="sidebar-links">
+    <a class="side-link" href="./index.html"><span>🏠</span><span class="label">Home</span></a>
+    <a class="side-link" href="./client.html"><span>👤</span><span class="label">Cliente</span></a>
+    <a class="side-link" href="./admin.html"><span>🛠️</span><span class="label">Admin</span></a>
+    <button class="side-link" type="button" onclick="toggleNotasAtualizacao()"><span>🔔</span><span class="label">Novidades</span></button>
+    <div class="side-session" id="home-session-status">🔒 Cliente não logado</div>
+  </nav>
+</aside>
 
 <!-- ── HEADER ── -->
 <header class="header">
@@ -762,13 +801,6 @@ textarea:focus-visible {
     </div>
     <p class="header-tagline">Passeios &amp; Banhos</p>
     <div class="header-contract-label">📋 Contrato de Prestação de Serviços</div>
-    <div class="header-portals">
-      <a class="portal-link" href="./client.html">👤 Portal do Cliente</a>
-      <a class="portal-link" href="./admin.html">🛠️ Portal Admin</a>
-      <button class="portal-link" type="button" onclick="toggleNotasAtualizacao()">🔔 Novidades</button>
-      <button class="portal-link" type="button" onclick="toggleTheme()" id="theme-toggle-btn">🌙 Tema escuro</button>
-    </div>
-    <div class="session-status" id="home-session-status">🔒 Cliente não logado</div>
     <div class="session-status" id="home-release" style="display:none;text-align:left">
       <strong>Atualizações</strong><br>
       v1.0.0 • Base do portal e agenda<br>
@@ -1106,11 +1138,7 @@ textarea:focus-visible {
     <br><span id="index-version-footer">Versão atual: v1.13.0</span>
     <br><a class="privacy-link" href="./privacy.html">Política de Privacidade</a>
   </div>
-  <div class="contact-footer-wrap">
-    <a class="contact-footer-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20ou%20quero%20uma%20informa%C3%A7%C3%A3o%20sobre%20os%20servi%C3%A7os%20da%20Prime%20Pet." target="_blank" rel="noopener noreferrer">
-      <span>💬</span> Fale conosco no WhatsApp
-    </a>
-  </div>
+  <div style="text-align:center;color:#5e6b86;font-size:12px;margin-top:10px">Suporte: <a href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer" style="font-weight:700;text-decoration:none;color:#2d405e">WhatsApp</a></div>
 
 </main>
 
@@ -1128,7 +1156,6 @@ textarea:focus-visible {
 <script>
 const APP_VERSION = 'v1.13.0';
 const DRAFT_KEY = 'primepet_form_draft_v2';
-const THEME_KEY = 'primepet_theme';
 const METRICS_KEY = 'primepet_metrics_events';
 /* ── HELPERS ── */
 function trackEvent(event, meta = {}) {
@@ -1142,22 +1169,13 @@ function trackEvent(event, meta = {}) {
   list.push({ event, meta, at: Date.now(), page: 'index' });
   localStorage.setItem(METRICS_KEY, JSON.stringify(list.slice(-2000)));
 }
-function applyTheme(theme) {
-  const mode = theme === 'dark' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', mode);
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) btn.textContent = mode === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro';
-}
-function initTheme() {
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved) return applyTheme(saved);
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(prefersDark ? 'dark' : 'light');
-}
-window.toggleTheme = function() {
-  const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
+document.body.setAttribute('data-theme', 'light');
+window.toggleSidebar = function() {
+  const side = document.getElementById('sidebar-nav');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!side || !btn) return;
+  side.classList.toggle('expanded');
+  btn.textContent = side.classList.contains('expanded') ? '⇤' : '⇥';
 };
 function toggle(id, show) {
   document.getElementById(id).classList.toggle('visible', show);
@@ -1216,7 +1234,6 @@ function toggleNotasAtualizacao() {
 }
 window.addEventListener('storage', atualizarStatusSessaoHome);
 window.addEventListener('focus', atualizarStatusSessaoHome);
-initTheme();
 trackEvent('page_open');
 atualizarStatusSessaoHome();
 if (!garantirConsentimentoLgpd()) exibirLgpdCorner();
