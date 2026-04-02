@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prime Pet • Em manutenção</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <style>
+    :root{--bg:#0f172a;--card:#111f3b;--txt:#e8efff;--accent:#ff8200;--muted:#a9b8d8}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 10% 10%,#1f2b4d 0,#0f172a 45%,#0b1221 100%);font-family:Nunito,Arial,sans-serif;color:var(--txt);padding:24px}
+    .card{width:min(620px,100%);background:linear-gradient(180deg,#16284c,#111f3b);border:1px solid #2a3f6d;border-radius:22px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.35);text-align:center}
+    h1{margin:8px 0 12px;font-size:32px}
+    p{margin:8px 0;color:var(--muted)}
+    .emoji{font-size:46px}
+    .msg{margin:16px 0;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff}
+    .actions{margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    a,button{border:none;border-radius:999px;padding:10px 15px;font-weight:800;cursor:pointer;text-decoration:none}
+    .primary{background:var(--accent);color:#1d1d2e}
+    .ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="emoji">🐶🛠️</div>
+    <h1>Estamos em manutenção</h1>
+    <p>Estamos fazendo melhorias para deixar sua experiência no Prime Pet ainda melhor.</p>
+    <div class="msg" id="maintenance-msg">Voltamos em breve. Obrigado pela paciência 💛</div>
+    <div class="actions">
+      <a class="primary" href="./index.html">Tentar novamente</a>
+      <a class="ghost" href="https://wa.me/5579996623050" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    if (msg) document.getElementById('maintenance-msg').textContent = msg;
+  </script>
+</body>
+</html>
