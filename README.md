@@ -152,10 +152,17 @@ Foi adicionada uma página de demonstração mais visual para apresentação com
   - `score-demo.svg`
   - `pdf-demo.svg`
 
-Abra localmente no navegador:
+Abra o arquivo localmente no navegador. Exemplos:
 
 ```bash
+# macOS
 open demo.html
+
+# Linux
+xdg-open demo.html
+
+# Windows
+start demo.html
 ```
 
 ## 🗂️ Próximos passos em formato de issue
