@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f4f7fb"/>
+  <rect x="40" y="30" width="1200" height="70" rx="14" fill="#1f3a5f"/>
+  <text x="70" y="75" font-family="Arial" font-size="28" fill="#fff">Portal do Cliente — Fluxo de Agendamento</text>
+  <rect x="70" y="140" width="540" height="500" rx="16" fill="#fff" stroke="#d9e3f0"/>
+  <text x="95" y="185" font-family="Arial" font-size="24" fill="#1f3a5f">Novo pedido</text>
+  <rect x="95" y="215" width="490" height="52" rx="10" fill="#eef4ff"/>
+  <rect x="95" y="285" width="490" height="52" rx="10" fill="#eef4ff"/>
+  <rect x="95" y="355" width="490" height="52" rx="10" fill="#eef4ff"/>
+  <rect x="95" y="425" width="220" height="48" rx="12" fill="#2a6df4"/>
+  <text x="130" y="457" font-family="Arial" font-size="18" fill="#fff">Solicitar agenda</text>
+
+  <rect x="650" y="140" width="560" height="500" rx="16" fill="#fff" stroke="#d9e3f0"/>
+  <text x="675" y="185" font-family="Arial" font-size="24" fill="#1f3a5f">Linha do tempo</text>
+  <circle cx="700" cy="240" r="10" fill="#2a6df4"/>
+  <text x="730" y="246" font-family="Arial" font-size="18" fill="#2f3d4f">Pedido criado</text>
+  <circle cx="700" cy="300" r="10" fill="#ffb020"/>
+  <text x="730" y="306" font-family="Arial" font-size="18" fill="#2f3d4f">Aguardando confirmação</text>
+  <circle cx="700" cy="360" r="10" fill="#34a853"/>
+  <text x="730" y="366" font-family="Arial" font-size="18" fill="#2f3d4f">Confirmado pelo admin</text>
+  <circle cx="700" cy="420" r="10" fill="#8b5cf6"/>
+  <text x="730" y="426" font-family="Arial" font-size="18" fill="#2f3d4f">Lembrete enviado</text>
+</svg>

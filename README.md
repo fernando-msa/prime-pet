@@ -193,6 +193,31 @@ No painel admin, você pode configurar uma URL de webhook para disparar eventos 
 - Zapier
 - ou outro endpoint compatível com `POST` JSON.
 
+
+## 🗺️ Roadmap por fases (Milestones + Projects)
+
+Para gestão do roadmap com fases e rastreabilidade de execução:
+
+- `docs/ROADMAP_PROJECTS_MILESTONES.md`
+
+## 🧩 Arquitetura Firebase + Functions + Webhook
+
+Documentação técnica consolidada:
+
+- `docs/ARQUITETURA_FIREBASE_FUNCTIONS_WEBHOOK.md`
+
+## 🖼️ Prints do fluxo cliente/admin/dashboard
+
+Galeria versionada dos fluxos de referência:
+
+- `docs/PRINTS_FLUXO_CLIENTE_ADMIN_DASHBOARD.md`
+
+## 📝 Changelog por release
+
+Registro de mudanças por release:
+
+- `CHANGELOG.md`
+
 ## 🌐 Deploy
 
 Publicado em: https://prime-pet.vercel.app  
