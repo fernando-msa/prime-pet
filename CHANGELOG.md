@@ -11,7 +11,7 @@ O formato segue o padrão **Keep a Changelog** e versionamento semântico (**Sem
 - Documento de arquitetura Firebase + Functions + Webhook.
 - Galeria de prints do fluxo cliente/admin/dashboard.
 
-## [2026.04.0] - 2026-04-04
+## [2026.4.0] - 2026-04-04
 
 ### Added
 - Organização inicial do roadmap em fases com critérios de pronto.
