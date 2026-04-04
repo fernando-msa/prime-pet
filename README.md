@@ -141,6 +141,36 @@ firebase deploy --only firestore:rules,firestore:indexes
 firebase deploy --only functions
 ```
 
+
+## 🎬 Landing/demo visual
+
+Foi adicionada uma página de demonstração mais visual para apresentação comercial e validação do fluxo mínimo:
+
+- `demo.html` (hero, cards de fluxo, galeria de screenshots e próximos passos)
+- screenshots em `assets/screenshots/`:
+  - `checklist-demo.svg`
+  - `score-demo.svg`
+  - `pdf-demo.svg`
+
+Abra localmente no navegador:
+
+```bash
+open demo.html
+```
+
+## 🗂️ Próximos passos em formato de issue
+
+Para transformar o roadmap da auditoria em execução:
+
+- backlog pronto em `docs/NEXT_STEPS_ISSUES.md`
+- template de issue em `.github/ISSUE_TEMPLATE/proximo-passo.yml`
+
+## 🚢 Release quando fechar o fluxo mínimo
+
+Checklist operacional para liberação em:
+
+- `docs/RELEASE_MINIMO_CHECKLIST.md`
+
 ## 🧭 Auditoria e roadmap de evolução
 
 Para uma visão objetiva de melhorias de recursos e layout alinhadas ao mercado, consulte:

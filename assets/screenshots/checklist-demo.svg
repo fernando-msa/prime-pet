@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" fill="none">
+  <rect width="1280" height="720" fill="#0B1120"/>
+  <rect x="72" y="56" width="1136" height="608" rx="24" fill="#111827" stroke="#334155"/>
+  <text x="120" y="120" fill="#E2E8F0" font-family="Arial" font-size="44" font-weight="700">Checklist de Atendimento</text>
+  <text x="120" y="160" fill="#94A3B8" font-family="Arial" font-size="24">Pré-atendimento → Execução → Encerramento</text>
+  <g font-family="Arial" font-size="28" fill="#E2E8F0">
+    <rect x="120" y="210" width="1040" height="86" rx="12" fill="#1E293B"/>
+    <text x="152" y="262">✅ Confirmar cadastro e dados do pet</text>
+    <rect x="120" y="318" width="1040" height="86" rx="12" fill="#1E293B"/>
+    <text x="152" y="370">✅ Validar observações de saúde e comportamento</text>
+    <rect x="120" y="426" width="1040" height="86" rx="12" fill="#1E293B"/>
+    <text x="152" y="478">⬜ Registrar fotos e observações finais</text>
+    <rect x="120" y="534" width="1040" height="86" rx="12" fill="#1E293B"/>
+    <text x="152" y="586">⬜ Enviar resumo no WhatsApp + PDF</text>
+  </g>
+</svg>
