@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Auditoria 2026
+    url: https://github.com/<owner>/<repo>/blob/<default-branch>/AUDITORIA_MELHORIAS_2026.md
+    about: Consulte o documento base com o racional de priorização.

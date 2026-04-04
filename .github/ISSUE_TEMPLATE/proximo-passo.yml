@@ -1,0 +1,46 @@
+name: Próximo passo do roadmap
+description: Template para transformar itens da auditoria em issue executável
+title: "[Roadmap] "
+labels:
+  - roadmap
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use este template para registrar um próximo passo do roadmap descrito em `AUDITORIA_MELHORIAS_2026.md`.
+  - type: dropdown
+    id: horizonte
+    attributes:
+      label: Horizonte
+      options:
+        - Prioridade Alta (0-30 dias)
+        - Prioridade Média (31-60 dias)
+        - Prioridade Estratégica (61-90 dias)
+    validations:
+      required: true
+  - type: input
+    id: objetivo
+    attributes:
+      label: Objetivo
+      placeholder: Ex.: Modularizar front-end sem quebrar deploy estático
+    validations:
+      required: true
+  - type: textarea
+    id: entregaveis
+    attributes:
+      label: Entregáveis
+      description: Liste itens concretos para fechar a issue.
+      placeholder: |
+        - [ ] Separar CSS para styles/
+        - [ ] Separar JS para scripts/
+        - [ ] Atualizar documentação
+    validations:
+      required: true
+  - type: textarea
+    id: criterio
+    attributes:
+      label: Critério de aceite
+      placeholder: Descreva como validar que a entrega está concluída.
+    validations:
+      required: true

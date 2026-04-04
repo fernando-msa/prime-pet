@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" fill="none">
+  <rect width="1280" height="720" fill="#0B1120"/>
+  <rect x="72" y="56" width="1136" height="608" rx="24" fill="#111827" stroke="#334155"/>
+  <rect x="280" y="100" width="720" height="520" rx="12" fill="#F8FAFC"/>
+  <text x="326" y="162" fill="#0F172A" font-family="Arial" font-size="34" font-weight="700">Relatório de Atendimento Prime Pet</text>
+  <text x="326" y="204" fill="#334155" font-family="Arial" font-size="20">Tutor: Ana Souza • Pet: Thor • Data: 04/04/2026</text>
+
+  <rect x="326" y="232" width="628" height="1" fill="#CBD5E1"/>
+  <text x="326" y="280" fill="#0F172A" font-family="Arial" font-size="24">Resumo do serviço</text>
+  <text x="326" y="320" fill="#334155" font-family="Arial" font-size="20">• Banho e tosa concluídos com sucesso</text>
+  <text x="326" y="354" fill="#334155" font-family="Arial" font-size="20">• Checklist validado e score total: 90</text>
+  <text x="326" y="388" fill="#334155" font-family="Arial" font-size="20">• Próxima recomendação: retorno em 30 dias</text>
+
+  <rect x="326" y="430" width="260" height="56" rx="8" fill="#E2E8F0"/>
+  <text x="356" y="466" fill="#0F172A" font-family="Arial" font-size="22">Exportar / Compartilhar</text>
+
+  <text x="72" y="674" fill="#94A3B8" font-family="Arial" font-size="20">Preview de PDF para demonstração comercial e operação.</text>
+</svg>

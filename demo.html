@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prime Pet | Demo Visual</title>
+  <meta name="description" content="Landing/demo visual do Prime Pet com fluxo, indicadores e materiais operacionais." />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: rgba(15, 23, 42, 0.75);
+      --border: rgba(148, 163, 184, 0.25);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --brand: #22d3ee;
+      --accent: #a78bfa;
+      --ok: #34d399;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1400px circle at 0% 0%, rgba(34, 211, 238, 0.16), transparent 60%),
+        radial-gradient(1200px circle at 100% 0%, rgba(167, 139, 250, 0.22), transparent 60%),
+        var(--bg);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1120px, 92vw);
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-top: 8px;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.35);
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.2;
+      margin: 0 0 12px;
+    }
+
+    h2 { margin-top: 0; }
+
+    .muted { color: var(--muted); }
+
+    .cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      padding: 10px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      border: 1px solid transparent;
+      font-weight: 600;
+      transition: .2s ease;
+    }
+
+    .btn.primary {
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      color: #0f172a;
+    }
+
+    .btn.secondary {
+      border-color: var(--border);
+      color: var(--text);
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(2, 6, 23, 0.4);
+    }
+
+    .kpi strong {
+      font-size: 1.2rem;
+      color: var(--ok);
+      display: block;
+    }
+
+    .section {
+      margin-top: 26px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    figure {
+      margin: 0;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(2, 6, 23, 0.4);
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background: #0b1120;
+    }
+
+    figcaption {
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 10px 12px 12px;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      letter-spacing: .02em;
+    }
+
+    @media (max-width: 920px) {
+      .hero { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <article class="panel">
+        <span class="badge">Prime Pet • Demo visual</span>
+        <h1>Uma landing mais visual para vender o fluxo completo de atendimento pet.</h1>
+        <p class="muted">
+          Esta página resume o valor do produto, mostra evidências operacionais (checklist, score e PDF)
+          e prepara a trilha para release quando o fluxo mínimo estiver concluído.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="index.html">Ver formulário público</a>
+          <a class="btn secondary" href="admin.html">Abrir painel admin</a>
+          <a class="btn secondary" href="README.md">Ler documentação</a>
+        </div>
+      </article>
+
+      <aside class="panel">
+        <h2>Snapshot do fluxo mínimo</h2>
+        <div class="kpi">
+          <div class="kpi-card"><strong>1</strong> Pré-cadastro rápido + WhatsApp.</div>
+          <div class="kpi-card"><strong>2</strong> Portal cliente com histórico.</div>
+          <div class="kpi-card"><strong>3</strong> Admin confirma/cancela slots.</div>
+          <div class="kpi-card"><strong>4</strong> Dashboard monitora KPIs.</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section panel">
+      <h2>Screenshots operacionais</h2>
+      <p class="muted">Material de demo para checklist, score de qualidade e exportação em PDF.</p>
+      <div class="gallery">
+        <figure>
+          <img src="assets/screenshots/checklist-demo.svg" alt="Screenshot do checklist operacional" />
+          <figcaption>Checklist operacional por etapa (pré-atendimento, execução e encerramento).</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/screenshots/score-demo.svg" alt="Screenshot do score de atendimento" />
+          <figcaption>Score consolidado para saúde, comportamento e satisfação do tutor.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/screenshots/pdf-demo.svg" alt="Screenshot da prévia de relatório em PDF" />
+          <figcaption>Prévia de PDF para compartilhamento com tutor e controle interno.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section panel">
+      <h2>Próximos passos já preparados</h2>
+      <ul>
+        <li>Backlog de issues derivado da auditoria em <code>docs/NEXT_STEPS_ISSUES.md</code>.</li>
+        <li>Templates para novos tickets em <code>.github/ISSUE_TEMPLATE/</code>.</li>
+        <li>Checklist de release mínimo em <code>docs/RELEASE_MINIMO_CHECKLIST.md</code>.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
