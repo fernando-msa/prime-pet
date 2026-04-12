@@ -22,6 +22,11 @@ export class MigrationController {
     return this.migrationService.progress(tenantId);
   }
 
+  @Get('overall-status')
+  overallStatus(@Query('tenantId') tenantId: string) {
+    return this.migrationService.overallStatus(tenantId);
+  }
+
   @Post('import/clients')
   importClients(@Body() body: ImportClientsDto) {
     return this.migrationService.importClients(body);

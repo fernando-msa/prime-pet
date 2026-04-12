@@ -29,6 +29,7 @@ localStorage.setItem('primepet_v2_access_token', '<jwt>')
 4. Contrato/formulário
 
 ## 4) Validar critérios antes de cutover
+- `GET /api/v2/migration/overall-status?tenantId=<id>` para medir quanto falta no plano total.
 - `GET /api/v2/migration/progress?tenantId=<id>` com cobertura >=95%
 - Backfill final concluído
 - Dual-write estável

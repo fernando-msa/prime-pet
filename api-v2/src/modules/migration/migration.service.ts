@@ -92,6 +92,43 @@ export class MigrationService {
     };
   }
 
+
+  async overallStatus(tenantId: string) {
+    const progress = await this.progress(tenantId);
+    const dataCoverage = progress.domainCoverage;
+
+    const tracks = {
+      apiV2Foundation: 100,
+      visualRefactor: 100,
+      dataBackfill: dataCoverage,
+      frontendCutover: dataCoverage >= 70 ? 60 : 25,
+      contractPhase: dataCoverage >= 95 ? 20 : 0,
+    };
+
+    const overall = Number(
+      (
+        tracks.apiV2Foundation * 0.2 +
+        tracks.visualRefactor * 0.2 +
+        tracks.dataBackfill * 0.3 +
+        tracks.frontendCutover * 0.2 +
+        tracks.contractPhase * 0.1
+      ).toFixed(1),
+    );
+
+    const remaining = Number((100 - overall).toFixed(1));
+
+    return {
+      tenantId,
+      overall,
+      remaining,
+      tracks,
+      recommendation:
+        dataCoverage >= 70
+          ? 'Iniciar virada gradual dos fluxos para /api/v2 por feature flag.'
+          : 'Priorizar backfill até atingir pelo menos 70% de cobertura de dados.',
+    };
+  }
+
   async importClients(payload: ImportClientsDto) {
     const operations = payload.clients.map((client) =>
       this.prisma.client.upsert({
