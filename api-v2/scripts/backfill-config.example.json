@@ -1,0 +1,15 @@
+{
+  "tenant": {
+    "id": "tenant_legacy_clinica_01",
+    "name": "Clínica Legado",
+    "slug": "clinica-legado",
+    "planCode": "starter",
+    "maxUsers": 3,
+    "maxAppointmentsMonth": 150
+  },
+  "sources": {
+    "clients": "scripts/data/clients.json",
+    "pets": "scripts/data/pets.json",
+    "appointments": "scripts/data/appointments.json"
+  }
+}

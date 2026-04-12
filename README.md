@@ -6,6 +6,17 @@
 
 ## 📌 Visão geral
 
+## 🆕 Estado atual do projeto (v2 em evolução)
+
+O repositório agora está organizado para **migração progressiva para API v2 (SaaS multi-tenant)**:
+
+- Backend novo em `api-v2/` (NestJS + Prisma);
+- Frontend legado ainda ativo, com bridge para alternância gradual `legacy`/`v2`;
+- Documentação segmentada em `docs/v2`, `docs/legacy` e `docs/planning`.
+
+Consulte o índice de docs em `docs/README.md`.
+
+
 O **Prime Pet** é uma aplicação web com:
 
 - **Formulário público (`index.html`)** para pré-cadastro e solicitação de agendamento;
@@ -169,14 +180,14 @@ start demo.html
 
 Para transformar o roadmap da auditoria em execução:
 
-- backlog pronto em `docs/NEXT_STEPS_ISSUES.md`
+- backlog pronto em `docs/planning/NEXT_STEPS_ISSUES.md`
 - template de issue em `.github/ISSUE_TEMPLATE/proximo-passo.yml`
 
 ## 🚢 Release quando fechar o fluxo mínimo
 
 Checklist operacional para liberação em:
 
-- `docs/RELEASE_MINIMO_CHECKLIST.md`
+- `docs/legacy/RELEASE_MINIMO_CHECKLIST.md`
 
 ## 🧭 Auditoria e roadmap de evolução
 
@@ -198,19 +209,19 @@ No painel admin, você pode configurar uma URL de webhook para disparar eventos 
 
 Para gestão do roadmap com fases e rastreabilidade de execução:
 
-- `docs/ROADMAP_PROJECTS_MILESTONES.md`
+- `docs/planning/ROADMAP_PROJECTS_MILESTONES.md`
 
 ## 🧩 Arquitetura Firebase + Functions + Webhook
 
 Documentação técnica consolidada:
 
-- `docs/ARQUITETURA_FIREBASE_FUNCTIONS_WEBHOOK.md`
+- `docs/legacy/ARQUITETURA_FIREBASE_FUNCTIONS_WEBHOOK.md`
 
 ## 🖼️ Prints do fluxo cliente/admin/dashboard
 
 Galeria versionada dos fluxos de referência:
 
-- `docs/PRINTS_FLUXO_CLIENTE_ADMIN_DASHBOARD.md`
+- `docs/legacy/PRINTS_FLUXO_CLIENTE_ADMIN_DASHBOARD.md`
 
 ## 📝 Changelog por release
 
