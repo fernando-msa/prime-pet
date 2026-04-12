@@ -1,0 +1,130 @@
+:root {
+  --pp-shell-bg: linear-gradient(135deg, #101a33, #1a2d55 55%, #223a69);
+  --pp-shell-fg: #f3f7ff;
+  --pp-shell-accent: #ff8200;
+  --pp-sidebar-bg: linear-gradient(180deg, rgba(12,22,45,.97), rgba(18,30,58,.95));
+}
+
+body.pp-v2-layout {
+  padding-top: 66px !important;
+  padding-left: 230px !important;
+}
+
+/* Oculta sidebars legadas para evitar visual "solto" e duplicado */
+body.pp-v2-layout .sidebar-nav {
+  display: none !important;
+}
+
+.pp-v2-shell {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 248px;
+  background: var(--pp-shell-bg);
+  color: var(--pp-shell-fg);
+  border-bottom: 1px solid rgba(255,255,255,.16);
+  backdrop-filter: blur(10px);
+}
+
+.pp-v2-brand {
+  font-family: 'Baloo 2', cursive;
+  letter-spacing: .2px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.pp-v2-brand span { color: var(--pp-shell-accent); }
+
+.pp-v2-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pp-v2-nav a {
+  color: #eef4ff;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.08);
+}
+
+.pp-v2-nav a.active {
+  color: #0f2146;
+  background: linear-gradient(135deg, #ffd7ae, #ffbf74);
+  border-color: transparent;
+}
+
+.pp-v2-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1199;
+  width: 220px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--pp-sidebar-bg);
+  border-right: 1px solid rgba(255,255,255,.14);
+}
+
+.pp-v2-side-title {
+  margin-top: 56px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: rgba(238,245,255,.72);
+}
+
+.pp-v2-side-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #eef4ff;
+  border-radius: 12px;
+  padding: 11px 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pp-v2-side-link.active {
+  color: #132344;
+  border-color: transparent;
+  background: linear-gradient(135deg, #ffd9b2, #ffb052);
+}
+
+@media (max-width: 920px) {
+  .pp-v2-sidebar { display: none; }
+
+  .pp-v2-shell {
+    padding-left: 12px;
+    height: auto;
+    min-height: 56px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    gap: 8px;
+  }
+
+  body.pp-v2-layout {
+    padding-top: 92px !important;
+    padding-left: 0 !important;
+  }
+}

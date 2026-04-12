@@ -1,0 +1,59 @@
+.pp-v2-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 18px;
+  z-index: 1201;
+  border: 0;
+  border-radius: 999px;
+  width: 52px;
+  height: 52px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #132344;
+  background: linear-gradient(135deg, #ffd4a3, #ff9f2a);
+  box-shadow: 0 12px 28px rgba(255,130,0,.35);
+}
+
+.pp-v2-quick-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 78px;
+  z-index: 1201;
+  width: 220px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(173,190,223,.6);
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 16px 32px rgba(21,32,57,.18);
+  display: none;
+}
+
+.pp-v2-quick-panel.open { display: block; }
+
+.pp-v2-quick-panel a,
+.pp-v2-quick-panel button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #d6e1f6;
+  background: #fff;
+  color: #1a2948;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin: 4px 0;
+  font-weight: 800;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body[data-theme='dark'] .pp-v2-quick-panel {
+  background: rgba(17,26,47,.95);
+  border-color: rgba(84,109,156,.7);
+}
+
+body[data-theme='dark'] .pp-v2-quick-panel a,
+body[data-theme='dark'] .pp-v2-quick-panel button {
+  background: #16233f;
+  border-color: #2a3d66;
+  color: #e8efff;
+}
