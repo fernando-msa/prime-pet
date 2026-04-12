@@ -105,18 +105,66 @@
       </tr>`).join('');
     }
 
-    async function loadMetrics() {
+    function normalizeV2Rows(rows) {
+      return rows.map((row) => {
+        const dateObj = row.startsAt ? new Date(row.startsAt) : null;
+        const statusMap = {
+          scheduled: 'pending',
+          confirmed: 'confirmed',
+          completed: 'confirmed',
+          canceled: 'cancelled',
+        };
+        return {
+          date: dateObj ? dateObj.toLocaleDateString('pt-BR') : '-',
+          hour: dateObj ? dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '-',
+          ownerName: row.client?.name || row.ownerName || '-',
+          petName: row.pet?.name || row.petName || '-',
+          status: statusMap[row.status] || row.status || '-',
+        };
+      });
+    }
+
+    async function loadMetricsFromV2() {
+      const bridge = window.PrimePetApiBridge;
+      if (!bridge) throw new Error('Bridge da API v2 não carregada.');
+
+      const [summaryRes, appointmentsRes] = await Promise.all([
+        bridge.request('/dashboard/summary'),
+        bridge.request('/appointments'),
+      ]);
+
+      if (!summaryRes.ok || !appointmentsRes.ok) {
+        throw new Error('Falha ao carregar métricas da API v2.');
+      }
+
+      const summary = await summaryRes.json();
+      const appointments = await appointmentsRes.json();
+      const rows = normalizeV2Rows(appointments);
+      paint(rows);
+      statusEl.textContent = `v2 ativo • atendimentos: ${summary.appointments} • faturamento: R$ ${Number(summary.revenue || 0).toFixed(2)}`;
+    }
+
+    async function loadMetricsLegacy() {
       if (!auth.currentUser) {
         statusEl.textContent = 'Faça login com Google para carregar métricas.';
         return;
       }
+      const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'), limit(100));
+      const snap = await getDocs(q);
+      const rows = snap.docs.map(d => d.data());
+      paint(rows);
+      statusEl.textContent = `Atualizado em ${new Date().toLocaleString('pt-BR')}`;
+    }
+
+    async function loadMetrics() {
       statusEl.textContent = 'Carregando dados...';
       try {
-        const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'), limit(100));
-        const snap = await getDocs(q);
-        const rows = snap.docs.map(d => d.data());
-        paint(rows);
-        statusEl.textContent = `Atualizado em ${new Date().toLocaleString('pt-BR')}`;
+        const mode = window.PrimePetApiBridge?.getMode?.() || 'legacy';
+        if (mode === 'v2') {
+          await loadMetricsFromV2();
+        } else {
+          await loadMetricsLegacy();
+        }
       } catch (err) {
         console.error(err);
         statusEl.textContent = `Erro: ${err.message}`;
@@ -124,6 +172,11 @@
     }
 
     onAuthStateChanged(auth, (user) => {
+      const mode = window.PrimePetApiBridge?.getMode?.() || 'legacy';
+      if (mode === 'v2') {
+        loadMetrics();
+        return;
+      }
       if (user) {
         loadMetrics();
       } else {
@@ -132,6 +185,11 @@
     });
     el('btn-login').addEventListener('click', async () => {
       try {
+        const mode = window.PrimePetApiBridge?.getMode?.() || 'legacy';
+        if (mode === 'v2') {
+          statusEl.textContent = 'Modo v2 ativo: use token JWT em localStorage (primepet_v2_access_token).';
+          return;
+        }
         await loginWithGoogle();
       } catch (err) {
         statusEl.textContent = `Erro: ${err.message}`;

@@ -23,7 +23,7 @@ localStorage.setItem('primepet_v2_access_token', '<jwt>')
 ```
 
 ## 3) Migrar chamadas por fluxo (feature flag)
-1. Dashboard
+1. Dashboard ✅ (já com fallback legado/v2)
 2. Cliente
 3. Admin
 4. Contrato/formulário

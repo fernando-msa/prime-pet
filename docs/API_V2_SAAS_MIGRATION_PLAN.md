@@ -62,3 +62,6 @@ Referência para refactor de interface: `docs/LAYOUT_V2_COMPATIBILIDADE.md`.
 
 
 Checklist operacional pós-refactor visual: `docs/MIGRACAO_API_V2_CHECKLIST.md`.
+
+
+Status atual de cutover: `dashboard.html` já suporta leitura em modo v2 via `PrimePetApiBridge`.
