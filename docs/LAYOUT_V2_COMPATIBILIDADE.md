@@ -15,6 +15,7 @@ Guiar o redesenho de layout para consumir a API v2 sem bloquear a migração.
 9. Aplicar também `layout-v2-page-polish.css` para refinamento cross-page.
 10. Definir `aria-current="page"` no item de navegação ativo.
 11. Garantir modo impressão sem shell/FAB para exportações e evidências.
+12. Usar `PrimePetApiBridge` para alternar legado/v2 por feature flag.
 
 ## Ordem recomendada de telas
 1. Login e seleção de tenant
