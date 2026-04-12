@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+enum AppointmentStatus {
+  scheduled
+  confirmed
+  completed
+  canceled
+}
+
+enum NotificationChannel {
+  whatsapp
+  email
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+}
+
+model Tenant {
+  id                   String   @id @default(cuid())
+  name                 String
+  slug                 String   @unique
+  planCode             String
+  maxUsers             Int      @default(3)
+  maxAppointmentsMonth Int      @default(150)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  users             User[]
+  clients           Client[]
+  pets              Pet[]
+  appointments      Appointment[]
+  medicalRecords    MedicalRecord[]
+  auditLogs         AuditLog[]
+  notificationOutbox NotificationOutbox[]
+}
+
+model User {
+  id               String   @id @default(cuid())
+  tenantId         String
+  email            String   @unique
+  passwordHash     String
+  role             UserRole @default(user)
+  refreshTokenHash String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+}
+
+model Client {
+  id             String   @id @default(cuid())
+  tenantId       String
+  name           String
+  email          String?
+  phone          String?
+  externalLegacyId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  pets         Pet[]
+  appointments Appointment[]
+
+  @@index([tenantId])
+  @@unique([tenantId, externalLegacyId])
+}
+
+model Pet {
+  id               String   @id @default(cuid())
+  tenantId         String
+  clientId         String
+  name             String
+  species          String
+  breed            String?
+  externalLegacyId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id])
+  client         Client          @relation(fields: [clientId], references: [id])
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+
+  @@index([tenantId, clientId])
+  @@unique([tenantId, externalLegacyId])
+}
+
+model Appointment {
+  id               String            @id @default(cuid())
+  tenantId         String
+  clientId         String
+  petId            String
+  startsAt         DateTime
+  status           AppointmentStatus @default(scheduled)
+  totalAmount      Decimal           @db.Decimal(10, 2)
+  externalLegacyId String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  client Client @relation(fields: [clientId], references: [id])
+  pet    Pet    @relation(fields: [petId], references: [id])
+
+  @@index([tenantId, startsAt])
+  @@unique([tenantId, externalLegacyId])
+}
+
+model MedicalRecord {
+  id         String   @id @default(cuid())
+  tenantId   String
+  petId      String
+  diagnosis  String?
+  notes      String
+  createdAt  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  pet    Pet    @relation(fields: [petId], references: [id])
+
+  @@index([tenantId, petId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  tenantId   String
+  actorUserId String?
+  action     String
+  entityType String
+  entityId   String
+  oldData    Json?
+  newData    Json?
+  createdAt  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, entityType, entityId])
+}
+
+model NotificationOutbox {
+  id           String             @id @default(cuid())
+  tenantId     String
+  channel      NotificationChannel
+  to           String
+  templateCode String
+  status       NotificationStatus @default(pending)
+  errorMessage String?
+  createdAt    DateTime           @default(now())
+  sentAt       DateTime?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status, createdAt])
+}
+
+model Plan {
+  code                  String  @id
+  name                  String
+  monthlyPrice          Decimal @db.Decimal(10, 2)
+  maxUsers              Int
+  maxAppointmentsMonth  Int
+}
