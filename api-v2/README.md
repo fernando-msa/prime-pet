@@ -113,3 +113,22 @@ api-v2/
 - MySQL: `prisma/sql-templates/mysql.expand.sql`
 
 Use os templates na fase **EXPAND** antes do backfill e do contract.
+
+
+## Backfill legado (próxima etapa da migração)
+
+1. Copie e ajuste `scripts/backfill-config.example.json` para o tenant alvo.
+2. Preencha arquivos de origem JSON em `scripts/data/`.
+3. Execute validação sem escrita:
+
+```bash
+npm run migration:backfill:dry
+```
+
+4. Execute backfill efetivo:
+
+```bash
+npm run migration:backfill
+```
+
+O script é idempotente via `externalLegacyId` + `tenantId` e pode ser reexecutado com segurança.

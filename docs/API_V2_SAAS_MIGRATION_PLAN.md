@@ -42,3 +42,15 @@ Estratégia expand/backfill/contract para evitar indisponibilidade durante a mig
 ## Pré-requisito resolvido antes da migração
 - Alinhamento de dependências NestJS para `11.x` em todo o workspace `api-v2` (evita risco de incompatibilidade de runtime/DI por versões mistas).
 - Inclusão de templates SQL separados por banco (`PostgreSQL` e `MySQL`) para execução segura da fase EXPAND.
+
+
+## Runbook de backfill (executável)
+- Script: `api-v2/scripts/backfill-legacy.js`
+- Configuração: `api-v2/scripts/backfill-config.example.json`
+- Fontes: `api-v2/scripts/data/*.json`
+
+Fluxo recomendado:
+1. Rodar dry-run: `npm --prefix api-v2 run migration:backfill:dry`
+2. Validar contagens e referências não encontradas (`[skip]`).
+3. Rodar efetivo: `npm --prefix api-v2 run migration:backfill`
+4. Reexecutar incrementalmente sempre que houver novos dados legados (idempotência por `externalLegacyId`).

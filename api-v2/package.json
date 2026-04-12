@@ -10,7 +10,9 @@
     "lint": "eslint \"src/**/*.ts\"",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "migration:backfill:dry": "node scripts/backfill-legacy.js scripts/backfill-config.example.json --dry-run",
+    "migration:backfill": "node scripts/backfill-legacy.js scripts/backfill-config.example.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.18",
