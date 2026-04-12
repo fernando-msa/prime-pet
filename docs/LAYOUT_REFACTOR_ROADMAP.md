@@ -1,7 +1,7 @@
 # Roadmap de refactor de layout (PrimePet)
 
 ## Entregue agora
-- Novo passo aplicado: sidebar única global integrada ao shell (substitui sidebars soltas das páginas).
+- Novo passo aplicado: remoção da sidebar global; navegação única no cabeçalho superior.
 - Novo passo aplicado: ações rápidas globais (FAB), alternância de tema persistida e painel de atalhos.
 - Novo passo aplicado: camada de componentes visuais compartilhados (`layout-v2-components.css`) em todas as páginas principais.
 - Shell visual unificado (topbar v2) aplicado em:
@@ -14,7 +14,7 @@
   - `assets/js/layout-v2-shell.js`
 
 ## Quanto falta para concluir layout novo
-Estimativa atual do refactor visual global: **~32% restante**.
+Estimativa atual do refactor visual global: **~25% restante**.
 
 ### Fases restantes
 1. Padronizar componentes (cards, botões, inputs, tabelas): **30%**
