@@ -12,6 +12,7 @@ Guiar o redesenho de layout para consumir a API v2 sem bloquear a migração.
 6. Usar apenas navegação no cabeçalho global (sem sidebar fixa).
 7. Garantir UX de ações rápidas (fechar com clique fora e tecla Esc).
 8. Respeitar `prefers-reduced-motion` para animações/transições.
+9. Aplicar também `layout-v2-page-polish.css` para refinamento cross-page.
 
 ## Ordem recomendada de telas
 1. Login e seleção de tenant

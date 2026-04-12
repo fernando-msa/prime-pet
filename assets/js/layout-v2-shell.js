@@ -24,13 +24,8 @@
     nav.appendChild(link);
   });
 
-  const chip = document.createElement('span');
-  chip.className = 'pp-v2-chip';
-  chip.textContent = 'Layout unificado';
-
   shell.appendChild(brand);
   shell.appendChild(nav);
-  shell.appendChild(chip);
 
   document.body.classList.add('pp-v2-layout');
   document.body.prepend(shell);
