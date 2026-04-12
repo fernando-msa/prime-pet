@@ -100,3 +100,16 @@ api-v2/
 
 - Campos `externalLegacyId` foram adicionados nas entidades principais para referência cruzada com IDs legados.
 - A API v2 foi isolada em pasta própria sem quebrar o frontend atual.
+
+
+## Compatibilidade de dependências
+
+- O ecossistema NestJS foi alinhado na mesma major (`11.x`) para evitar incompatibilidades entre `@nestjs/core`, `@nestjs/common`, `@nestjs/platform-express` e pacotes auxiliares.
+- Evite misturar majors diferentes no mesmo projeto (ex.: `core@11` com `common@10`).
+
+## Templates SQL por banco
+
+- PostgreSQL: `prisma/sql-templates/postgresql.expand.sql`
+- MySQL: `prisma/sql-templates/mysql.expand.sql`
+
+Use os templates na fase **EXPAND** antes do backfill e do contract.

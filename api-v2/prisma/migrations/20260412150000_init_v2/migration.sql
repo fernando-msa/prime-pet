@@ -1,3 +1,4 @@
+-- Script base no dialeto PostgreSQL. Para MySQL usar sql-templates/mysql.expand.sql
 -- Prime Pet v2 (SaaS) - fase EXPAND
 -- Objetivo: criar estrutura v2 sem tocar no sistema legado em produção.
 

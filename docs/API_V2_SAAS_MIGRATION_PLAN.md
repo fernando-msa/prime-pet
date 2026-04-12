@@ -37,3 +37,8 @@ Estratégia expand/backfill/contract para evitar indisponibilidade durante a mig
 - `POST /api/v2/migration/import/clients`
 - `POST /api/v2/migration/import/pets`
 - `POST /api/v2/migration/import/appointments`
+
+
+## Pré-requisito resolvido antes da migração
+- Alinhamento de dependências NestJS para `11.x` em todo o workspace `api-v2` (evita risco de incompatibilidade de runtime/DI por versões mistas).
+- Inclusão de templates SQL separados por banco (`PostgreSQL` e `MySQL`) para execução segura da fase EXPAND.
