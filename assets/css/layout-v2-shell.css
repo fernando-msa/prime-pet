@@ -1,0 +1,87 @@
+:root {
+  --pp-shell-bg: linear-gradient(135deg, #101a33, #1a2d55 55%, #223a69);
+  --pp-shell-fg: #f3f7ff;
+  --pp-shell-accent: #ff8200;
+}
+
+body.pp-v2-layout {
+  padding-top: 72px !important;
+  padding-left: 0 !important;
+}
+
+/* Oculta sidebars legadas para manter navegação única no cabeçalho */
+body.pp-v2-layout .sidebar-nav {
+  display: none !important;
+}
+
+.pp-v2-shell {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--pp-shell-bg);
+  color: var(--pp-shell-fg);
+  border-bottom: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 10px 24px rgba(8,16,34,.28);
+  backdrop-filter: blur(10px);
+}
+
+.pp-v2-brand {
+  font-family: 'Baloo 2', cursive;
+  letter-spacing: .2px;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0 8px;
+}
+
+.pp-v2-brand span { color: var(--pp-shell-accent); }
+
+.pp-v2-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pp-v2-nav a {
+  color: #eef4ff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.24);
+  background: rgba(255,255,255,.08);
+}
+
+.pp-v2-nav a.active {
+  color: #0f2146;
+  background: linear-gradient(135deg, #ffd7ae, #ffbf74);
+  border-color: transparent;
+}
+
+@media (max-width: 920px) {
+  .pp-v2-shell {
+    min-height: 56px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  body.pp-v2-layout {
+    padding-top: 106px !important;
+  }
+
+  .pp-v2-brand {
+    font-size: 26px;
+  }
+}
