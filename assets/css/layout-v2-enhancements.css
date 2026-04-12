@@ -57,3 +57,19 @@ body[data-theme='dark'] .pp-v2-quick-panel button {
   border-color: #2a3d66;
   color: #e8efff;
 }
+
+@media (max-width: 920px) {
+  .pp-v2-fab {
+    right: 12px;
+    bottom: 12px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .pp-v2-quick-panel {
+    right: 10px;
+    left: 10px;
+    width: auto;
+    bottom: 68px;
+  }
+}

@@ -9,6 +9,17 @@
   --pp-success: #1f9d68;
 }
 
+body[data-theme='dark'] {
+  --pp-surface: #151f37;
+  --pp-surface-2: #1a2746;
+  --pp-border: #33486f;
+  --pp-text: #e7efff;
+  --pp-muted: #a9b8d9;
+  --pp-primary: #ffad46;
+  --pp-primary-2: #ffd08d;
+  --pp-success: #64d9a4;
+}
+
 body.pp-v2-layout {
   color: var(--pp-text);
   background-image: radial-gradient(circle at 85% -10%, rgba(255,130,0,.10), transparent 40%);
@@ -52,8 +63,13 @@ body.pp-v2-layout button {
   font-weight: 800 !important;
 }
 
+body[data-theme='dark'].pp-v2-layout .btn,
+body[data-theme='dark'].pp-v2-layout button {
+  color: #1f2334 !important;
+}
+
 body.pp-v2-layout .btn-outline {
-  background: #fff !important;
+  background: var(--pp-surface) !important;
   border: 1px solid var(--pp-border) !important;
   color: var(--pp-text) !important;
 }
@@ -63,6 +79,8 @@ body.pp-v2-layout select,
 body.pp-v2-layout textarea {
   border-radius: 10px !important;
   border: 1.4px solid var(--pp-border) !important;
+  background: var(--pp-surface) !important;
+  color: var(--pp-text) !important;
 }
 
 body.pp-v2-layout table {
@@ -80,4 +98,26 @@ body.pp-v2-layout .confirmed,
 body.pp-v2-layout .ok,
 body.pp-v2-layout .status-confirmado {
   color: var(--pp-success) !important;
+}
+
+body.pp-v2-layout a:focus-visible,
+body.pp-v2-layout button:focus-visible,
+body.pp-v2-layout input:focus-visible,
+body.pp-v2-layout select:focus-visible,
+body.pp-v2-layout textarea:focus-visible {
+  outline: 3px solid rgba(0,191,200,.45);
+  outline-offset: 2px;
+}
+
+@media (max-width: 920px) {
+  body.pp-v2-layout .card,
+  body.pp-v2-layout .section-card,
+  body.pp-v2-layout .resp-card {
+    border-radius: 12px !important;
+  }
+
+  body.pp-v2-layout .btn,
+  body.pp-v2-layout button {
+    min-height: 42px;
+  }
 }

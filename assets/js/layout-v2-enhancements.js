@@ -34,6 +34,20 @@
     }
   });
 
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Node)) return;
+    if (!panel.contains(target) && target !== btn) {
+      panel.classList.remove('open');
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      panel.classList.remove('open');
+    }
+  });
+
   const savedTheme = localStorage.getItem('primepet-theme');
   if (savedTheme === 'dark') {
     document.body.setAttribute('data-theme', 'dark');

@@ -1,6 +1,7 @@
 # Roadmap de refactor de layout (PrimePet)
 
 ## Entregue agora
+- Novo passo aplicado: ajustes de acessibilidade (focus states), dark mode consolidado e melhorias de responsividade mobile no shell/FAB.
 - Novo passo aplicado: remoção da sidebar global; navegação única no cabeçalho superior.
 - Novo passo aplicado: ações rápidas globais (FAB), alternância de tema persistida e painel de atalhos.
 - Novo passo aplicado: camada de componentes visuais compartilhados (`layout-v2-components.css`) em todas as páginas principais.
@@ -14,13 +15,12 @@
   - `assets/js/layout-v2-shell.js`
 
 ## Quanto falta para concluir layout novo
-Estimativa atual do refactor visual global: **~25% restante**.
+Estimativa atual do refactor visual global: **~18% restante**.
 
 ### Fases restantes
-1. Padronizar componentes (cards, botões, inputs, tabelas): **30%**
-2. Responsividade mobile/tablet em todas as páginas: **20%**
-3. Tokens de tema claro/escuro centralizados: **10%**
-4. Ajuste fino UX (microinterações, hierarquia visual, acessibilidade): **10%**
+1. Ajuste fino por página (tipografia/spacing): **8%**
+2. Revisão final mobile/tablet por fluxo: **5%**
+3. QA visual e acessibilidade (contraste/teclado): **5%**
 
 ## Recomendação de execução
 - Fechar primeiro o layout do fluxo crítico:
