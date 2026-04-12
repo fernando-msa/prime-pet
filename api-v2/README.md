@@ -84,6 +84,7 @@ api-v2/
 
 ### Migração
 - `GET /api/v2/migration/status`
+- `GET /api/v2/migration/progress?tenantId=<id>`
 - `POST /api/v2/migration/import/clients`
 - `POST /api/v2/migration/import/pets`
 - `POST /api/v2/migration/import/appointments`
@@ -132,3 +133,8 @@ npm run migration:backfill
 ```
 
 O script é idempotente via `externalLegacyId` + `tenantId` e pode ser reexecutado com segurança.
+
+
+### Como medir quanto falta
+
+Use `GET /api/v2/migration/progress?tenantId=<id>` para ver cobertura por domínio (`clients`, `pets`, `appointments`) e o percentual consolidado (`domainCoverage`).

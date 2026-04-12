@@ -34,6 +34,7 @@ Estratégia expand/backfill/contract para evitar indisponibilidade durante a mig
 
 ## Endpoints de migração entregues
 - `GET /api/v2/migration/status`
+- `GET /api/v2/migration/progress?tenantId=<id>`
 - `POST /api/v2/migration/import/clients`
 - `POST /api/v2/migration/import/pets`
 - `POST /api/v2/migration/import/appointments`
@@ -54,3 +55,6 @@ Fluxo recomendado:
 2. Validar contagens e referências não encontradas (`[skip]`).
 3. Rodar efetivo: `npm --prefix api-v2 run migration:backfill`
 4. Reexecutar incrementalmente sempre que houver novos dados legados (idempotência por `externalLegacyId`).
+
+
+Referência para refactor de interface: `docs/LAYOUT_V2_COMPATIBILIDADE.md`.

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 
 import { Roles } from '../../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -15,6 +15,11 @@ export class MigrationController {
   @Get('status')
   status() {
     return this.migrationService.status();
+  }
+
+  @Get('progress')
+  progress(@Query('tenantId') tenantId: string) {
+    return this.migrationService.progress(tenantId);
   }
 
   @Post('import/clients')
