@@ -8,6 +8,7 @@ Guiar o redesenho de layout para consumir a API v2 sem bloquear a migração.
 2. Enviar `x-tenant-id` em todas as chamadas multi-tenant.
 3. Consumir endpoints v2 (clientes, pets, agendamentos, dashboard, notificações).
 4. Herdar a camada visual compartilhada (`layout-v2-shell.css` + `layout-v2-components.css`).
+5. Opcional: habilitar atalhos globais e toggle de tema (`layout-v2-enhancements.js`).
 
 ## Ordem recomendada de telas
 1. Login e seleção de tenant
