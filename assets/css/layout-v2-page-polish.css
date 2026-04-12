@@ -1,0 +1,66 @@
+body.pp-v2-layout h1,
+body.pp-v2-layout h2,
+body.pp-v2-layout h3 {
+  letter-spacing: .2px;
+}
+
+body.pp-v2-layout .wrap,
+body.pp-v2-layout .container,
+body.pp-v2-layout main {
+  padding-top: 8px;
+  padding-bottom: 24px;
+}
+
+body.pp-v2-layout .card,
+body.pp-v2-layout .section-card,
+body.pp-v2-layout .overview-card,
+body.pp-v2-layout .history-card {
+  padding: clamp(12px, 2vw, 20px) !important;
+}
+
+body.pp-v2-layout .list,
+body.pp-v2-layout .grid,
+body.pp-v2-layout .tabs,
+body.pp-v2-layout .toolbar,
+body.pp-v2-layout .subfilters {
+  gap: 10px !important;
+}
+
+body.pp-v2-layout .item,
+body.pp-v2-layout .resp-card,
+body.pp-v2-layout .stat-card,
+body.pp-v2-layout .health-card {
+  border-radius: 12px !important;
+}
+
+body.pp-v2-layout label,
+body.pp-v2-layout .label,
+body.pp-v2-layout .muted,
+body.pp-v2-layout .sub,
+body.pp-v2-layout .planner-sub {
+  color: var(--pp-muted) !important;
+}
+
+body.pp-v2-layout input::placeholder,
+body.pp-v2-layout textarea::placeholder {
+  color: color-mix(in srgb, var(--pp-muted) 72%, white);
+}
+
+@media (max-width: 920px) {
+  body.pp-v2-layout {
+    font-size: 15px;
+  }
+
+  body.pp-v2-layout .tabs,
+  body.pp-v2-layout .toolbar,
+  body.pp-v2-layout .subfilters {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  body.pp-v2-layout .tabs .tab,
+  body.pp-v2-layout .toolbar button,
+  body.pp-v2-layout .subfilters .subfilter-btn {
+    width: 100%;
+  }
+}
