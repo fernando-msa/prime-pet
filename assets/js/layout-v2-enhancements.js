@@ -46,6 +46,12 @@
     if (event.key === 'Escape') {
       panel.classList.remove('open');
     }
+
+    if (event.altKey && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      panel.classList.toggle('open');
+    }
+
   });
 
   const savedTheme = localStorage.getItem('primepet-theme');

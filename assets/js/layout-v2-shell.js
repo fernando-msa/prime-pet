@@ -20,7 +20,10 @@
     const link = document.createElement('a');
     link.href = entry.href;
     link.textContent = entry.label;
-    if (path === entry.href.toLowerCase()) link.classList.add('active');
+    if (path === entry.href.toLowerCase()) {
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    }
     nav.appendChild(link);
   });
 
