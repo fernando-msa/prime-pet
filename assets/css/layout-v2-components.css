@@ -1,0 +1,123 @@
+:root {
+  --pp-surface: #ffffff;
+  --pp-surface-2: #f8fbff;
+  --pp-border: #d8e2f4;
+  --pp-text: #1a2948;
+  --pp-muted: #5b6d91;
+  --pp-primary: #ff8200;
+  --pp-primary-2: #ffb45f;
+  --pp-success: #1f9d68;
+}
+
+body[data-theme='dark'] {
+  --pp-surface: #151f37;
+  --pp-surface-2: #1a2746;
+  --pp-border: #33486f;
+  --pp-text: #e7efff;
+  --pp-muted: #a9b8d9;
+  --pp-primary: #ffad46;
+  --pp-primary-2: #ffd08d;
+  --pp-success: #64d9a4;
+}
+
+body.pp-v2-layout {
+  color: var(--pp-text);
+  background-image: radial-gradient(circle at 85% -10%, rgba(255,130,0,.10), transparent 40%);
+}
+
+body.pp-v2-layout .card,
+body.pp-v2-layout .section-card,
+body.pp-v2-layout .resp-card,
+body.pp-v2-layout .overview-card,
+body.pp-v2-layout .history-card,
+body.pp-v2-layout .health-card {
+  border: 1px solid var(--pp-border) !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, var(--pp-surface), var(--pp-surface-2)) !important;
+  box-shadow: 0 12px 34px rgba(26,41,72,.08) !important;
+}
+
+body.pp-v2-layout .btn,
+body.pp-v2-layout button,
+body.pp-v2-layout .tab,
+body.pp-v2-layout .subfilter-btn,
+body.pp-v2-layout .portal-link {
+  border-radius: 10px !important;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+body.pp-v2-layout .btn:hover,
+body.pp-v2-layout button:hover,
+body.pp-v2-layout .tab:hover,
+body.pp-v2-layout .subfilter-btn:hover,
+body.pp-v2-layout .portal-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(26,41,72,.15);
+}
+
+body.pp-v2-layout .btn,
+body.pp-v2-layout button {
+  background: linear-gradient(135deg, var(--pp-primary), var(--pp-primary-2)) !important;
+  color: #12213f !important;
+  border: 1px solid rgba(255,130,0,.5) !important;
+  font-weight: 800 !important;
+}
+
+body[data-theme='dark'].pp-v2-layout .btn,
+body[data-theme='dark'].pp-v2-layout button {
+  color: #1f2334 !important;
+}
+
+body.pp-v2-layout .btn-outline {
+  background: var(--pp-surface) !important;
+  border: 1px solid var(--pp-border) !important;
+  color: var(--pp-text) !important;
+}
+
+body.pp-v2-layout input,
+body.pp-v2-layout select,
+body.pp-v2-layout textarea {
+  border-radius: 10px !important;
+  border: 1.4px solid var(--pp-border) !important;
+  background: var(--pp-surface) !important;
+  color: var(--pp-text) !important;
+}
+
+body.pp-v2-layout table {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+body.pp-v2-layout .badge,
+body.pp-v2-layout .status-badge {
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+}
+
+body.pp-v2-layout .confirmed,
+body.pp-v2-layout .ok,
+body.pp-v2-layout .status-confirmado {
+  color: var(--pp-success) !important;
+}
+
+body.pp-v2-layout a:focus-visible,
+body.pp-v2-layout button:focus-visible,
+body.pp-v2-layout input:focus-visible,
+body.pp-v2-layout select:focus-visible,
+body.pp-v2-layout textarea:focus-visible {
+  outline: 3px solid rgba(0,191,200,.45);
+  outline-offset: 2px;
+}
+
+@media (max-width: 920px) {
+  body.pp-v2-layout .card,
+  body.pp-v2-layout .section-card,
+  body.pp-v2-layout .resp-card {
+    border-radius: 12px !important;
+  }
+
+  body.pp-v2-layout .btn,
+  body.pp-v2-layout button {
+    min-height: 42px;
+  }
+}
