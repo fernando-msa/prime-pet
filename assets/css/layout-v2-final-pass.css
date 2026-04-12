@@ -1,0 +1,38 @@
+body.pp-v2-layout {
+  line-height: 1.45;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.pp-v2-layout .pp-v2-shell {
+  isolation: isolate;
+}
+
+body.pp-v2-layout .pp-v2-nav a[aria-current='page'] {
+  outline: 2px solid rgba(255,255,255,.32);
+  outline-offset: 1px;
+}
+
+body.pp-v2-layout .empty,
+body.pp-v2-layout .empty-state,
+body.pp-v2-layout .overview-empty {
+  border: 1px dashed var(--pp-border);
+  border-radius: 12px;
+  padding: 14px;
+  color: var(--pp-muted);
+  background: color-mix(in srgb, var(--pp-surface) 88%, #ffffff);
+}
+
+@media print {
+  .pp-v2-shell,
+  .pp-v2-fab,
+  .pp-v2-quick-panel {
+    display: none !important;
+  }
+
+  body.pp-v2-layout {
+    padding: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+}
