@@ -26,6 +26,14 @@ Criar uma nova camada backend (NestJS + Prisma) para evolução SaaS multi-tenan
 - Notifications
 - Audit
 - Plans
+- Migration (importação legada idempotente por `externalLegacyId`)
 
 ## Zero downtime
 Estratégia expand/backfill/contract para evitar indisponibilidade durante a migração.
+
+
+## Endpoints de migração entregues
+- `GET /api/v2/migration/status`
+- `POST /api/v2/migration/import/clients`
+- `POST /api/v2/migration/import/pets`
+- `POST /api/v2/migration/import/appointments`

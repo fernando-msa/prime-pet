@@ -13,6 +13,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { PlansModule } from './modules/plans/plans.module';
+import { MigrationModule } from './modules/migration/migration.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -29,6 +30,7 @@ import { PrismaModule } from './prisma/prisma.module';
     NotificationsModule,
     AuditModule,
     PlansModule,
+    MigrationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

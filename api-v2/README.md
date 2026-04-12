@@ -82,6 +82,12 @@ api-v2/
 - `GET /api/v2/plans/catalog`
 - `GET /api/v2/plans/limits`
 
+### Migração
+- `GET /api/v2/migration/status`
+- `POST /api/v2/migration/import/clients`
+- `POST /api/v2/migration/import/pets`
+- `POST /api/v2/migration/import/appointments`
+
 ## Estratégia de migração progressiva (zero downtime)
 
 1. **Expandir**: criar tabelas novas (`tenants`, `plans`, `audit_logs`, `notification_outbox`) e colunas `tenant_id` como nullable nas tabelas legadas SQL.
