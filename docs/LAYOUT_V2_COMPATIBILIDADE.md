@@ -7,6 +7,7 @@ Guiar o redesenho de layout para consumir a API v2 sem bloquear a migração.
 1. Enviar `Authorization: Bearer <JWT>` em todas as rotas protegidas.
 2. Enviar `x-tenant-id` em todas as chamadas multi-tenant.
 3. Consumir endpoints v2 (clientes, pets, agendamentos, dashboard, notificações).
+4. Herdar a camada visual compartilhada (`layout-v2-shell.css` + `layout-v2-components.css`).
 
 ## Ordem recomendada de telas
 1. Login e seleção de tenant

@@ -1,6 +1,7 @@
 # Roadmap de refactor de layout (PrimePet)
 
 ## Entregue agora
+- Novo passo aplicado: camada de componentes visuais compartilhados (`layout-v2-components.css`) em todas as páginas principais.
 - Shell visual unificado (topbar v2) aplicado em:
   - `index.html`
   - `client.html`
@@ -11,7 +12,7 @@
   - `assets/js/layout-v2-shell.js`
 
 ## Quanto falta para concluir layout novo
-Estimativa atual do refactor visual global: **~70% restante**.
+Estimativa atual do refactor visual global: **~55% restante**.
 
 ### Fases restantes
 1. Padronizar componentes (cards, botões, inputs, tabelas): **30%**
