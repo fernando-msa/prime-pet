@@ -121,3 +121,37 @@ body.pp-v2-layout textarea:focus-visible {
     min-height: 42px;
   }
 }
+
+
+body.pp-v2-layout .wrap,
+body.pp-v2-layout .container,
+body.pp-v2-layout main {
+  width: min(1240px, 100% - 24px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body.pp-v2-layout table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+body.pp-v2-layout .toast,
+body.pp-v2-layout .cookie-banner,
+body.pp-v2-layout .cookie-box {
+  border-radius: 14px !important;
+  border: 1px solid var(--pp-border) !important;
+  box-shadow: 0 16px 30px rgba(17,30,56,.24) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.pp-v2-layout *,
+  body.pp-v2-layout *::before,
+  body.pp-v2-layout *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
