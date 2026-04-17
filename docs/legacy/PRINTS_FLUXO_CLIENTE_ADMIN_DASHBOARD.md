@@ -4,27 +4,30 @@ Abaixo estão os prints de referência do fluxo operacional para documentação 
 
 ## 1) Cliente (`client.html`)
 
-![Fluxo do cliente](../assets/screenshots/fluxo-cliente.svg)
+![Fluxo do cliente](../../assets/screenshots/fluxo-cliente.svg)
 
 Foco do print:
+
 - criação de pedido;
 - acompanhamento de status;
 - visibilidade da jornada até confirmação.
 
 ## 2) Admin (`admin.html`)
 
-![Fluxo do admin](../assets/screenshots/fluxo-admin.svg)
+![Fluxo do admin](../../assets/screenshots/fluxo-admin.svg)
 
 Foco do print:
+
 - lista de pendências;
 - decisão operacional (confirmar/cancelar);
 - status de integração via webhook.
 
 ## 3) Dashboard (`dashboard.html`)
 
-![Fluxo do dashboard](../assets/screenshots/fluxo-dashboard.svg)
+![Fluxo do dashboard](../../assets/screenshots/fluxo-dashboard.svg)
 
 Foco do print:
+
 - KPIs principais;
 - funil de conversão;
 - saúde operacional (SLA e integrações).

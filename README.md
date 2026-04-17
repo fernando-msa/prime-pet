@@ -16,7 +16,6 @@ O repositório agora está organizado para **migração progressiva para API v2 
 
 Consulte o índice de docs em `docs/README.md`.
 
-
 O **Prime Pet** é uma aplicação web com:
 
 - **Formulário público (`index.html`)** para pré-cadastro e solicitação de agendamento;
@@ -25,6 +24,7 @@ O **Prime Pet** é uma aplicação web com:
 - **Dashboard de métricas (`dashboard.html`)** com KPIs operacionais em Firestore.
 
 O fluxo é simples:
+
 1. O tutor preenche o pré-cadastro no formulário.
 2. O sistema valida campos, bloqueia datas indisponíveis e abre WhatsApp com resumo.
 3. O cliente conclui no portal (login Google/e-mail), acompanha e gerencia pedidos.
@@ -152,7 +152,6 @@ firebase deploy --only firestore:rules,firestore:indexes
 firebase deploy --only functions
 ```
 
-
 ## 🎬 Landing/demo visual
 
 Foi adicionada uma página de demonstração mais visual para apresentação comercial e validação do fluxo mínimo:
@@ -175,6 +174,21 @@ xdg-open demo.html
 # Windows
 start demo.html
 ```
+
+## 🧪 Ambiente de demo e validação
+
+Para facilitar apresentações e validação funcional ponta-a-ponta:
+
+- Demo pública: [prime-pet.vercel.app](https://prime-pet.vercel.app)
+- Pitch visual: `demo.html`
+- Fluxo público: `index.html`
+- Fluxo cliente: `client.html`
+- Fluxo operacional: `admin.html`
+- Métricas operacionais: `dashboard.html`
+
+Guia consolidado de evidências de maturidade:
+
+- `docs/planning/PROVA_MATURIDADE_2026-04.md`
 
 ## 🗂️ Próximos passos em formato de issue
 
@@ -204,7 +218,6 @@ No painel admin, você pode configurar uma URL de webhook para disparar eventos 
 - Zapier
 - ou outro endpoint compatível com `POST` JSON.
 
-
 ## 🗺️ Roadmap por fases (Milestones + Projects)
 
 Para gestão do roadmap com fases e rastreabilidade de execução:
@@ -223,6 +236,12 @@ Galeria versionada dos fluxos de referência:
 
 - `docs/legacy/PRINTS_FLUXO_CLIENTE_ADMIN_DASHBOARD.md`
 
+## 📈 Métricas de produto por release
+
+Quadro simples de métricas com snapshot por release:
+
+- `docs/planning/PROVA_MATURIDADE_2026-04.md`
+
 ## 📝 Changelog por release
 
 Registro de mudanças por release:
@@ -231,7 +250,7 @@ Registro de mudanças por release:
 
 ## 🌐 Deploy
 
-Publicado em: https://prime-pet.vercel.app  
+Publicado em: [prime-pet.vercel.app](https://prime-pet.vercel.app)  
 Sugestão de deploy: Vercel com integração ao GitHub.
 
 ## 📄 Licença
