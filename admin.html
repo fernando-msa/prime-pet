@@ -1023,6 +1023,20 @@ function safeMapsLink(url) {
     return '';
   }
 }
+
+function normalizeWebhookUrl(rawUrl) {
+  try {
+    const parsed = new URL(String(rawUrl || '').trim());
+    const host = (parsed.hostname || '').toLowerCase();
+    const blockedHosts = new Set(['localhost', '127.0.0.1', '::1']);
+    if (parsed.protocol !== 'https:') return '';
+    if (blockedHosts.has(host)) return '';
+    if (/^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[0-1])\./.test(host)) return '';
+    return parsed.href;
+  } catch (_) {
+    return '';
+  }
+}
 function getMetricEvents(days = 7) {
   try {
     const raw = localStorage.getItem(METRICS_KEY);
@@ -1680,7 +1694,13 @@ window.salvarWebhookNotificacao = function() {
     showToast('Webhook removido.');
     return;
   }
-  localStorage.setItem(ADMIN_WEBHOOK_KEY, valor);
+  const urlNormalizada = normalizeWebhookUrl(valor);
+  if (!urlNormalizada) {
+    showToast('Webhook inválido. Use URL HTTPS pública (sem localhost/rede interna).');
+    return;
+  }
+  localStorage.setItem(ADMIN_WEBHOOK_KEY, urlNormalizada);
+  input.value = urlNormalizada;
   showToast('Webhook salvo com sucesso.');
 };
 
@@ -1708,7 +1728,7 @@ window.habilitarNotificacaoNavegador = async function() {
 };
 
 async function enviarWebhookNotificacao(payload) {
-  const url = localStorage.getItem(ADMIN_WEBHOOK_KEY);
+  const url = normalizeWebhookUrl(localStorage.getItem(ADMIN_WEBHOOK_KEY));
   if (!url) return;
   try {
     const resp = await fetch(url, {

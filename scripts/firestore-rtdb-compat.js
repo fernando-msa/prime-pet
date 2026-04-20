@@ -73,6 +73,19 @@ function agendamentoDocId(date, hour) {
   return `${date}__${hour}`;
 }
 
+function normalizeAgendamentoPayload(value) {
+  if (value && typeof value === 'object') {
+    return {
+      status: String(value.status || 'pending'),
+      ownerUid: value.ownerUid ? String(value.ownerUid) : undefined,
+    };
+  }
+  return {
+    status: String(value || 'pending'),
+    ownerUid: undefined,
+  };
+}
+
 function toNestedObject(pathParts, value) {
   return pathParts.reduceRight((acc, key) => ({ [key]: acc }), value);
 }
@@ -152,7 +165,14 @@ export async function set(refObj, value) {
 
   if (root === 'agendamentos' && len === 3) {
     const [_, date, hour] = segs;
-    await setDoc(doc(db, 'agendamentos', agendamentoDocId(date, hour)), { date, hour, status: value }, { merge: true });
+    const normalized = normalizeAgendamentoPayload(value);
+    const payload = {
+      date,
+      hour,
+      status: normalized.status,
+    };
+    if (normalized.ownerUid) payload.ownerUid = normalized.ownerUid;
+    await setDoc(doc(db, 'agendamentos', agendamentoDocId(date, hour)), payload, { merge: true });
     return;
   }
 

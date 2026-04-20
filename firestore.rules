@@ -23,6 +23,10 @@ service cloud.firestore {
       return status in ['pending', 'confirmed', 'cancelled'];
     }
 
+    function hasValidOwnerUid(data) {
+      return data.ownerUid is string && data.ownerUid.size() > 0;
+    }
+
     // ── Coleções novas (modelo Firestore nativo) ───────────────────────────
     match /maintenance/config {
       allow read: if true;
@@ -76,9 +80,21 @@ service cloud.firestore {
     // ── Coleções legadas usadas pela camada de compatibilidade ─────────────
     match /agendamentos/{id} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn()
+
+      allow create: if (isAdmin()
+          && validStatus(request.resource.data.status)
+          && hasValidOwnerUid(request.resource.data))
+        || (isSignedIn()
+          && request.resource.data.ownerUid == request.auth.uid
+          && request.resource.data.status == 'pending');
+
+      allow update: if isAdmin()
         && validStatus(request.resource.data.status);
-      allow delete: if isSignedIn();
+
+      allow delete: if isAdmin()
+        || (isSignedIn()
+          && resource.data.ownerUid == request.auth.uid
+          && resource.data.status == 'pending');
     }
 
     match /historico_acoes/{id} {
