@@ -8,14 +8,36 @@ O formato segue o padrão **Keep a Changelog** e versionamento semântico (**Sem
 
 ### Added
 
-- Guia de milestones por fase e uso do GitHub Projects para roadmap.
-- Documento de arquitetura Firebase + Functions + Webhook.
-- Galeria de prints do fluxo cliente/admin/dashboard.
-- Documento de prova de maturidade com evidências visuais, ambiente de demo, política de release e snapshot de métricas.
+- Sem mudanças registradas.
 
 ### Fixed
 
-- Correção dos caminhos das imagens no guia de prints para renderização correta no repositório.
+- Sem mudanças registradas.
+
+## [2026.4.2] - 2026-04-20
+
+### Added
+
+- Seção de clareza da proposta no README (problema, público e uso real).
+- Seção visual no README com screenshots e GIF de execução do produto.
+- Script de smoke QA para Windows PowerShell (`scripts/qa_smoke.ps1`).
+- Documento de hardening com evidências de segurança e validação ponta a ponta (`docs/planning/SECURITY_HARDENING_2026-04.md`).
+
+### Changed
+
+- Atualização da API v2 para `bcrypt@^6.0.0` e `typescript@^5.5.4`.
+- README atualizado com comandos de validação da API v2 no PowerShell usando `npm.cmd`.
+
+### Fixed
+
+- Ajuste de ownership nos slots de agendamento para reduzir risco de alteração indevida por usuário autenticado.
+- Validação robusta de URL de webhook no admin (HTTPS público, sem localhost/rede interna).
+- Renderização segura no dashboard para mitigar injeção de HTML em dados dinâmicos.
+
+### Security
+
+- Vulnerabilidades transitivas de `tar` removidas após upgrade de `bcrypt`.
+- Resultado atual de auditoria na API v2: `npm audit` sem vulnerabilidades.
 
 ## [2026.4.0] - 2026-04-04
 
