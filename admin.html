@@ -1048,6 +1048,20 @@ function safeMapsLink(url) {
     return '';
   }
 }
+
+function normalizeWebhookUrl(rawUrl) {
+  try {
+    const parsed = new URL(String(rawUrl || '').trim());
+    const host = (parsed.hostname || '').toLowerCase();
+    const blockedHosts = new Set(['localhost', '127.0.0.1', '::1']);
+    if (parsed.protocol !== 'https:') return '';
+    if (blockedHosts.has(host)) return '';
+    if (/^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[0-1])\./.test(host)) return '';
+    return parsed.href;
+  } catch (_) {
+    return '';
+  }
+}
 function getMetricEvents(days = 7) {
   try {
     const raw = localStorage.getItem(METRICS_KEY);
@@ -1697,12 +1711,13 @@ window.salvarWebhookNotificacao = async function() {
   const input = document.getElementById('notif-webhook-url');
   if (!input) return;
   const valor = String(input.value || '').trim();
-  try {
-    await callableSetOperationalWebhook({ url: valor });
-    showToast(valor ? 'Webhook salvo com sucesso.' : 'Webhook removido.');
-  } catch (e) {
-    showToast(`Falha ao salvar webhook (${e?.code || 'erro'}).`);
+  if (!valor) {
+    localStorage.removeItem(ADMIN_WEBHOOK_KEY);
+    showToast('Webhook removido.');
+    return;
   }
+  localStorage.setItem(ADMIN_WEBHOOK_KEY, valor);
+  showToast('Webhook salvo com sucesso.');
 };
 
 window.testarWebhookNotificacao = async function() {
@@ -1728,6 +1743,8 @@ window.habilitarNotificacaoNavegador = async function() {
 };
 
 async function enviarWebhookNotificacao(payload) {
+  const url = localStorage.getItem(ADMIN_WEBHOOK_KEY);
+  if (!url) return;
   try {
     const resp = await callableNotifyOperationalEvent(payload);
     if (resp?.data?.delivered === false) return;

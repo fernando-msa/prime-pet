@@ -97,6 +97,11 @@
       return cred.user;
     }
 
+    function safeText(value) {
+      const txt = String(value ?? '').trim();
+      return txt || '-';
+    }
+
     function paint(rows) {
       const counts = { pending: 0, confirmed: 0, cancelled: 0 };
       rows.forEach(r => { if (counts[r.status] !== undefined) counts[r.status]++; });
@@ -110,13 +115,16 @@
       el('m-rate').textContent = `${rate}%`;
 
       const tbody = el('rows');
-      tbody.innerHTML = rows.map(r => `<tr>
-        <td>${r.date || '-'}</td>
-        <td>${r.hour || '-'}</td>
-        <td>${r.ownerName || '-'}</td>
-        <td>${r.petName || '-'}</td>
-        <td>${r.status || '-'}</td>
-      </tr>`).join('');
+      tbody.innerHTML = '';
+      rows.forEach((r) => {
+        const tr = document.createElement('tr');
+        [r.date, r.hour, r.ownerName, r.petName, r.status].forEach((value) => {
+          const td = document.createElement('td');
+          td.textContent = safeText(value);
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
     }
 
     function normalizeV2Rows(rows) {

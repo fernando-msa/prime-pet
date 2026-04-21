@@ -625,7 +625,7 @@ async function importarPreCadastroSeExistir(user) {
       const slotRef = ref(db, `agendamentos/${registro.dataAgendada}/${slotKey}`);
       const slotSnap = await get(slotRef);
       if (!slotSnap.exists()) {
-        await set(slotRef, 'pending');
+        await set(slotRef, { status: 'pending', ownerUid: user.uid });
       }
     }
 
@@ -948,11 +948,20 @@ window.remarcarSolicitacao = async function(id){
     return;
   }
 
+  const ownerUid = auth.currentUser?.uid || solic.ownerUid || '';
+  if (!ownerUid) {
+    document.getElementById('portal-msg').textContent = 'Sessão inválida para remarcar. Faça login novamente.';
+    return;
+  }
+
   const oldKey = (solic.horaAgendada || '').replace(':','');
   if (solic.dataAgendada && oldKey) {
     await remove(ref(db, `agendamentos/${solic.dataAgendada}/${oldKey}`));
   }
-  await set(ref(db, `agendamentos/${novaData}/${novoKey}`), 'pending');
+  await set(ref(db, `agendamentos/${novaData}/${novoKey}`), {
+    status: 'pending',
+    ownerUid
+  });
   await set(ref(db, `historico_clientes/${id}/dataAgendada`), novaData);
   await set(ref(db, `historico_clientes/${id}/horaAgendada`), novoHorario);
   await atualizarSolicitacaoLocal(id);

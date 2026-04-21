@@ -30,6 +30,27 @@ O fluxo é simples:
 3. O cliente conclui no portal (login Google/e-mail), acompanha e gerencia pedidos.
 4. O admin acompanha pendências e decide confirmar/cancelar/liberar agenda.
 
+## 🎯 Clareza da proposta (nível produto)
+
+### Problema
+
+Clínicas e operações pet perdem eficiência quando o agendamento digital fica fragmentado entre formulário público, acompanhamento do tutor e gestão interna.
+
+### Público
+
+- Tutores de pets que precisam solicitar e acompanhar atendimentos com rapidez.
+- Equipe operacional/admin que precisa confirmar, organizar e monitorar agenda em tempo real.
+
+### Uso real
+
+O produto conecta o fluxo ponta a ponta:
+
+1. Tutor solicita atendimento no formulário público.
+2. Tutor acompanha status e histórico no portal do cliente.
+3. Operação valida, confirma/cancela e monitora métricas no admin/dashboard.
+
+Isso reduz ambiguidade operacional e transforma a proposta em valor prático e mensurável para adoção.
+
 ## ✨ Funcionalidades
 
 - Pré-cadastro completo (tutor, pet, saúde, comportamento e serviços).
@@ -78,6 +99,24 @@ Depois, abra o `index.html` no navegador.
 
 ```bash
 ./scripts/qa_smoke.sh
+```
+
+No Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\qa_smoke.ps1
+```
+
+### API v2 (validação local no Windows)
+
+No PowerShell, prefira `npm.cmd` para evitar bloqueio de política de execução do `npm.ps1`:
+
+```powershell
+cd .\api-v2
+npm.cmd install
+npm.cmd run lint
+npm.cmd run build
+npm.cmd audit --audit-level=moderate
 ```
 
 ## 📁 Estrutura do projeto
@@ -177,6 +216,24 @@ xdg-open demo.html
 start demo.html
 ```
 
+## 📸 Screenshots do produto em execução
+
+### Fluxos principais
+
+![Fluxo do cliente](assets/screenshots/fluxo-cliente.svg)
+![Fluxo administrativo](assets/screenshots/fluxo-admin.svg)
+![Fluxo de dashboard](assets/screenshots/fluxo-dashboard.svg)
+
+### Evidências de demo
+
+![Checklist da demo](assets/screenshots/checklist-demo.svg)
+![Score da demo](assets/screenshots/score-demo.svg)
+![Exportação/PDF da demo](assets/screenshots/pdf-demo.svg)
+
+### GIF curto de navegação
+
+![Prime Pet em execução](assets/screenshots/prime-pet-demo.gif)
+
 ## 🧪 Ambiente de demo e validação
 
 Para facilitar apresentações e validação funcional ponta-a-ponta:
@@ -191,6 +248,7 @@ Para facilitar apresentações e validação funcional ponta-a-ponta:
 Guia consolidado de evidências de maturidade:
 
 - `docs/planning/PROVA_MATURIDADE_2026-04.md`
+- `docs/planning/SECURITY_HARDENING_2026-04.md`
 
 ## 🗂️ Próximos passos em formato de issue
 
