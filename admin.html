@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Painel Admin</title>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="apple-touch-icon" href="./favicon.svg">
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#FF8200">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -250,7 +250,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 /* ══ PAINEL ══ */
 #admin-panel { display: none; background:var(--cream); min-height:100vh; }
-.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:120;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:120;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
 .sidebar-brand{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:linear-gradient(135deg,rgba(255,130,0,.26),rgba(0,191,200,.2));border:1px solid rgba(255,255,255,.16);color:#fff;font-weight:900;font-family:'Baloo 2',cursive;letter-spacing:.3px}
 .sidebar-brand .brand-mark{font-size:18px;line-height:1}
@@ -701,6 +701,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   font-size: 14px; z-index: 999; box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   max-width: 90vw; text-align: center; font-family: 'DM Sans', sans-serif;
 }
+.mb-14 { margin-bottom: 14px; }
+.row-wrap-gap-8 { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.input-grow-280 { min-width: 280px; flex: 1; }
+.mt-8 { margin-top: 8px; }
+.btn-hidden { display: none; }
+.history-head-actions { display: flex; align-items: center; gap: 8px; }
 </style>
 
 <link rel="stylesheet" href="./assets/css/layout-v2-shell.css">
@@ -774,16 +780,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   </div>
 
   <div class="admin-wrap">
-    <div class="overview-card" style="margin-bottom:14px">
+    <div class="overview-card mb-14">
       <div class="overview-head">
         <h3 class="overview-title">Modo de manutenção</h3>
       </div>
       <p class="muted-note">Quando ativo, Home e Portal do Cliente exibem a página técnica de manutenção.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-        <input id="maintenance-message" class="month-input" style="min-width:280px;flex:1" placeholder="Mensagem para o cliente (opcional)">
+      <div class="row-wrap-gap-8">
+        <input id="maintenance-message" class="month-input input-grow-280" placeholder="Mensagem para o cliente (opcional)">
         <button class="btn-export" type="button" onclick="alternarModoManutencao()" id="maintenance-toggle-btn">Ativar manutenção</button>
       </div>
-      <p class="muted-note" id="maintenance-status" style="margin-top:8px">Status: verificando...</p>
+      <p class="muted-note mt-8" id="maintenance-status">Status: verificando...</p>
     </div>
     <div class="health-grid">
       <div class="health-card"><div class="health-k">Saúde Auth</div><div class="health-v" id="health-auth">OK</div></div>
@@ -791,7 +797,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <div class="health-card"><div class="health-k">Erros (24h)</div><div class="health-v" id="health-errors">0</div></div>
       <div class="health-card"><div class="health-k">Versão</div><div class="health-v" id="health-version">v1.13.0</div></div>
     </div>
-    <div class="overview-card" style="margin-bottom:14px">
+    <div class="overview-card mb-14">
       <div class="overview-head">
         <h3 class="overview-title">Dashboard técnico rápido</h3>
       </div>
@@ -803,7 +809,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
       <p class="muted-note">Use os blocos abaixo para administrar rapidamente o ambiente operacional.</p>
     </div>
-    <div class="overview-card" style="margin-bottom:14px" id="sec-export">
+    <div class="overview-card mb-14" id="sec-export">
       <div class="overview-head">
         <h3 class="overview-title">Funil local (7 dias)</h3>
         <button class="btn-export" type="button" onclick="exportarMetricasLocais()">Exportar métricas (CSV)</button>
@@ -816,7 +822,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
       <p class="muted-note">Base local do navegador/admin atual (últimos 7 dias).</p>
     </div>
-    <div class="overview-card" style="margin-bottom:14px" id="sec-webhook">
+    <div class="overview-card mb-14" id="sec-webhook">
       <div class="overview-head">
         <h3 class="overview-title">Exportações para análise/contabilidade</h3>
       </div>
@@ -828,13 +834,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
       <p class="muted-note">Exporte no formato que fizer mais sentido para BI, financeiro e auditoria.</p>
     </div>
-    <div class="overview-card" style="margin-bottom:14px">
+    <div class="overview-card mb-14">
       <div class="overview-head">
         <h3 class="overview-title">Notificações operacionais (Webhook)</h3>
       </div>
       <p class="muted-note">Configure um webhook (n8n/Make/Zapier) para avisos externos quando surgir agendamento pendente.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
-        <input id="notif-webhook-url" class="month-input" style="min-width:280px;flex:1" placeholder="https://seu-webhook/prime-pet">
+      <div class="row-wrap-gap-8">
+        <input id="notif-webhook-url" class="month-input input-grow-280" placeholder="https://seu-webhook/prime-pet">
         <button class="btn-export" type="button" onclick="salvarWebhookNotificacao()">Salvar webhook</button>
         <button class="btn-export" type="button" onclick="testarWebhookNotificacao()">Testar webhook</button>
         <button class="btn-export" type="button" onclick="habilitarNotificacaoNavegador()">Ativar notificação do navegador</button>
@@ -846,7 +852,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
         <p class="planner-sub">Monitore pendências, capacidade e status de slots em tempo real.</p>
       </div>
       <div class="planner-actions">
-        <input type="month" id="mes-referencia" class="month-input" onchange="alterarMesVisao(this.value)">
+        <input type="text" id="mes-referencia" class="month-input" placeholder="AAAA-MM" pattern="\\d{4}-\\d{2}" onchange="alterarMesVisao(this.value)">
         <button class="btn-export" onclick="exportarMesGoogle()">Exportar mês (Google Agenda)</button>
       </div>
     </div>
@@ -883,7 +889,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <ul id="acoes-admin-list">
         <li>Nenhuma ação registrada ainda.</li>
       </ul>
-      <button class="btn-export" type="button" id="acoes-ver-mais" onclick="toggleAcoesAdminExpandido()" style="margin-top:8px;display:none">Ver mais</button>
+      <button class="btn-export mt-8 btn-hidden" type="button" id="acoes-ver-mais" onclick="toggleAcoesAdminExpandido()">Ver mais</button>
     </div>
 
     <div class="actions-log">
@@ -891,13 +897,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <ul id="erros-app-list">
         <li>Nenhum erro registrado ainda.</li>
       </ul>
-      <button class="btn-export" type="button" id="erros-ver-mais" onclick="toggleErrosExpandido()" style="margin-top:8px;display:none">Ver mais</button>
+      <button class="btn-export mt-8 btn-hidden" type="button" id="erros-ver-mais" onclick="toggleErrosExpandido()">Ver mais</button>
     </div>
 
     <div class="history-wrap">
       <div class="history-head">
         <h3 class="history-title">Histórico de clientes</h3>
-        <div style="display:flex;align-items:center;gap:8px">
+        <div class="history-head-actions">
           <span class="history-count" id="history-count">0</span>
           <button class="btn-more" onclick="apagarHistoricoClientes()">Apagar histórico</button>
           <button class="btn-more" onclick="toggleHistorico()">Ver mais</button>
@@ -943,7 +949,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 <script type="module">
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, remove, get, query, orderByChild, equalTo } from "./scripts/firestore-rtdb-compat.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getIdTokenResult
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -957,16 +963,35 @@ const firebaseConfig = {
   appId:             "1:716091719601:web:89e7ff08dc887ad4254790"
 };
 
+const AUTHORIZED_WEB_HOSTS = new Set([
+  'localhost',
+  '127.0.0.1',
+  'prime-pet.firebaseapp.com',
+  'prime-pet.web.app',
+  'prime-pet.vercel.app'
+]);
+
+function assertHostAutorizado() {
+  const host = String(window.location.hostname || '');
+  if (!host || AUTHORIZED_WEB_HOSTS.has(host)) return;
+  throw new Error(`Host não autorizado para Firebase Auth: ${host}`);
+}
+
+assertHostAutorizado();
+
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
-const fsdb = getFirestore(app);
 const auth = getAuth(app);
+const fns  = getFunctions(app, 'us-central1');
 const APP_VERSION = 'v1.14.0';
 const METRICS_KEY = 'primepet_metrics_events';
-const ADMIN_WEBHOOK_KEY = 'primepet_admin_notification_webhook';
 const ADMIN_SESSION_KEY = 'primepet_admin_session_v1';
 const ADMIN_IDLE_LIMIT_MS = 15 * 60 * 1000;
 const ADMIN_MAX_SESSION_MS = 8 * 60 * 60 * 1000;
+const callableGetOperationalWebhook = httpsCallable(fns, 'getOperationalWebhook');
+const callableSetOperationalWebhook = httpsCallable(fns, 'setOperationalWebhook');
+const callableTestOperationalWebhook = httpsCallable(fns, 'testOperationalWebhook');
+const callableNotifyOperationalEvent = httpsCallable(fns, 'notifyOperationalEvent');
 
 let agendamentos = {};
 let historicoClientes = [];
@@ -1132,14 +1157,6 @@ async function isAdminAutorizado(user) {
     if (token?.claims?.admin === true) return true;
   } catch (_) {}
 
-  try {
-    const adminByUid = await getDoc(doc(fsdb, 'admin_users', user.uid));
-    if (adminByUid.exists()) {
-      const data = adminByUid.data() || {};
-      if (data.enabled !== false) return true;
-    }
-  } catch (_) {}
-
   return ADMINS_FALLBACK_EMAILS.has(String(user.email || '').toLowerCase().trim());
 }
 
@@ -1163,7 +1180,6 @@ document.getElementById('health-version').textContent = APP_VERSION;
 document.getElementById('admin-version-footer').textContent = `Prime Pet • Versão atual: ${APP_VERSION}`;
 destacarLinkAtivoSidebar();
 renderFunnelLocal();
-carregarWebhookNotificacao();
 
 // ── Auth observer ─────────────────────────────────
 onAuthStateChanged(auth, async user => {
@@ -1177,7 +1193,7 @@ onAuthStateChanged(auth, async user => {
     const autorizado = await isAdminAutorizado(user);
     if (!autorizado) {
       signOut(auth).catch(() => {});
-      mostrarErroLogin('Acesso negado. Configure custom claim admin=true ou crie admin_users/{uid} com enabled=true no Firestore.');
+      mostrarErroLogin('Acesso negado. Conta sem custom claim admin=true.');
       return;
     }
     registrarSessaoAdmin();
@@ -1188,6 +1204,7 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('admin-panel').style.display  = 'block';
     atualizarStatusSessoes();
     atualizarUiManutencao();
+    carregarWebhookNotificacao().catch(() => {});
     iniciarAdmin();
   } else {
     limparSessaoAdmin();
@@ -1231,7 +1248,7 @@ window.fazerLoginGoogle = async function() {
     const cred = await signInWithPopup(auth, provider);
     if (!(await isAdminAutorizado(cred.user))) {
       await signOut(auth);
-      mostrarErroLogin('Conta Google sem permissão admin. Use claim admin=true ou admin_users/{uid}.');
+      mostrarErroLogin('Conta Google sem permissão admin. Defina custom claim admin=true.');
     }
   } catch (e) {
     mostrarErroLogin(`Falha no login Google (${e?.code || 'erro-desconhecido'}).`);
@@ -1665,37 +1682,40 @@ function baixarArquivo(nome, conteudo, mime) {
   URL.revokeObjectURL(url);
 }
 
-function carregarWebhookNotificacao() {
+async function carregarWebhookNotificacao() {
   const input = document.getElementById('notif-webhook-url');
   if (!input) return;
-  input.value = localStorage.getItem(ADMIN_WEBHOOK_KEY) || '';
+  try {
+    const resp = await callableGetOperationalWebhook();
+    input.value = String(resp?.data?.url || '');
+  } catch (_) {
+    input.value = '';
+  }
 }
 
-window.salvarWebhookNotificacao = function() {
+window.salvarWebhookNotificacao = async function() {
   const input = document.getElementById('notif-webhook-url');
   if (!input) return;
   const valor = String(input.value || '').trim();
-  if (!valor) {
-    localStorage.removeItem(ADMIN_WEBHOOK_KEY);
-    showToast('Webhook removido.');
-    return;
+  try {
+    await callableSetOperationalWebhook({ url: valor });
+    showToast(valor ? 'Webhook salvo com sucesso.' : 'Webhook removido.');
+  } catch (e) {
+    showToast(`Falha ao salvar webhook (${e?.code || 'erro'}).`);
   }
-  localStorage.setItem(ADMIN_WEBHOOK_KEY, valor);
-  showToast('Webhook salvo com sucesso.');
 };
 
 window.testarWebhookNotificacao = async function() {
-  const url = localStorage.getItem(ADMIN_WEBHOOK_KEY);
-  if (!url) {
-    showToast('Salve um webhook antes de testar.');
-    return;
+  try {
+    const resp = await callableTestOperationalWebhook();
+    if (resp?.data?.delivered === false) {
+      showToast('Webhook não configurado no backend.');
+      return;
+    }
+    showToast('Teste de webhook enviado com sucesso.');
+  } catch (e) {
+    showToast(`Falha ao testar webhook (${e?.code || 'erro'}).`);
   }
-  await enviarWebhookNotificacao({
-    tipo: 'teste',
-    mensagem: 'Teste manual do admin Prime Pet',
-    admin: adminEmailAtual || 'admin',
-    at: Date.now()
-  });
 };
 
 window.habilitarNotificacaoNavegador = async function() {
@@ -1708,17 +1728,11 @@ window.habilitarNotificacaoNavegador = async function() {
 };
 
 async function enviarWebhookNotificacao(payload) {
-  const url = localStorage.getItem(ADMIN_WEBHOOK_KEY);
-  if (!url) return;
   try {
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const resp = await callableNotifyOperationalEvent(payload);
+    if (resp?.data?.delivered === false) return;
   } catch (e) {
-    showToast(`Falha ao notificar webhook (${e.message || 'erro'}).`);
+    showToast(`Falha ao notificar webhook (${e?.code || 'erro'}).`);
   }
 }
 
@@ -1743,13 +1757,14 @@ function processarNotificacoesPendentes() {
     }
     document.title = `(${novos.length}) Prime Pet – Painel Admin`;
     enviarWebhookNotificacao({
-      tipo: 'novo_agendamento_pendente',
-      mensagem: msg,
-      data: date,
-      hora: hour,
-      status: 'pending',
-      adminDestino: 'arthurleite71@gmail.com',
-      at: Date.now()
+      eventType: 'novo_agendamento_pendente',
+      payload: {
+        mensagem: msg,
+        data: date,
+        hora: hour,
+        status: 'pending',
+        at: Date.now()
+      }
     });
   });
 }

@@ -70,6 +70,20 @@
       appId: "1:716091719601:web:89e7ff08dc887ad4254790"
     };
 
+    const AUTHORIZED_WEB_HOSTS = new Set([
+      'localhost',
+      '127.0.0.1',
+      'prime-pet.firebaseapp.com',
+      'prime-pet.web.app',
+      'prime-pet.vercel.app'
+    ]);
+    const host = String(window.location.hostname || '');
+    if (host && !AUTHORIZED_WEB_HOSTS.has(host)) {
+      const statusNode = document.getElementById('status');
+      if (statusNode) statusNode.textContent = `Host não autorizado para Firebase Auth: ${host}`;
+      throw new Error('host-nao-autorizado');
+    }
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);

@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD022 MD029 MD031 MD032 -->
+
 # Auditoria do Repositório Prime Pet (Abril/2026)
 
 ## Escopo revisado
@@ -132,3 +134,25 @@ Com essas melhorias, o Prime Pet tende a evoluir de um formulário funcional par
 - melhor retenção de clientes;
 - operação mais segura e escalável;
 - percepção de marca mais premium.
+
+---
+
+## Execução técnica aplicada (21/04/2026)
+
+1. Modelo de autorização admin corrigido
+- `firestore.rules` passou a aceitar admin por `custom claim` (`admin=true`) com fallback em `admin_users/{uid}` (`enabled != false`).
+- `admin.html` foi alinhado para exigir claim admin no login de painel (evitando divergência entre front e rules).
+
+2. Hardening Firebase Web
+- Adicionada validação de host autorizado no front para bloquear uso de Auth em domínios não aprovados.
+- Domínios permitidos no código: `localhost`, `127.0.0.1`, `prime-pet.firebaseapp.com`, `prime-pet.web.app`, `prime-pet.vercel.app`.
+- Reforço operacional: manter revisão periódica de API key e Authorized Domains no console Firebase.
+
+3. Configuração operacional sensível movida do front para backend
+- Webhook operacional deixou de ser salvo em `localStorage`.
+- Novas callable Functions: `setOperationalWebhook`, `getOperationalWebhook`, `testOperationalWebhook`, `notifyOperationalEvent`.
+- `admin.html` agora consome apenas essas funções para salvar/testar/disparar integração.
+
+4. Migração legado -> nativo com redução de superfície de erro
+- `assets/js/api-v2-migration-bridge.js` ajustado para `v2` como modo padrão.
+- Checklists de migração atualizados para tratar `legacy` somente como rollback temporário.

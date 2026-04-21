@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Pet – Portal do Cliente</title>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="apple-touch-icon" href="./favicon.svg">
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#FF8200">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -39,7 +39,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .portal-link.news{background:linear-gradient(135deg,#fff1c9,#ffe08a);color:#4a3a00}
 .portal-link.profile{background:rgba(255,255,255,.14)}
 .portal-link.logout{background:linear-gradient(135deg,#ffe5e5,#ffc8c8);color:#6f0d0d}
-.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:62px;background:rgba(14,24,45,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-right:1px solid rgba(160,178,220,.24);z-index:40;display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:12px;transition:width .28s ease}
 .sidebar-nav.expanded{width:220px;align-items:stretch;padding:12px 10px}
 .sidebar-brand{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:linear-gradient(135deg,rgba(255,130,0,.26),rgba(0,191,200,.2));border:1px solid rgba(255,255,255,.16);color:#fff;font-weight:900;font-family:'Baloo 2',cursive;letter-spacing:.3px}
 .sidebar-brand .brand-mark{font-size:18px;line-height:1}
@@ -57,7 +57,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .side-link .label{opacity:0;max-width:0;overflow:hidden;transition:all .2s ease}
 .sidebar-nav.expanded .side-link .label{opacity:1;max-width:140px}
 .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 46px}
-.card{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border:1px solid #dfe6f7;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 12px 32px rgba(24,38,66,.08)}
+.card{background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid #dfe6f7;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 12px 32px rgba(24,38,66,.08)}
 .login-row{display:flex;gap:8px;flex-wrap:wrap}
 input[type="tel"],input[type="text"]{flex:1;min-width:220px;border:1.5px solid var(--gray2);border-radius:8px;padding:11px 12px;font-size:14px}
 .btn{border:none;border-radius:8px;padding:11px 16px;background:var(--dark);color:#fff;cursor:pointer;font-size:13px}
@@ -145,6 +145,16 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
 @keyframes pulseStatus{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.22);opacity:1}}
 @keyframes breatheStatus{0%,100%{transform:scale(.92)}50%{transform:scale(1.07)}}
 @keyframes shakeStatus{0%,90%,100%{transform:translateX(0)}92%{transform:translateX(-1px)}96%{transform:translateX(1px)}}
+.wrap-tight-top { padding-top: 10px; padding-bottom: 0; }
+.assistant-input-inline { flex: 1; min-width: 220px; }
+.assistant-meta { margin-top: 6px; }
+.mt-10 { margin-top: 10px; }
+.portal-actions { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.profile-grid-top { margin-top: 10px; }
+.profile-checkbox-row { flex-direction: row; align-items: center; gap: 10px; }
+.profile-checkbox-input { width: 18px; height: 18px; min-width: auto; }
+.version-line { text-align: center; }
+.privacy-link-strong { text-decoration: none; font-weight: 700; }
 </style>
 
 <link rel="stylesheet" href="./assets/css/layout-v2-shell.css">
@@ -229,7 +239,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
       </div>
     </div>
   </div>
-  <div class="wrap" style="padding-top:10px;padding-bottom:0">
+  <div class="wrap wrap-tight-top">
     <div class="card hidden" id="notas-atualizacao">
       <strong>Atualizações / Correções</strong><br>
       v1.0.0 • Base do portal e agenda<br>
@@ -261,17 +271,17 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
         <button class="assistant-chip" onclick="responderAssistente('suporte')">Falar com suporte</button>
       </div>
       <div class="assistant-actions">
-        <input type="text" id="assistant-input" placeholder="Descreva seu problema..." style="flex:1;min-width:220px">
+        <input type="text" id="assistant-input" class="assistant-input-inline" placeholder="Descreva seu problema...">
         <button class="btn-sm" onclick="responderAssistenteLivre()">Enviar dúvida</button>
       </div>
       <div class="assistant-reply" id="assistant-reply">Selecione uma opção acima para receber orientação.</div>
-      <div class="muted" id="assistant-meta" style="margin-top:6px">Base: respostas rápidas locais.</div>
-      <div style="margin-top:10px">
+      <div class="muted assistant-meta" id="assistant-meta">Base: respostas rápidas locais.</div>
+      <div class="mt-10">
         <a class="contact-btn" href="https://wa.me/5579996623050?text=Ol%C3%A1%21%20Preciso%20de%20ajuda%20com%20meu%20pedido%20no%20portal." target="_blank" rel="noopener noreferrer">💬 Fale conosco</a>
       </div>
     </div>
     <div class="card hidden" id="portal-card">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <div class="portal-actions">
         <button class="btn-sm" onclick="recarregarPortal()">Atualizar</button>
         <button class="btn-sm" onclick="sairPortal()">Sair</button>
       </div>
@@ -293,7 +303,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
         <div class="item">
           <strong>Dados do perfil</strong><br>
           <span class="muted">Esses dados podem ser reutilizados em novos agendamentos.</span>
-          <div class="profile-grid" style="margin-top:10px">
+          <div class="profile-grid profile-grid-top">
             <label class="profile-label">Nome completo
               <input type="text" id="perfil-nome" placeholder="Seu nome" autocomplete="name">
             </label>
@@ -309,8 +319,8 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
             <label class="profile-label">Raça do pet
               <input type="text" id="perfil-raca" placeholder="Ex.: SRD, Poodle" autocomplete="off">
             </label>
-            <label class="profile-label full" style="flex-direction:row;align-items:center;gap:10px">
-              <input type="checkbox" id="perfil-acessibilidade-contraste" style="width:18px;height:18px;min-width:auto">
+            <label class="profile-label full profile-checkbox-row">
+              <input type="checkbox" id="perfil-acessibilidade-contraste" class="profile-checkbox-input">
               Ativar alto contraste (acessibilidade)
             </label>
           </div>
@@ -322,7 +332,7 @@ body[data-contrast="high"]{filter:contrast(1.16) saturate(1.04)}
     </div>
 
     <div class="card" id="portal-msg" role="status" aria-live="polite">Entre com Google para visualizar seu histórico.</div>
-    <div class="muted" style="text-align:center">Versão atual: <span id="client-version">v1.14.0</span> (alinhada ao admin) · <a href="./privacy.html" style="text-decoration:none;font-weight:700">Política de Privacidade</a></div>
+    <div class="muted version-line">Versão atual: <span id="client-version">v1.14.0</span> (alinhada ao admin) · <a href="./privacy.html" class="privacy-link-strong">Política de Privacidade</a></div>
   </div>
 
 </div>
@@ -361,6 +371,23 @@ const firebaseConfig = {
   messagingSenderId:"716091719601",
   appId:"1:716091719601:web:89e7ff08dc887ad4254790"
 };
+
+const AUTHORIZED_WEB_HOSTS = new Set([
+  'localhost',
+  '127.0.0.1',
+  'prime-pet.firebaseapp.com',
+  'prime-pet.web.app',
+  'prime-pet.vercel.app'
+]);
+
+function assertHostAutorizado() {
+  const host = String(window.location.hostname || '');
+  if (!host || AUTHORIZED_WEB_HOSTS.has(host)) return;
+  throw new Error(`Host não autorizado para Firebase Auth: ${host}`);
+}
+
+assertHostAutorizado();
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);

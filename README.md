@@ -107,7 +107,8 @@ prime-pet/
 O projeto usa Firebase diretamente no front-end. Confira:
 
 - credenciais no bloco `firebaseConfig` de `index.html`, `client.html` e `admin.html`;
-- permissão administrativa por **custom claim** `admin=true` no Firebase Auth.
+- permissão administrativa por **custom claim** `admin=true` no Firebase Auth;
+- validação de host autorizado no front (`localhost`, `prime-pet.web.app`, `prime-pet.firebaseapp.com`, `prime-pet.vercel.app`).
 
 Também é possível customizar:
 
@@ -118,13 +119,14 @@ Também é possível customizar:
 
 ## 🔐 Migração concluída: aplicação em Firestore
 
-- `firestore.rules` com regras por usuário autenticado (ownerUid) e perfil admin por custom claim;
+- `firestore.rules` com regras por usuário autenticado (ownerUid) e perfil admin por custom claim + fallback em `admin_users/{uid}`;
 - `firestore.indexes.json` com índices para consultas do dashboard e agenda;
 - `scripts/firestore-rtdb-compat.js` para manter o código de `client.html` e `admin.html` sem dependência do Realtime Database;
 - `dashboard.html` para leitura de métricas usando coleção `appointments`;
 - `functions/index.js` com:
   - `enqueueVaccineAlert` (callable) para agendar alerta de vacina;
-  - `dispatchVaccineAlerts` (schedule) para enviar alertas pendentes para `notification_outbox`.
+  - `dispatchVaccineAlerts` (schedule) para enviar alertas pendentes para `notification_outbox`;
+  - callables de operação segura (`setOperationalWebhook`, `getOperationalWebhook`, `testOperationalWebhook`, `notifyOperationalEvent`).
 
 ### Modelo mínimo sugerido no Firestore
 
@@ -136,10 +138,10 @@ Também é possível customizar:
 
 ### Acesso ao `admin.html` após migração
 
-Você pode liberar acesso de duas formas:
+Modelo recomendado:
 
-1. **Custom claim** no Auth: `admin=true`; ou
-2. Criar documento `admin_users/{uid}` no Firestore com:
+1. Definir **custom claim** no Auth: `admin=true` (fonte principal);
+2. Opcional: criar `admin_users/{uid}` no Firestore como fallback operacional controlado por backend:
 
 ```json
 { "enabled": true, "email": "seu-email@dominio.com" }
@@ -211,7 +213,9 @@ Para uma visão objetiva de melhorias de recursos e layout alinhadas ao mercado,
 
 ## 🔔 Notificações e automação
 
-No painel admin, você pode configurar uma URL de webhook para disparar eventos de novos agendamentos pendentes para:
+No painel admin, você pode configurar uma URL de webhook, mas o armazenamento e o disparo são feitos no backend (Cloud Functions), reduzindo exposição de configuração sensível no navegador.
+
+Eventos operacionais podem ser integrados com:
 
 - n8n
 - Make

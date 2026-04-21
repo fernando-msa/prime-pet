@@ -12,7 +12,7 @@
     const storedMode = localStorage.getItem(STORAGE_KEY);
     if (storedMode && VALID_MODES.has(storedMode)) return storedMode;
 
-    return 'legacy';
+    return 'v2';
   }
 
   function getTenantId() {
