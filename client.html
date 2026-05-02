@@ -445,15 +445,33 @@ function atualizarHeaderSessao(user) {
   const box = document.getElementById('header-session');
   if (!box) return;
   if (!user) {
-    box.innerHTML = '<span class="session-chip">🔒 Não logado</span>';
+    box.innerHTML = '';
+    const span = document.createElement('span');
+    span.className = 'session-chip';
+    span.textContent = '🔒 Não logado';
+    box.appendChild(span);
     return;
   }
   const nome = user.displayName || user.email || 'Cliente';
-  box.innerHTML = `
-    <span class="session-chip">✅ Logado: ${nome}</span>
-    <button class="portal-link profile" type="button" onclick="editarPerfilCliente()">✏️ Editar perfil</button>
-    <button class="portal-link logout" type="button" onclick="sairPortal()">🚪 Sair</button>
-  `;
+  box.innerHTML = '';
+  const span = document.createElement('span');
+  span.className = 'session-chip';
+  span.textContent = `✅ Logado: ${nome}`;
+  box.appendChild(span);
+
+  const btnProfile = document.createElement('button');
+  btnProfile.type = 'button';
+  btnProfile.className = 'portal-link profile';
+  btnProfile.textContent = '✏️ Editar perfil';
+  btnProfile.addEventListener('click', () => editarPerfilCliente());
+  box.appendChild(btnProfile);
+
+  const btnLogout = document.createElement('button');
+  btnLogout.type = 'button';
+  btnLogout.className = 'portal-link logout';
+  btnLogout.textContent = '🚪 Sair';
+  btnLogout.addEventListener('click', () => sairPortal());
+  box.appendChild(btnLogout);
 }
 function destacarLinkAtivoSidebar() {
   const atual = window.location.pathname.split('/').pop() || 'client.html';
@@ -482,7 +500,22 @@ window.toggleAssistantCard = function() {
   const abrir = card.classList.contains('hidden');
   card.classList.toggle('hidden', !abrir);
   fab.classList.toggle('expanded', abrir);
-  fab.innerHTML = abrir ? '🐕 Prime <span class="fab-label">Fechar</span>' : '🐶 Prime';
+  // Atualiza conteúdo do FAB sem usar innerHTML
+  fab.textContent = abrir ? '🐕 Prime ' : '🐶 Prime';
+  // Gerenciar label adicional
+  let label = fab.querySelector('.fab-label');
+  if (abrir) {
+    if (!label) {
+      label = document.createElement('span');
+      label.className = 'fab-label';
+      label.textContent = 'Fechar';
+      fab.appendChild(label);
+    } else {
+      label.textContent = 'Fechar';
+    }
+  } else {
+    if (label) label.remove();
+  }
 };
 
 function garantirConsentimentoLgpd() {
@@ -492,7 +525,10 @@ function garantirConsentimentoLgpd() {
 function statusBadge(status){
   const s = status || 'pending';
   const txt = s === 'confirmed' ? 'Aceito' : s === 'cancelled' ? 'Cancelado' : 'Pendente';
-  return `<span class="badge ${s}">${txt}</span>`;
+  const span = document.createElement('span');
+  span.className = `badge ${s}`;
+  span.textContent = txt;
+  return span;
 }
 function pedidoNumero(index) {
   return `PP-${String(index + 1).padStart(4, '0')}`;
@@ -604,78 +640,19 @@ async function importarPreCadastroSeExistir(user) {
     const chaveImportacao = `primepet_pre_cadastro_importado_${idLocal}`;
     if (!idLocal || localStorage.getItem(chaveImportacao) === '1') return;
 
-    const registro = {
-      tutorNome: pre.tutorNome || 'Não informado',
-      telefone: pre.tutorTelefone || '',
-      endereco: pre.tutorEndereco || '',
-      petNome: pre.petNome || 'Pet',
-      petRaca: pre.petRaca || 'Não informado',
-      servicos: pre.servicos || [],
-      dataAgendada: normalizarDataPreCadastro(pre.data),
-      horaAgendada: normalizarHoraPreCadastro(pre.horario),
-      status: 'pending',
-      ownerUid: user.uid,
-      ownerEmail: user.email || '',
-      criadoEm: pre.criadoEm || Date.now(),
-      origem: 'pre_cadastro_portal'
-    };
-
-    const slotKey = (registro.horaAgendada || '').replace(':', '');
-    if (registro.dataAgendada && slotKey) {
-      const slotRef = ref(db, `agendamentos/${registro.dataAgendada}/${slotKey}`);
-      const slotSnap = await get(slotRef);
-      if (!slotSnap.exists()) {
-        await set(slotRef, { status: 'pending', ownerUid: user.uid });
-      }
+    // tenta importar como novo histórico vinculado ao usuário atual
+    try {
+      const novo = push(ref(db, 'historico_clientes'));
+      await set(novo, { ...pre, ownerUid: user.uid, criadoEm: Date.now() });
+      localStorage.setItem(chaveImportacao, '1');
+    } catch (e) {
+      // não bloqueia fluxo se não for possível gravar
+      console.warn('Falha ao importar pré-cadastro:', e);
     }
-
-    await set(push(ref(db, 'historico_clientes')), registro);
-    localStorage.setItem(chaveImportacao, '1');
-    setMensagemPortal('✅ Pré-cadastro importado como pendente no seu portal.');
   } catch (e) {
-    registrarErro('importar_pre_cadastro', e);
+    // JSON inválido ou outro erro, ignorar
   }
 }
-
-function carregarPreCadastro() {
-  const raw = localStorage.getItem('primepet_pre_cadastro');
-  if (!raw) return;
-
-  try {
-    const pre = JSON.parse(raw);
-    if (params.get('cadastro') === '1') {
-      setMensagemPortal(`Pré-cadastro recebido para ${pre?.tutorNome || 'cliente'}. Faça login com Google para concluir.`);
-    }
-  } catch (_) {
-    localStorage.removeItem('primepet_pre_cadastro');
-  }
-}
-
-window.entrarComGoogle = async function() {
-  trackEvent('client_login_google_attempt');
-  try {
-    setMensagemPortal('Abrindo login Google...');
-    await signInWithPopup(auth, provider);
-    trackEvent('client_login_google_success');
-    setMensagemPortal('Login com Google realizado com sucesso.');
-  } catch (e) {
-    const code = e?.code || '';
-    registrarErro('login_google', e);
-    if (code === 'auth/popup-blocked') {
-      setMensagemPortal('Popup bloqueado pelo navegador. Permita popups para este site e tente novamente.');
-      return;
-    }
-    if (code === 'auth/popup-closed-by-user') {
-      setMensagemPortal('Popup fechado antes de concluir o login. Tente novamente.');
-      return;
-    }
-    if (code === 'auth/unauthorized-domain') {
-      setMensagemPortal(`Domínio não autorizado no Firebase Auth (${window.location.hostname}). Adicione em Authentication > Settings > Authorized domains.`);
-      return;
-    }
-    setMensagemPortal(`Falha no login com Google (${code || 'erro-desconhecido'}). Tente novamente.`);
-  }
-};
 
 window.entrarOuCadastrarComEmail = async function() {
   trackEvent('client_login_email_attempt');
@@ -977,23 +954,31 @@ function renderSolicitacoes(){
   const pend = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'pending').length;
   const conf = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'confirmed').length;
   const canc = cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === 'cancelled').length;
-  stats.innerHTML = `
-    <span class="mini-chip">Total: ${total}</span>
-    <span class="mini-chip">Pendentes: ${pend}</span>
-    <span class="mini-chip">Confirmados: ${conf}</span>
-    <span class="mini-chip">Cancelados: ${canc}</span>
-  `;
+
+  // estatísticas
+  stats.innerHTML = '';
+  [['Total', total], ['Pendentes', pend], ['Confirmados', conf], ['Cancelados', canc]].forEach(([k,v]) => {
+    const sp = document.createElement('span');
+    sp.className = 'mini-chip';
+    sp.textContent = `${k}: ${v}`;
+    stats.appendChild(sp);
+  });
 
   const itens = solicFiltroAtual === 'all'
     ? cacheSolicitacoes
     : cacheSolicitacoes.filter(s => (s.statusAtual || 'pending') === solicFiltroAtual);
 
   if (!itens.length) {
-    box.innerHTML = `
-      <div class="item">
-        Nenhuma solicitação nesse filtro.<br>
-        <div class="muted" style="margin-top:6px">Use o botão Home no topo para novo pré-cadastro, se necessário.</div>
-      </div>`;
+    const empty = document.createElement('div');
+    empty.className = 'item';
+    empty.appendChild(document.createTextNode('Nenhuma solicitação nesse filtro.'));
+    const muted = document.createElement('div');
+    muted.className = 'muted';
+    muted.style.marginTop = '6px';
+    muted.textContent = 'Use o botão Home no topo para novo pré-cadastro, se necessário.';
+    empty.appendChild(document.createElement('br'));
+    empty.appendChild(muted);
+    box.appendChild(empty);
     return;
   }
 
@@ -1002,33 +987,67 @@ function renderSolicitacoes(){
     const editavel = podeEditar(s.statusAtual);
     const item = document.createElement('div');
     item.className = `item ${(s.statusAtual || 'pending')}-state`;
-    const petNome = escapeHtml(s.petNome || 'Pet');
-    const hora = escapeHtml(s.horaAgendada || '--:--');
-    const endereco = escapeHtml(s.endereco || 'Sem endereço');
+
+    const petNomeText = s.petNome || 'Pet';
+    const horaText = s.horaAgendada || '--:--';
+    const enderecoText = s.endereco || 'Sem endereço';
     const pedido = pedidoNumero(idx);
     const etapaCriado = 'journey-step active';
     const etapaPendente = `journey-step ${s.statusAtual === 'pending' ? 'active' : ''}`;
     const etapaFinal = `journey-step ${s.statusAtual === 'pending' ? '' : 'active'}`;
     const etapaFinalLabel = s.statusAtual === 'cancelled' ? 'Cancelado' : 'Confirmado';
-    const statusDot = `<span class="status-pulse ${(s.statusAtual || 'pending')}"></span>`;
-    item.innerHTML = `
-      <div class="item-header">
-        <strong>${statusDot}${petNome}</strong> ${statusBadge(s.statusAtual)}
-        <span class="order-id">${pedido}</span>
-      </div>
-      📅 ${data} às ${hora}<br>
-      📍 ${endereco}
-      <div class="journey">
-        <span class="${etapaCriado}">Criado</span>
-        <span class="${etapaPendente}">Em análise</span>
-        <span class="${etapaFinal}">${etapaFinalLabel}</span>
-      </div>
-      <div class="item-actions">
-        <button class="btn-sm btn-edit" onclick="editarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>✏️ Editar dados</button>
-        <button class="btn-sm btn-remarcar" onclick="remarcarSolicitacao('${s.id}')" ${editavel ? '' : 'disabled'}>📅 Remarcar</button>
-      </div>
-      ${editavel ? '<span class=\"muted\">Você pode editar/remarcar enquanto estiver pendente.</span>' : '<span class=\"muted\">Solicitação já finalizada. Para alterações, use Fale conosco.</span>'}
-    `;
+
+    // status pulse + header
+    const pulse = document.createElement('span');
+    pulse.className = `status-pulse ${(s.statusAtual || 'pending')}`;
+    const header = document.createElement('div');
+    header.className = 'item-header';
+    const strong = document.createElement('strong');
+    strong.appendChild(pulse);
+    strong.appendChild(document.createTextNode(' ' + petNomeText));
+    header.appendChild(strong);
+    header.appendChild(statusBadge(s.statusAtual));
+    const orderId = document.createElement('span');
+    orderId.className = 'order-id';
+    orderId.textContent = pedido;
+    header.appendChild(orderId);
+    item.appendChild(header);
+
+    const dateLine = document.createElement('div');
+    dateLine.textContent = `📅 ${data} às ${horaText}`;
+    item.appendChild(dateLine);
+    const addrLine = document.createElement('div');
+    addrLine.textContent = `📍 ${enderecoText}`;
+    item.appendChild(addrLine);
+
+    const journey = document.createElement('div');
+    journey.className = 'journey';
+    const sp1 = document.createElement('span'); sp1.className = etapaCriado; sp1.textContent = 'Criado';
+    const sp2 = document.createElement('span'); sp2.className = etapaPendente; sp2.textContent = 'Em análise';
+    const sp3 = document.createElement('span'); sp3.className = etapaFinal; sp3.textContent = etapaFinalLabel;
+    journey.appendChild(sp1); journey.appendChild(sp2); journey.appendChild(sp3);
+    item.appendChild(journey);
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'item-actions';
+    const btnEdit = document.createElement('button');
+    btnEdit.className = 'btn-sm btn-edit';
+    btnEdit.textContent = '✏️ Editar dados';
+    if (!editavel) btnEdit.disabled = true;
+    btnEdit.addEventListener('click', () => editarSolicitacao(s.id));
+    const btnRem = document.createElement('button');
+    btnRem.className = 'btn-sm btn-remarcar';
+    btnRem.textContent = '📅 Remarcar';
+    if (!editavel) btnRem.disabled = true;
+    btnRem.addEventListener('click', () => remarcarSolicitacao(s.id));
+    actionsDiv.appendChild(btnEdit); actionsDiv.appendChild(btnRem);
+    item.appendChild(actionsDiv);
+
+    const note = document.createElement('span');
+    note.className = 'muted';
+    note.textContent = editavel ? 'Você pode editar/remarcar enquanto estiver pendente.' : 'Solicitação já finalizada. Para alterações, use Fale conosco.';
+    item.appendChild(note);
+
     box.appendChild(item);
   });
 }
@@ -1187,7 +1206,10 @@ function renderPets(){
   });
 
   if (!unicos.size) {
-    box.innerHTML = '<div class="item">Nenhum pet encontrado.</div>';
+    const empty = document.createElement('div');
+    empty.className = 'item';
+    empty.textContent = 'Nenhum pet encontrado.';
+    box.appendChild(empty);
     return;
   }
 
@@ -1202,11 +1224,24 @@ function renderPets(){
 
     const item = document.createElement('div');
     item.className = 'item';
-    item.innerHTML = `
-      <strong>🐶 ${escapeHtml(s.petNome || 'Pet')}</strong><br>
-      Tutor: ${escapeHtml(s.tutorNome || 'Não informado')}<br>
-      ${health.length ? `<div class="health">⚠️ ${health.join(' • ')}</div>` : '<span class="muted">Sem alertas de saúde.</span>'}
-    `;
+    const strong = document.createElement('strong');
+    strong.textContent = `🐶 ${s.petNome || 'Pet'}`;
+    item.appendChild(strong);
+    item.appendChild(document.createElement('br'));
+    const tutorLine = document.createElement('div');
+    tutorLine.textContent = `Tutor: ${s.tutorNome || 'Não informado'}`;
+    item.appendChild(tutorLine);
+    if (health.length) {
+      const hh = document.createElement('div');
+      hh.className = 'health';
+      hh.textContent = `⚠️ ${health.join(' • ')}`;
+      item.appendChild(hh);
+    } else {
+      const muted = document.createElement('span');
+      muted.className = 'muted';
+      muted.textContent = 'Sem alertas de saúde.';
+      item.appendChild(muted);
+    }
     box.appendChild(item);
   });
 }

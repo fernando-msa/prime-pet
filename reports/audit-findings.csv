@@ -1,0 +1,12 @@
+file,line,pattern,context,risk,recommendation
+admin.html,1431,innerHTML,"li.innerHTML = `⚠️ <strong>${formatDateBR(date)}</strong> ...`",High,"Use createElement/textContent; escape user data"
+admin.html,1503,innerHTML,"card.innerHTML = `... ${escapeHtml(item.tutorNome)} ...` (mitigated)",High,"Reviewed; keep using escapeHtml or DOM creation"
+admin.html,1856,innerHTML+onclick,"card.innerHTML = `... <div class=\"agend-actions\">${actions}</div>`",High,"Replaced by addEventListener; avoid attribute handlers"
+client.html,448,innerHTML,"box.innerHTML = '<span class=\"session-chip\">🔒 Não logado</span>'",Medium,"Prefer createElement/textContent; sanitize interpolations"
+index.html,1512,innerHTML,"document.getElementById('calDays').innerHTML = html;",Medium,"Rewrite to DOM builders to avoid injection"
+dashboard.html,118,innerHTML,"tbody.innerHTML = ''",Medium,"Prefer removing child nodes or building rows with createElement"
+assets/js/layout-v2-shell.js,15,innerHTML,"brand.innerHTML = 'Prime <span>Pet</span> v2'",Low,"Safe if content controlled; prefer element creation for spans"
+assets/js/api-v2-migration-bridge.js,8,localStorage.setItem,"localStorage.setItem(STORAGE_KEY, urlMode);",Medium,"Avoid storing tokens; document keys and retention"
+admin.html,1067,localStorage.getItem,"const raw = localStorage.getItem(METRICS_KEY);",Medium,"Limit retention of metrics; avoid PII"
+admin.html,991-994,httpsCallable,"const callableGetOperationalWebhook = httpsCallable(...)",Medium,"Ensure server-side validation and rate limiting"
+admin.html,1262,signInWithPopup,"const cred = await signInWithPopup(auth, provider);",Medium,"Validate admin claim on server; handle errors/edge cases"

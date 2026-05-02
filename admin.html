@@ -1296,6 +1296,10 @@ window.addEventListener('pagehide', () => {
 });
 
 // ── Dados em tempo real ───────────────────────────
+/**
+ * Inicializa observadores em tempo real do banco (agendamentos, histórico, logs).
+ * Faz bind das renderizações ao receber dados e trata erros de leitura.
+ */
 function iniciarAdmin() {
   onValue(ref(db, 'agendamentos'), snap => {
     agendamentos = snap.val() || {};
@@ -1413,6 +1417,11 @@ function csvEscape(value) {
   return `"${txt.replace(/"/g, '""')}"`;
 }
 
+/**
+ * Renderiza o resumo do mês (pendências e agendamentos planejados).
+ * Substitui inserções via `innerHTML` por criação de nós DOM para evitar XSS.
+ * @param {Array} items Lista de itens do mês
+ */
 function renderResumoMes(items) {
   const pendencias = items.filter(i => i.status === 'pending');
   const planejados = items.filter(i => i.status !== 'cancelled');
@@ -1431,7 +1440,18 @@ function renderResumoMes(items) {
   pendencias.slice(0, 6).forEach(({ date, hour }) => {
     const li = document.createElement('li');
     li.className = 'overview-item';
-    li.innerHTML = `⚠️ <strong>${formatDateBR(date)}</strong> às <strong>${hour}</strong> <small>(aguardando confirmação)</small>`;
+    li.appendChild(document.createTextNode('⚠️ '));
+    const strongDate = document.createElement('strong');
+    strongDate.textContent = formatDateBR(date);
+    li.appendChild(strongDate);
+    li.appendChild(document.createTextNode(' às '));
+    const strongHour = document.createElement('strong');
+    strongHour.textContent = hour;
+    li.appendChild(strongHour);
+    li.appendChild(document.createTextNode(' '));
+    const small = document.createElement('small');
+    small.textContent = '(aguardando confirmação)';
+    li.appendChild(small);
     pendenciasList.appendChild(li);
   });
 
@@ -1441,11 +1461,26 @@ function renderResumoMes(items) {
     .forEach(({ date, hour, status }) => {
       const li = document.createElement('li');
       li.className = 'overview-item';
-      li.innerHTML = `📌 <strong>${formatDateBR(date)}</strong> às <strong>${hour}</strong> <small>(${status === 'confirmed' ? 'confirmado' : 'pendente'})</small>`;
+      li.appendChild(document.createTextNode('📌 '));
+      const strongDate = document.createElement('strong');
+      strongDate.textContent = formatDateBR(date);
+      li.appendChild(strongDate);
+      li.appendChild(document.createTextNode(' às '));
+      const strongHour = document.createElement('strong');
+      strongHour.textContent = hour;
+      li.appendChild(strongHour);
+      li.appendChild(document.createTextNode(' '));
+      const spanStatus = document.createElement('small');
+      spanStatus.textContent = `(${status === 'confirmed' ? 'confirmado' : 'pendente'})`;
+      li.appendChild(spanStatus);
       planejadoList.appendChild(li);
     });
 }
 
+/**
+ * Renderiza a lista de histórico de clientes.
+ * Usa apenas textContent e criação de nós DOM (sem innerHTML direto).
+ */
 function renderHistoricoClientes() {
   const list = document.getElementById('history-list');
   const count = document.getElementById('history-count');
@@ -1500,14 +1535,58 @@ function renderHistoricoClientes() {
 
     const card = document.createElement('div');
     card.className = 'history-item';
-    card.innerHTML = `
-      <strong>${escapeHtml(item.tutorNome || 'Tutor não informado')}</strong> • ${escapeHtml(item.petNome || 'Pet não informado')}<br>
-      📅 ${data} às ${escapeHtml(hora)}<br>
-      📞 ${escapeHtml(item.telefone || 'Sem telefone')}<br>
-      📍 ${escapeHtml(item.endereco || 'Sem endereço')}
-      ${mapa ? `<br><a href="${mapa}" target="_blank" rel="noopener noreferrer">Abrir localização no mapa</a>` : ''}
-      ${saudeHtml}
-    `;
+
+    // Tutor e nome do pet
+    const titleLine = document.createElement('div');
+    const strongTutor = document.createElement('strong');
+    strongTutor.textContent = item.tutorNome || 'Tutor não informado';
+    titleLine.appendChild(strongTutor);
+    titleLine.appendChild(document.createTextNode(' • ' + (item.petNome || 'Pet não informado')));
+    card.appendChild(titleLine);
+
+    // Data e hora
+    const dateLine = document.createElement('div');
+    dateLine.appendChild(document.createTextNode('📅 ' + data + ' às ' + (hora || '--:--')));
+    card.appendChild(dateLine);
+
+    // Telefone
+    const phoneLine = document.createElement('div');
+    phoneLine.appendChild(document.createTextNode('📞 ' + (item.telefone || 'Sem telefone')));
+    card.appendChild(phoneLine);
+
+    // Endereço
+    const addrLine = document.createElement('div');
+    addrLine.appendChild(document.createTextNode('📍 ' + (item.endereco || 'Sem endereço')));
+    card.appendChild(addrLine);
+
+    // Link para mapa (já validado por safeMapsLink)
+    if (mapa) {
+      const linkLine = document.createElement('div');
+      const a = document.createElement('a');
+      a.href = mapa;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = 'Abrir localização no mapa';
+      linkLine.appendChild(a);
+      card.appendChild(linkLine);
+    }
+
+    // Alertas de saúde
+    if (alertasSaude.length) {
+      const healthDiv = document.createElement('div');
+      healthDiv.className = 'health-alert';
+      const strong = document.createElement('strong');
+      strong.textContent = '⚠️ Atenção saúde:';
+      healthDiv.appendChild(strong);
+      healthDiv.appendChild(document.createElement('br'));
+      alertasSaude.forEach(t => {
+        const p = document.createElement('div');
+        p.textContent = '• ' + t;
+        healthDiv.appendChild(p);
+      });
+      card.appendChild(healthDiv);
+    }
+
     list.appendChild(card);
   });
 }
@@ -1787,6 +1866,10 @@ function processarNotificacoesPendentes() {
 }
 
 // ── Render ────────────────────────────────────────
+/**
+ * Renderiza a lista principal de agendamentos e resumo.
+ * Cria cards e botões com addEventListener para evitar injeção via atributos.
+ */
 function renderLista() {
   const lista = document.getElementById('lista-agend');
   lista.innerHTML = '';
@@ -1840,26 +1923,61 @@ function renderLista() {
     const badgeClass = { pending:'badge-pending', confirmed:'badge-confirmed', cancelled:'badge-cancelled' }[status];
     const badgeText  = { pending:'⏳ Pendente',   confirmed:'✅ Confirmado',   cancelled:'❌ Cancelado'   }[status];
 
-    let actions = '';
-    if (status === 'pending') {
-      actions = `<button class="btn-confirm" onclick="confirmar('${date}','${hourKey}')">✅ Confirmar</button>
-                 <button class="btn-cancel"  onclick="cancelar('${date}','${hourKey}')">❌ Cancelar</button>`;
-    } else if (status === 'confirmed') {
-      actions = `<button class="btn-cancel" onclick="cancelar('${date}','${hourKey}')">❌ Cancelar</button>
-                 <button class="btn-free"   onclick="liberar('${date}','${hourKey}')">🔓 Liberar</button>`;
-    } else {
-      actions = `<button class="btn-free" onclick="liberar('${date}','${hourKey}')">🔓 Liberar slot</button>`;
-    }
-
+    // Construir card de forma segura com textContent e listeners
     const card = document.createElement('div');
     card.className = 'agend-card';
-    card.innerHTML = `
-      <span class="agend-badge ${badgeClass}">${badgeText}</span>
-      <div class="agend-info">
-        <div class="agend-date">📅 ${dtFmt}</div>
-        <div class="agend-time">🕐 ${hour}</div>
-      </div>
-      <div class="agend-actions">${actions}</div>`;
+
+    const badgeSpan = document.createElement('span');
+    badgeSpan.className = `agend-badge ${badgeClass}`;
+    badgeSpan.textContent = badgeText;
+    card.appendChild(badgeSpan);
+
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'agend-info';
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'agend-date';
+    dateDiv.textContent = '📅 ' + dtFmt;
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'agend-time';
+    timeDiv.textContent = '🕐 ' + hour;
+    infoDiv.appendChild(dateDiv);
+    infoDiv.appendChild(timeDiv);
+    card.appendChild(infoDiv);
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'agend-actions';
+
+    if (status === 'pending') {
+      const btnConfirm = document.createElement('button');
+      btnConfirm.className = 'btn-confirm';
+      btnConfirm.textContent = '✅ Confirmar';
+      btnConfirm.addEventListener('click', () => confirmar(date, hourKey));
+      const btnCancel = document.createElement('button');
+      btnCancel.className = 'btn-cancel';
+      btnCancel.textContent = '❌ Cancelar';
+      btnCancel.addEventListener('click', () => cancelar(date, hourKey));
+      actionsDiv.appendChild(btnConfirm);
+      actionsDiv.appendChild(btnCancel);
+    } else if (status === 'confirmed') {
+      const btnCancel = document.createElement('button');
+      btnCancel.className = 'btn-cancel';
+      btnCancel.textContent = '❌ Cancelar';
+      btnCancel.addEventListener('click', () => cancelar(date, hourKey));
+      const btnFree = document.createElement('button');
+      btnFree.className = 'btn-free';
+      btnFree.textContent = '🔓 Liberar';
+      btnFree.addEventListener('click', () => liberar(date, hourKey));
+      actionsDiv.appendChild(btnCancel);
+      actionsDiv.appendChild(btnFree);
+    } else {
+      const btnFree = document.createElement('button');
+      btnFree.className = 'btn-free';
+      btnFree.textContent = '🔓 Liberar slot';
+      btnFree.addEventListener('click', () => liberar(date, hourKey));
+      actionsDiv.appendChild(btnFree);
+    }
+
+    card.appendChild(actionsDiv);
     lista.appendChild(card);
   });
 }
