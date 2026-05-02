@@ -1,5 +1,7 @@
 # 🐾 Prime Pet
 
+<!-- markdownlint-disable MD013 -->
+
 [![Deploy na Vercel](https://img.shields.io/badge/deploy-vercel-black?style=flat-square&logo=vercel)](https://prime-pet.vercel.app)
 ![HTML](https://img.shields.io/badge/html-100%25-orange?style=flat-square&logo=html5&logoColor=white)
 ![Licença MIT](https://img.shields.io/badge/licença-MIT-green?style=flat-square)
